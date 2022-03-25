@@ -1,32 +1,3 @@
+# Marcus Elias Faysal Dantes AI projekt
 
-       =IY;           
-      XRVRRi          
-     =Ri :RR          
-     VR  ;RR          
-     RY  tRY          
-     RX ;RR;          
-     tR=RRR           
-     ;RRRR;           
-     ;RRRi            
-    ;RRRV             
-   ;RRRRR:            
-  :RRRV.RX            
-  VRRR: ;R=           
- =RRR+   YRitti;.     
- VRRR  :YRRRRRRRRt.   
-.RRRY ;RRYYR;;iRRRR.  
-:RRRi RR; .Rt  .XRRY  
-:RRR= RV   +R.  .RRR  
-:RRRt tR    Rt   IRR. 
- RRRR  ;;   +R.  XRY  
- ;RRRt      .R+ +RR:  
-  ;RRRX;     YRIRX:   
-   .+RRRRIiitRRY;     
-      :;+ii+;tR:      
-             ;R:      
-             iR       
-    ;VRRi    Vi       
-    RRRRR.  tR.       
-    YRRR+ ;YV:        
-    .tRRRRR+          
-      .;;:
+Ett projekt som använder AI för att generera en låt baserat på input toner. Skrivet med JS och Rust.
