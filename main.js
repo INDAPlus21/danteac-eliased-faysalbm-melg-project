@@ -22,6 +22,14 @@ for (var i = 0; i < should_play.length; i++) {
     challenge_element.append(note_to_play)
 }
 
+// var key_octave_letters_1 = ["Q", "2", "W", "3", "E", "R", "5", "T", "6", "Y", "7", "U"]
+// // var lower_octave_1 = {"IntlBackslash": "C", "A": "Db", "Z": "D", "S": "Eb", "X": "E", "C": "F", "F": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B" }
+// // console.log(Object.keys(lower_octave_1))
+// // var lower_octave_2 = {"M": "C", "K": "Db", "Comma": "D", "L": "Eb", "Period": "E", "Slash": "F", "Quote": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B", "ShiftRight": "G", "Backslash": "Ab", "ArrowUp": "A", "Numpad4": "Bb", "Numpad1": "B"}
+
+// var key_octave_letters_2 = ["I", "9", "O", "0", "P", "Å", "`", "^", "←", "←", "Lk", "7"]
+// var key_octave_letters_lower_1 = ["IntlBackslash", "A", "Z", "S", "X", "C", "F", "V", "G", "B", "H", "N"]
+
 /* if (should_play[0] == "E") {
     document.getElementById("play-now").style.marginLeft = "465px"
 } */
@@ -145,28 +153,58 @@ function setUpKeyboard() {
 
     for (var i = 1; i < 7; i++) {
         const clone = template.content.cloneNode(true);
-        console.log(clone)
+        // console.log(clone)
         clone.className += " " + i
-        console.log(clone.className)
+        // console.log(clone.className)
         var is_something = container.appendChild(clone);
-        console.log({ is_something })
+        // console.log({ is_something })
     }
+
+    /* console.log("length: ", tiles.length)
+    for (var i = 0; i < 7; i++) { 
+        document.get
+    } */
 
     // set up lower 
-    var container = document.getElementById("lower-container");
-    for (var i = 0; i < 2; i++) {
-        const clone = template.content.cloneNode(true);
-        console.log(clone)
-        clone.className += " " + i
-        console.log(clone.className)
-        var is_something = container.appendChild(clone);
-        console.log({ is_something })
-    }
+    /*  var container = document.getElementById("lower-container");
+     for (var i = 0; i < 3; i++) {
+         const clone = template.content.cloneNode(true);
+         // console.log(clone)
+         clone.className += " " + i
+         // console.log(clone.className)
+         var is_something = container.appendChild(clone);
+         // console.log({ is_something })
+     } */
 
     var octaves = document.getElementsByClassName("octave-container")
+    var key_octave_letters_1 = ["Q", "2", "W", "3", "E", "R", "5", "T", "6", "Y", "7", "U"]
+    var key_octave_letters_2 = ["I", "9", "O", "0", "P", "Å", "`", "^", "←", "←", "Lk", "n7"]
+    var key_octave_letters_lower_1 = [">", "A", "Z", "S", "X", "C", "F", "V", "G", "B", "H", "N"]
+    var key_octave_letters_lower_2 = ["M", "K", ",", "L", ".", "Ö", "-", "V", "G", "B", "H", "N", "↑", "*", "▲", "n4", "n1"]
+
     for (var i = 0; i < octaves.length; i++) {
         console.log(octaves[i])
         octaves[i].className += " " + i
+        var children = octaves[i].children
+        for (var j = 0; j < children.length; j++) {
+            console.log(children[j])
+            var letter = document.createElement("div")
+            letter.className = "new-letter"
+            if (children[j].className.includes("black")) {
+                letter.className += " new-letter-black"
+            }
+            // console.log({new_key_octave_1}, {i})
+            if (i == 0) {
+                letter.innerHTML = key_octave_letters_lower_1[j]
+            } else if (i == 1) {
+                letter.innerHTML = key_octave_letters_lower_2[j]
+            } else if (i == 2) {
+                letter.innerHTML = key_octave_letters_1[j]
+            } else if (i == 3) {
+                letter.innerHTML = key_octave_letters_2[j]
+            }
+            children[j].append(letter)
+        }
     }
 
     tiles[0].style.borderTopLeftRadius = "5px";
@@ -221,20 +259,30 @@ var playSound = function (url) {
 }
 
 function computerKeyboardPress(event) {
-    var key = event.code.replace("Key", "")
-    // console.log({event})
+    var key = event.code.replace("Key", "").replace("Digit", "")
+    console.log({ event })
+    // playSound("./piano-mp3/C2.mp3")
 
     if (["Numpad4", "Numpad6"].includes(event.code)) {
         event.preventDefault();
     }
 
     // semicolon = ö, quote = ä, backslash = * 
-    var key_octave_1 = { "A": "C", "S": "D", "D": "E", "F": "F", "G": "G", "H": "A", "J": "B" }
-    var flats_octave_1 = { "W": "Db", "E": "Eb", "T": "Gb", "Y": "Ab", "U": "Bb" }
-    var key_octave_2 = { "K": "C", "L": "D", "Semicolon": "E", "Quote": "F", "Backslash": "G", "Enter": "Ab", "Numpad4": "A", "Numpad5": "B" }
-    var key_octave_3 = { "Numpad6": "C", "NumpadAdd": "Db" }
-    var flats_octave_2 = { "O": "Db", "P": "Eb", "BracketRight": "Gb", "Numpad8": "Bb" }
+    // var key_octave_1 = { "A": "C", "S": "D", "D": "E", "F": "F", "G": "G", "H": "A", "J": "B" }
+    // var flats_octave_1 = { "W": "Db", "E": "Eb", "T": "Gb", "Y": "Ab", "U": "Bb" }
+    // var key_octave_2 = { "K": "C", "L": "D", "Semicolon": "E", "Quote": "F", "Backslash": "G", "Enter": "Ab", "Numpad4": "A", "Numpad5": "B" }
+    // var key_octave_3 = { "Numpad6": "C", "NumpadAdd": "Db" }
+    // var flats_octave_2 = { "O": "Db", "P": "Eb", "BracketRight": "Gb", "Numpad8": "Bb" }
+
+    var new_key_octave_1 = { "Q": "C", "2": "Db", "W": "D", "3": "Eb", "E": "E", "R": "F", "5": "Gb", "T": "G", "6": "Ab", "Y": "A", "7": "Bb", "U": "B" }
+    var new_key_octave_2 = { "I": "C", "9": "Db", "O": "D", "0": "Eb", "P": "E", "BracketLeft": "F", "Equal": "Gb", "BracketRight": "G", "Backspace": "Ab", "Enter": "A", "NumLock": "Bb", "Numpad7": "B" }
+    var lower_octave_1 = { "IntlBackslash": "C", "A": "Db", "Z": "D", "S": "Eb", "X": "E", "C": "F", "F": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B" }
+    console.log(Object.keys(lower_octave_1))
+    var lower_octave_2 = { "M": "C", "K": "Db", "Comma": "D", "L": "Eb", "Period": "E", "Slash": "F", "Quote": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B", "ShiftRight": "G", "Backslash": "Ab", "ArrowUp": "A", "Numpad4": "Bb", "Numpad1": "B" }
+    // var lower_octave_3 = {"Numpad2": "C", "Numpad5": "Db", "Numpad3": "D"}
+
     function determinePlay(keys, octave) {
+        console.log({ keys }, { octave })
         if (Object.keys(keys).includes(key)) {
             var elem_with_key = document.getElementsByClassName(keys[key])
             var key_elem = elem_with_key[octave - 2]
@@ -258,11 +306,17 @@ function computerKeyboardPress(event) {
         }
     }
 
-    determinePlay(key_octave_1, 2)
-    determinePlay(key_octave_2, 3)
-    determinePlay(flats_octave_1, 2)
-    determinePlay(flats_octave_2, 3)
-    determinePlay(key_octave_3, 4)
+    // determinePlay(key_octave_1, 2)
+    // determinePlay(key_octave_2, 3)
+    // determinePlay(flats_octave_1, 2)
+    // determinePlay(flats_octave_2, 3)
+    // determinePlay(key_octave_3, 4)
+
+    determinePlay(lower_octave_1, 2)
+    determinePlay(lower_octave_2, 3)
+    determinePlay(new_key_octave_1, 4)
+    determinePlay(new_key_octave_2, 5)
+
 }
 
 document.addEventListener('keydown', computerKeyboardPress);
