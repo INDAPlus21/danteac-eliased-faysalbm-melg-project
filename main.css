@@ -4,16 +4,18 @@
 
 .white {
     border-style: solid;
-    border-width: 1px;
     border-color: black;
     width: var(--white-width);
     height: calc(var(--white-width)*6);
     margin-right: -35px;
+    z-index: 0; 
 }
 
 .tile {
     display: inline-block;
     border-radius: 5px;
+    position: relative;
+    border-width: 2px;
 }
 
 .white:hover {
@@ -24,11 +26,11 @@
     background-color: rgb(59, 58, 58);
 }
 
-.letter {
+/* .letter {
     display: inline;
     position: relative;
     font-weight: bold;
-}
+} */
 
 .whole {
     font-size: 30px;
@@ -66,6 +68,7 @@
 }
 
 #container {
+    /* display: flex;  */
     margin-top: 5px; 
     width: 10000px;
     height: 350px;
@@ -123,6 +126,7 @@
     right: -18px;
     border-top-right-radius: 0px;
     border-top-left-radius: 0px;
+    z-index: 1; 
 }
 
 .next-white {
@@ -196,6 +200,22 @@ div {
     user-select: none;
     /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.new-letter {
+    position: absolute; 
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    width: 100%; 
+    font-weight: bold;
+    font-size: 20px; 
+    margin-bottom: 3px; 
+}
+
+.new-letter-black {
+    color: white; 
 }
 
 #play-now {
