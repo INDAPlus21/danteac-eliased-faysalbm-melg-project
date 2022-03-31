@@ -58,7 +58,7 @@ function playSound(url) {
     audio.play();
 }
 
-function printMousePos(event, type) {
+function keyPress(event, type) {
     console.log("mouse clicked!!!")
     var rect = canvas.getBoundingClientRect();
     x = event.clientX //- rect.left
@@ -119,7 +119,7 @@ function printMousePos(event, type) {
     // console.log(x, y)
 }
 
-canvas.addEventListener("click", printMousePos, true)
+canvas.addEventListener("click", keyPress, true)
 
 /* canvas.onmousemove = function (event) {
     var white_start_x = 0

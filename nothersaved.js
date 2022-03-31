@@ -21,22 +21,19 @@ function drawInitialCanvas(/* times = 0, grey = false */) {
     var white_start_x = 0
     var start_y = 0
     // var flat_keys_to_press = []
-    // var whole_keys_to_press = ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"]
-    var key_order = ["F", "G", "A", "B", "C", "D", "E"]
-    var flats_key_order = ["Gb", "Ab", "Bb", "Db", "Eb"]
+    var whole_keys_to_press = ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"]
 
     for (var i = 0; i < 20; i++) {
         // fillRect() parameters x, y-coordinates of upper-left corner, width, height 
 
-        ctx.fillStyle = "black"
         // draw white tiles 
         ctx.strokeStyle = 'black';
         for (var j = 0; j < 7; j++) {
             ctx.rect(white_start_x + white_width * j, start_y, white_width, white_height);
             console.log({ white_start_x }, white_width * j)
             ctx.font = "30px Arial";
-            var key = key_order[j]
-            if (key && (i == 1 && j > 3) || (i == 2 && j < 4)) {
+            var key = whole_keys_to_press[j + 7 * (i - 1)]
+            if (key) {
                 ctx.fillText(key, white_width * j + white_width / 2.6 + white_start_x - 7 * white_width, start_y + white_height - 50);
             }
             /* if (grey && times == _i*7+j) {
@@ -46,26 +43,27 @@ function drawInitialCanvas(/* times = 0, grey = false */) {
         }
         ctx.stroke();
 
+        // draw black tiles 
         ctx.fillStyle = "black"
-        // var tile_width = 150
-        for (var j = 0; j < 3; j++) {
-            ctx.fillStyle = "black"
-            ctx.fillRect(black_start_x + white_width * j, start_y, black_width, black_height);
-            ctx.fillStyle = "white"
-            if (i == 1) {
-                ctx.fillText(flats_key_order[j], black_start_x + white_width * j + black_width / 5.5, start_y + black_height - 50);
-            }
-        }
-        var distance = black_start_x + white_width * j + white_width
         for (var j = 0; j < 2; j++) {
-            ctx.fillStyle = "black"
+            ctx.fillRect(black_start_x + white_width * j, start_y, black_width, black_height);
+            // ctx.fillRect(white_width * j + white_width/2, start_y, black_width, black_height);
+        }
+        var distance = black_start_x + white_width * j + white_width 
+
+        for (var j = 0; j < 3; j++) {
             ctx.fillRect(distance + white_width * j, start_y, black_width, black_height);
-            ctx.fillStyle = "white"
-            if (i == 0) {
-                ctx.fillText(flats_key_order[j + 3], distance + white_width * j + black_width / 5, start_y + black_height - 50);
-            }
         }
 
+        /* for (var j = 0; j < 3; j++) {
+            ctx.fillRect(distance + black_start_x + white_width * j, start_y, black_width, black_height);
+        } */
+
+       /*  var distance = black_start_x + white_width * j + white_width
+        for (var j = 0; j < 2; j++) {
+            ctx.fillRect(distance + white_width * j, start_y, black_width, black_height);
+        }
+ */
         black_start_x += 7 * white_width
         white_start_x += 7 * white_width
     }
@@ -94,8 +92,8 @@ function keyPress(event, type) {
 
     var white_start_x = 0
     var black_start_x = white_width - black_width / 2
-    var key_order = ["F", "G", "A", "B", "C", "D", "E"]
-    var flats_key_order = ["Gb", "Ab", "Bb", "Db", "Eb"]
+    var key_order = ["C", "D", "E", "F", "G", "A", "B"]
+    var flats_key_order = [ "Db", "Eb", "Gb", "Ab", "Bb"]
     var octave = 1
     for (var i = 1; i < 4; i++) {
         // for whole notes 
@@ -105,21 +103,21 @@ function keyPress(event, type) {
                 octave++
             }
             if (x > white_start_x + white_width * j && x < white_start_x + white_width * (j + 1) && r == 255) {
-                console.log({j}, key_order[j], white_start_x + white_width * j)
                 console.log("./piano-mp3/" + key_order[j] + (octave + i) + ".mp3")
                 playSound("./piano-mp3/" + key_order[j] + (octave + i) + ".mp3")
             }
         }
 
         // for flats 
-        octave = 1
+        octave = 2
         key_index = 0
         for (var j = 0; j < flats_key_order.length + 1; j++) {
-            if (flats_key_order[j] == "Db") {
+            if (flats_key_order[j] == "Gb") {
                 j++
-                octave++
             }
+            // console.log({x}, {j}, {black_start_x}, black_start_x + white_width * j, black_start_x + white_width * j + black_width)
             if (x > black_start_x + white_width * j && x < black_start_x + white_width * j + black_width && r == 0) {
+                console.log("./piano-mp3/" + flats_key_order[key_index] + (octave + i) + ".mp3")
                 playSound("./piano-mp3/" + flats_key_order[key_index] + (octave + i) + ".mp3")
             }
             key_index++
@@ -139,27 +137,13 @@ canvas.addEventListener("click", keyPress, true)
 document.addEventListener('keydown', computerKeyboardPress);
 
 function computerKeyboardPress(event) {
-    var all_keys = ["F", "G", "A", "B", "C", "D", "E"] // "Gb", "Ab", "Bb", "Db", "Eb"]
-    // var corresponding_flats = ["C": "D", "q "]
+    /* var all_keys = ["F", "G", "A", "B", "C", "D", "E", "Gb", "Ab", "Bb", "Db", "Eb"]
     console.log("in keyboard press")
     var key = event.code.replace("Key", "")
-    /* if (event.altKey && all_keys.includes(key)) {
-        playSound("./piano-mp3/" + key + "b" + "2.mp3")
+    if (all_keys.includes(key)) {
+        playSound("./piano-mp3/" + key + "2.mp3")
     } */
-    if (event.shiftKey && all_keys.includes(key)) {
-        octave = 3
-        if (event.altKey) {
-            octave += 1
-        }
-        playSound("./piano-mp3/" + key + "b" + octave + ".mp3")
-    } else if (all_keys.includes(key)) {
-        octave = 3
-        if (event.altKey) {
-            octave += 1
-        }
-        playSound("./piano-mp3/" + key + octave + ".mp3")
-    }
-    /* var key_order = ["F", "G", "A", "B", "C", "D", "E"]
+    var key_order = ["F", "G", "A", "B", "C", "D", "E"]
     var whole_keys_to_press = ["A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"]
 
     console.log("in keyboard press")
@@ -175,7 +159,7 @@ function computerKeyboardPress(event) {
             octave += 1
         }
         playSound("./piano-mp3/" + key_order[index % 7] + octave + ".mp3")
-    } */
+    }
     // console.log(event.code) // e.code)
     //   log.textContent += ` ${e.code}`;
 }
