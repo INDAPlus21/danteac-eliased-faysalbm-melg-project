@@ -9,6 +9,7 @@
 
 .tile {
     display: inline-block;
+    border-radius: 5px; 
 }
 
 .white:hover {
@@ -22,13 +23,14 @@
 .letter {
     display: inline;
     position: relative;
+    font-weight: bold; 
 }
 
 .whole {
     font-size: 30px;
-    margin-left: 14.1px;
-    margin-right: 14px;
-    top: -50px;
+    margin-left: 13px;
+    margin-right: 13px;
+    top: -45px;
     /* width: 100px;  */
 }
 
@@ -36,27 +38,23 @@
     font-size: 20px;
     top: -210px;
     color: white;
-    margin-right: 10px;
+    margin-right: 8.8px;
 }
 
 .first {
-    margin-left: 42px;
-}
-
-.second {
-    margin-left: 22px;
+    margin-left: 41px;
 }
 
 .third {
     margin-left: 75px; 
 }
 
-.fourth, .fifth {
-    margin-left: 22px; 
+.second, .fourth, .fifth {
+    margin-left: 22.5px; 
 }
 
 .fifth {
-    margin-right: 40px; 
+    margin-right: 41px; 
 }
 
 #\^ {
@@ -86,13 +84,51 @@
     vertical-align: top;
     position: relative;
     right: -18px;
+    border-top-right-radius: 0px; 
+    border-top-left-radius: 0px; 
 }
 
 .next-white {
     margin-right: -5px;
+    border-top-right-radius: 0px; 
+    border-top-left-radius: 0px; 
 }
+
+.next-white + div {
+    border-top-right-radius: 0px; 
+    border-top-left-radius: 0px; 
+}
+
+.end-white {
+    border-top-right-radius: 0px; 
+    border-top-left-radius: 0px; 
+}
+
+.start-white {
+    border-top-right-radius: 0px; 
+    border-top-left-radius: 0px; 
+}
+
+/* .start:first-of-type {
+    border-top-left-radius: 5px !important; 
+} 
+
+#very-first:first-of-type{
+    border-top-left-radius: 5px !important; 
+} */
 
 .octave-container {
     display: inline-block;
     margin-right: 30px;
+}
+
+/* Make selectionn impossible (to be able to roll on the keys with mouse) */
+div {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
