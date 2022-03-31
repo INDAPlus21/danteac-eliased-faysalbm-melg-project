@@ -1,15 +1,19 @@
+:root {
+  --white-width: 50px;
+}
+
 .white {
     border-style: solid;
     border-width: 1px;
     border-color: black;
-    height: 300px;
-    width: 50px;
+    width: var(--white-width);
+    height: calc(var(--white-width)*6);
     margin-right: -35px;
 }
 
 .tile {
     display: inline-block;
-    border-radius: 5px; 
+    border-radius: 5px;
 }
 
 .white:hover {
@@ -23,7 +27,7 @@
 .letter {
     display: inline;
     position: relative;
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 .whole {
@@ -46,28 +50,55 @@
 }
 
 .third {
-    margin-left: 75px; 
+    margin-left: 75px;
 }
 
 .second, .fourth, .fifth {
-    margin-left: 22.5px; 
+    margin-left: 22.5px;
 }
 
 .fifth {
-    margin-right: 41px; 
+    margin-right: 41px;
 }
 
 #\^ {
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 #container {
+    margin-top: 5px; 
     width: 10000px;
-    height: 350px; 
+    height: 350px;
     /* display: flex;  */
     /* direction:rtl;  */
-    overflow: scroll; 
-    overflow:hidden;
+    overflow: scroll;
+    overflow: hidden;
+}
+
+/* #sheet-music {
+    position: absolute; 
+} */
+
+/* .sheet-note {
+    width: 70px; 
+    z-index: 1; 
+    position: absolute; 
+    top: 125px; 
+    margin-left: 5px; 
+} 
+
+#sheet2 {
+    left: 50px; 
+    top: 100px; 
+}
+
+#sheet3 {
+    left: 90px; 
+    top: 90px; 
+}
+ */
+#accuracy {
+    display: inline-block; 
 }
 
 /* .second {
@@ -75,7 +106,13 @@
     margin-left: 10px;
 } */
 
-
+/* .line {
+    height: 2px; 
+    margin: 15px; 
+    margin-right: 3000px;
+    width: 100%; 
+    background-color: black; 
+} */
 
 .black {
     background-color: black;
@@ -84,29 +121,51 @@
     vertical-align: top;
     position: relative;
     right: -18px;
-    border-top-right-radius: 0px; 
-    border-top-left-radius: 0px; 
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }
 
 .next-white {
     margin-right: -5px;
-    border-top-right-radius: 0px; 
-    border-top-left-radius: 0px; 
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }
 
-.next-white + div {
-    border-top-right-radius: 0px; 
-    border-top-left-radius: 0px; 
+.next-white+div {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }
 
 .end-white {
-    border-top-right-radius: 0px; 
-    border-top-left-radius: 0px; 
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
 }
 
 .start-white {
-    border-top-right-radius: 0px; 
-    border-top-left-radius: 0px; 
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+
+#hmm {
+    color: #58cf62
+}
+
+#challenge {
+    font-size: 20px;
+
+}
+
+.note-to-play {
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    width: fit-content;
+    display: inline-block;
+    margin: 1px; 
+    margin-right: 5px;
+    font-size: 20px;
+    border-radius: 5px; 
+    padding: 5px; 
 }
 
 /* .start:first-of-type {
@@ -124,11 +183,25 @@
 
 /* Make selectionn impossible (to be able to roll on the keys with mouse) */
 div {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+#play-now {
+    background-color: green; 
+    height: 40px; 
+    width: 40px; 
+    border-radius: 5px; 
+    position: relative; 
 }
