@@ -17,6 +17,7 @@
     height: calc(var(--white-width)*6);
     margin-right: -35px;
     z-index: 0;
+    background-color: white; 
 }
 
 .black {
@@ -139,6 +140,7 @@ div {
     position: relative;
     margin-top: 5px;
     vertical-align: bottom;
+    /* transition: all .5s ease-in-out; */
 }
 
 #next-notes-container {

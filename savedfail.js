@@ -53,31 +53,25 @@ function colorTile(key, octave, duration_ms) {
 }
 
 async function playAutomatically() {
-    // iterate through all the notes in the song 
     for (var i = 0; i < should_play.length; i++) {
-        // console.log("continuing")
+        /*  var play_tiles = document.getElementsByClassName("play-display")
+         for (var i = 0; i < play_tiles.length; i++) {
+             play_tiles[i].animate([
+                 // keyframes
+                 { transform: 'translateY(0px)' },
+                 { transform: 'translateY(100px)' }
+             ], {
+                 // timing options
+                 duration: 1000,
+                 iterations: Infinity
+             });
+         } */
+
+        console.log("continuing")
 
         var time_to_wait = should_play[i][1]
-        // console.log({ time_to_wait })
+        console.log({ time_to_wait })
         var key_with_octave = should_play[i][0]
-
-        // wait will this actually work... no it must change afterwards. but it should work!!! 
-        // I'm not updating in updateNoteDisplay until I've slept for the time to wait!!! 
-        var play_tiles = document.getElementsByClassName("play-display")
-        // console.log({ play_tiles }, play_tiles.length, play_tiles[play_tiles.length - 1], play_tiles[0])
-        var playing_now_height = parseInt(play_tiles[play_tiles.length - 1].style.height)
-        // console.log({ playing_now_height }, { time_to_wait })
-        for (var j = 0; j < play_tiles.length; j++) {
-            play_tiles[j].animate([
-                // keyframes
-                { transform: 'translateY(0px)' },
-                { transform: 'translateY(' + playing_now_height + 'px)' }
-            ], {
-                // timing options
-                duration: time_to_wait,
-                iterations: 1
-            });
-        }
 
         if (key_with_octave != "Pause") {
             // var start_time = performance.now()
@@ -113,9 +107,7 @@ async function playAutomatically() {
             // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
             var left_margin = c_s[octave - 2].getBoundingClientRect().left - 3;
 
-            // console.log({left_margin})
-
-            if (should_play[number_correct + how_many_elem - 1 - i][0].includes("b")) {
+            if (should_play[number_correct][0].includes("b")) {
                 left_margin -= 14
             }
 
@@ -129,96 +121,121 @@ async function playAutomatically() {
     }
 } */
 
-var play_elem_array = []
+// needs the key to have an octave
+function setTileHeight(key, play_elem) {
+    // console.log({key}, {id})
+    if (key == "Pause") {
+        console.log({ should_play })
+        play_elem.style.backgroundColor = "white"
+        play_elem.style.height = should_play[number_correct][1] * 0.2 + "px"
+    } else {
+        var octave = key.match(/\d+/)[0]
+        key = key.replace(/\d+/, "")
+        if (key) {
+            var c_s = document.getElementsByClassName(key)
 
-// async!!! will bite you in the ass
-function updateNoteDisplay() {
-    var notes_container = document.getElementById("next-notes-container")
-    notes_container.innerHTML = ""
-    var how_many_elem = 20
-    for (var i = 0; i < how_many_elem; i++) {
-        var play_elem = document.createElement("div")
-        play_elem.id = "play-" + (how_many_elem - i)
-        play_elem.className = "play-display"
-        // console.log(play_elem)
-        document.getElementById("next-notes-container").append(play_elem)
+            // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
+            var left_margin = c_s[octave - 2].getBoundingClientRect().left - 3;
 
-        // ok... what do we actually want to do... we want to move it down the right amount of height in the 
-        // right amount of time... the right amount of height is independent of the div's height itself (it can even be greater) 
-        // and we want... and it's too late to start the animation here because updatenoteondisplay is called by challengefunction 
-        // which is called when it's time to play a note... we can calculate the right amount of height... doesn't it depend
-        // on the tempo of the song??? you have to know when the NEXt note is...??? 
-        // I think you could just move everything down at the same speed, but that is made impossible by the fact that  
-        // all the elements are redrawn, so it messes up the alignment (and that were the glitches that you saw)
-        // but we still need access to the elements' id:s....??? could we solve it in another way? 
-        // I need to know in what order the divs were created... you could just have an array of the divs and do it manuall 
-        // you could change this function to addNoteDisplay... 
-        /* var height_diff = 100
-        // and the display none didn't do antthing essential 
-        play_elem.animate([
-            // keyframes
-            { transform: 'translateY(0px)' },
-            { transform: 'translateY('+height_diff+'px)' }
-        ], {
-            // timing options
-            duration: 400,
-            iterations: Infinity
-        }); */
-        // await sleep(1000)
-        // setTileHeight(should_play[number_correct + how_many_elem - 1 - i][0], play_elem)
-
-        var should_play_index = number_correct + how_many_elem - 1 - i // why??? 
-        var key = should_play[should_play_index][0]
-        // Set tile height (was a function before, but too many common parameters, and only called here) 
-        var play_number = play_elem.id.match(/\d+/)[0] - 1
-        if (key == "Pause") {
-            console.log({ should_play })
-            play_elem.style.backgroundColor = "white"
-            play_elem.style.height = should_play[number_correct + play_number][1] * 0.2 + "px"
-        } else {
-            var octave = key.match(/\d+/)[0]
-            key = key.replace(/\d+/, "")
-            if (key) {
-                var c_s = document.getElementsByClassName(key)
-
-                // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
-                var left_margin = c_s[octave - 2].getBoundingClientRect().left;
-
-                // console.log({left_margin})
-
-                if (should_play[should_play_index][0].includes("b")) {
-                    left_margin -= 14 // isn't it an inevitability that there will be margin conflicts? if not every tile has the same margin? 
-                    // i think this is the cause of the flicker i see happening
-                    // well, let's think about that later 
-                    // play_elem.style.right = "-50px";
-                }
-
-                play_elem.style.marginLeft = left_margin + "px";
-
-                // sets the HEIGHT, not the relative position! that is done by the other functions 
-                var height = should_play[number_correct + play_number][1] * 0.2 + "px"
-                play_elem.style.height = height
-                // return height
+            if (should_play[number_correct][0].includes("b")) {
+                left_margin -= 14
             }
+
+            play_elem.style.marginLeft = left_margin + "px";
+
+            // sets the HEIGHT, not the relative position! that is done by the other functions 
+            var height = should_play[number_correct][1] * 0.2 + "px"
+            play_elem.style.height = height
+            // return height
         }
     }
-    /* var i = 0
-    var added_height = 0
-    console.log({added_height}, window.innerHeight, notes_container.style.height)
-    while (added_height < window.innerHeight) { // should really be note container height, but don't care 
-        console.log("in while")
-        var play_elem = document.createElement("div")
-        play_elem.id = "play-" + (how_many_elem - i)
-        play_elem.className = "play-display"
-        console.log(play_elem)
-        notes_container.append(play_elem)
-        // await sleep(1000)
-        var height = playNext(should_play[number_correct + how_many_elem - 1 - i][0], play_elem.id)
-        console.log({height})
-        added_height += parseInt(height)  
-        i++
-    } */
+    return parseInt(play_elem.style.height)
 }
+
+var play_elem_array = []
+var how_many_elem = 20 // we still need this 
+
+function addRemoveTile(assume_number_correct) {
+    var notes_container = document.getElementById("next-notes-container")
+    var play_elem = document.createElement("div")
+    play_elem.id = "play-" + document.getElementsByClassName("play-display").length
+    play_elem.className = "play-display"
+    // console.log(play_elem)
+    notes_container.append(play_elem)
+
+    var height = setTileHeight(should_play[assume_number_correct][0], play_elem)
+
+    console.log({height})
+
+    var tempo = 400
+    play_elem.animate([
+        // keyframes
+        { transform: 'translateY(0px)' },
+        { transform: 'translateY(' + height + 'px)' }
+    ], {
+        // timing options
+        duration: tempo
+        // iterations: 1
+    });
+
+    setTimeout(() => {
+        notes_container.children[0].remove()
+    }, tempo)
+}
+
+// async!!! will bite you in the ass
+// function updateNoteDisplay() {
+//     var notes_container = document.getElementById("next-notes-container")
+//     notes_container.innerHTML = ""
+//     var how_many_elem = 20
+//     for (var i = 0; i < how_many_elem; i++) {
+//         var play_elem = document.createElement("div")
+//         play_elem.id = "play-" + (how_many_elem - i)
+//         play_elem.className = "play-display"
+//         // console.log(play_elem)
+//         document.getElementById("next-notes-container").append(play_elem)
+
+//         // ok... what do we actually want to do... we want to move it down the right amount of height in the 
+//         // right amount of time... the right amount of height is independent of the div's height itself (it can even be greater) 
+//         // and we want... and it's too late to start the animation here because updatenoteondisplay is called by challengefunction 
+//         // which is called when it's time to play a note... we can calculate the right amount of height... doesn't it depend
+//         // on the tempo of the song??? you have to know when the NEXt note is...??? 
+//         // I think you could just move everything down at the same speed, but that is made impossible by the fact that  
+//         // all the elements are redrawn, so it messes up the alignment (and that were the glitches that you saw)
+//         // but we still need access to the elements' id:s....??? could we solve it in another way? 
+//         // I need to know in what order the divs were created... you could just have an array of the divs and do it manuall 
+//         // you could change this function to addNoteDisplay... 
+//         /* var height_diff = 100
+//         // and the display none didn't do antthing essential 
+//         play_elem.animate([
+//             // keyframes
+//             { transform: 'translateY(0px)' },
+//             { transform: 'translateY('+height_diff+'px)' }
+//         ], {
+//             // timing options
+//             duration: 400,
+//             iterations: Infinity
+//         }); */
+//         // await sleep(1000)
+//         setTileHeight(should_play[number_correct + how_many_elem - 1 - i][0], play_elem)
+//     }
+//     /* var i = 0
+//     var added_height = 0
+//     console.log({added_height}, window.innerHeight, notes_container.style.height)
+//     while (added_height < window.innerHeight) { // should really be note container height, but don't care 
+//         console.log("in while")
+//         var play_elem = document.createElement("div")
+//         play_elem.id = "play-" + (how_many_elem - i)
+//         play_elem.className = "play-display"
+//         console.log(play_elem)
+//         notes_container.append(play_elem)
+//         // await sleep(1000)
+//         var height = playNext(should_play[number_correct + how_many_elem - 1 - i][0], play_elem.id)
+//         console.log({height})
+//         added_height += parseInt(height)  
+//         i++
+//     } */
+// }
 
 function challengeFunc(key, octave) {
     console.log({ key }, { octave }, should_play[number_correct])
@@ -232,7 +249,8 @@ function challengeFunc(key, octave) {
     if (should_play[number_correct][0] == key + octave || should_play[number_correct][0] == "Pause") {
         // console.log("one more correct")
         number_correct++
-        updateNoteDisplay()
+        addRemoveTile(number_correct)
+        // updateNoteDisplay()
     } else {
         number_incorrect++
     }
@@ -356,9 +374,14 @@ function setUpKeyboard() {
     }
 
     setTimeout(() => {
-        updateNoteDisplay()
-        playAutomatically()
+        // updateNoteDisplay()
+        for (var i = 0; i < 10; i++) {
+            addRemoveTile(i)
+        }
     }, 0) //??? 0 second wait works, but no timeout doesn't??? 
+
+
+    playAutomatically()
 }
 
 setUpKeyboard()
