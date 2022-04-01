@@ -74,8 +74,19 @@ function drawInitialCanvas(/* times = 0, grey = false */) {
 drawInitialCanvas()
 
 function playSound(url) {
-    const audio = new Audio(url);
-    audio.play();
+    return new Promise(function(resolve, reject) {   // return a promise
+        var audio = new Audio(url);                     // create audio wo/ src
+        audio.preload = "auto";                      // intend to play through
+        audio.autoplay = true;                       // autoplay when loaded
+        audio.onerror = reject;                      // on error, reject
+        audio.onended = resolve;                     // when done, resolve
+
+        audio.src = path + url + suffix; // just for example
+    });
+   /*  const audio = new Audio(url);
+    audio.addEventListener("canplaythrough", event => {
+      audio.play();
+    }); */
 }
 
 function keyPress(event, type) {
