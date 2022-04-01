@@ -47,6 +47,8 @@ fs.readFile('./sax_medley.mid', 'base64', function (err, data) {
                 if (notes_array[notes_array.length-1] == note) {
                     // console.log(notes_len)
                     notes_and_times.push([note, track[i].deltaTime]) // right!!! it will overwrite!!! 
+                } else if (track[i].deltaTime != 0 && track[i].deltaTime != 1) {
+                    notes_and_times.push(["Pause", track[i].deltaTime])
                 }
                 notes_array.push(note)
                 delta_times.push(track[i].deltaTime)
