@@ -43,6 +43,22 @@ function getKeyOctave(key) {
     return [key, octave]
 }
 
+function colorTile(key, octave) {
+    var elem_with_key = document.getElementsByClassName(key)
+    var key_elem = elem_with_key[octave - 2]
+    if (key_elem.className.includes("white")) {
+        key_elem.style.backgroundColor = "rgb(228, 228, 228)"
+        setTimeout(function () {
+            key_elem.style.backgroundColor = "white"
+        }, 200);
+    } else {
+        key_elem.style.backgroundColor = "rgb(59, 58, 58)"
+        setTimeout(function () {
+            key_elem.style.backgroundColor = "black"
+        }, 200);
+    }
+}
+
 async function playAutomatically() {
     console.log("in automatically")
     for (var i = 0; i < should_play.length; i++) {
@@ -54,10 +70,11 @@ async function playAutomatically() {
         // or are you confusing how long to play a particular note with the time until the next note? 
         // it's not always playing right after... but yeah it is, that's how midi is structured 
         if (key_with_octave != "Pause") {
-            var start_time = performance.now()
+            // var start_time = performance.now()
             playSound("./piano-mp3/" + key_with_octave + ".mp3")
-            console.log("took: ", performance.now() - start_time, "ms")
+            // console.log("took: ", performance.now() - start_time, "ms")
             var [key, octave] = getKeyOctave(key_with_octave)
+            colorTile(key, octave)
             console.log({ key }, { octave })
             await sleep(time_to_wait) // this is such a fascinating bug!!! that I put it before, and async function! that was ONE cause of it sounding iffy as ** 
             challengeFunc(key, octave)
@@ -72,7 +89,7 @@ function playNext(key, id) {
     // console.log({key})
     var play_number = id.match(/\d+/)[0] - 1
     if (key == "Pause") {
-        console.log({ id }, {should_play}, {play_number})
+        console.log({ id }, { should_play }, { play_number })
         document.getElementById(id).style.backgroundColor = "white"
         document.getElementById(id).style.height = should_play[number_correct + play_number][1] * 0.2 + "px"
     } else {
@@ -338,7 +355,7 @@ function setUpKeyboard() {
     }, 0) //??? 0 second wait works, but no timeout doesn't??? 
 
 
-    playAutomatically() // !!! 
+    // playAutomatically() // !!! 
 
     // playNext(should_play[number_correct], "play-1")
     // playNext(should_play[number_correct+1], "play-2")
@@ -360,14 +377,22 @@ function computerKeyboardPress(event) {
 
     // semicolon = ö, quote = ä, backslash = * 
 
-    var new_key_octave_1 = { "Q": "C", "2": "Db", "W": "D", "3": "Eb", "E": "E", "R": "F", "5": "Gb", "T": "G", "6": "Ab", "Y": "A", "7": "Bb", "U": "B" }
-    var new_key_octave_2 = { "I": "C", "9": "Db", "O": "D", "0": "Eb", "P": "E", "BracketLeft": "F", "Equal": "Gb", "BracketRight": "G", "Backspace": "Ab", "Enter": "A", "NumLock": "Bb", "Numpad7": "B" }
-    var new_key_octave_3 = { "Numpad8": "C", "NumpadDivide": "Db", "Numpad9": "D" }
-    var lower_octave_1 = { "IntlBackslash": "C", "A": "Db", "Z": "D", "S": "Eb", "X": "E", "C": "F", "F": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B" }
-    var lower_octave_2 = { "M": "C", "K": "Db", "Comma": "D", "L": "Eb", "Period": "E", "Slash": "F", "Quote": "Gb", "ShiftRight": "G", "Backslash": "Ab", "ArrowUp": "A", "Numpad4": "Bb", "Numpad1": "B" }
+    // var new_key_octave_1 = { "Q": "C", "2": "Db", "W": "D", "3": "Eb", "E": "E", "R": "F", "5": "Gb", "T": "G", "6": "Ab", "Y": "A", "7": "Bb", "U": "B" }
+    // var new_key_octave_2 = { "I": "C", "9": "Db", "O": "D", "0": "Eb", "P": "E", "BracketLeft": "F", "Equal": "Gb", "BracketRight": "G", "Backspace": "Ab", "Enter": "A", "NumLock": "Bb", "Numpad7": "B" }
+    // var new_key_octave_3 = { "Numpad8": "C", "NumpadDivide": "Db", "Numpad9": "D" }
+    // var lower_octave_1 = { "IntlBackslash": "C", "A": "Db", "Z": "D", "S": "Eb", "X": "E", "C": "F", "F": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B" }
+    // var lower_octave_2 = { "M": "C", "K": "Db", "Comma": "D", "L": "Eb", "Period": "E", "Slash": "F", "Quote": "Gb", "ShiftRight": "G", "Backslash": "Ab", "ArrowUp": "A", "Numpad4": "Bb", "Numpad1": "B" }
+
+    var keyboard_mapping = {
+        0: { "IntlBackslash": "C", "A": "Db", "Z": "D", "S": "Eb", "X": "E", "C": "F", "F": "Gb", "V": "G", "G": "Ab", "B": "A", "H": "Bb", "N": "B" }
+        , 1: { "M": "C", "K": "Db", "Comma": "D", "L": "Eb", "Period": "E", "Slash": "F", "Quote": "Gb", "ShiftRight": "G", "Backslash": "Ab", "ArrowUp": "A", "Numpad4": "Bb", "Numpad1": "B" }
+        , 2: { "Q": "C", "2": "Db", "W": "D", "3": "Eb", "E": "E", "R": "F", "5": "Gb", "T": "G", "6": "Ab", "Y": "A", "7": "Bb", "U": "B" }
+        , 3: { "I": "C", "9": "Db", "O": "D", "0": "Eb", "P": "E", "BracketLeft": "F", "Equal": "Gb", "BracketRight": "G", "Backspace": "Ab", "Enter": "A", "NumLock": "Bb", "Numpad7": "B" }
+        , 4: { "Numpad8": "C", "NumpadDivide": "Db", "Numpad9": "D" }
+    }
 
     function determinePlay(keys, octave) {
-        // console.log({ keys }, { octave })
+        console.log({ keys }, { octave })
         if (Object.keys(keys).includes(key)) {
             var elem_with_key = document.getElementsByClassName(keys[key])
             var key_elem = elem_with_key[octave - 2]
@@ -391,11 +416,15 @@ function computerKeyboardPress(event) {
         }
     }
 
-    determinePlay(lower_octave_1, 2)
+    for (var i = 0; i < Object.keys(keyboard_mapping).length; i++) {
+        console.log("determining play")
+        determinePlay(keyboard_mapping[i], i+2)
+    }
+    /* determinePlay(lower_octave_1, 2)
     determinePlay(lower_octave_2, 3)
     determinePlay(new_key_octave_1, 4)
     determinePlay(new_key_octave_2, 5)
-    determinePlay(new_key_octave_3, 6)
+    determinePlay(new_key_octave_3, 6) */
 }
 
 document.addEventListener('keydown', computerKeyboardPress);
