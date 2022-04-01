@@ -107,14 +107,24 @@ div {
     position: absolute; 
     bottom: 0;
     text-align: center;
-    width: 100%; 
+    width: 100%; /* Specifying a value centers it. Ehm, no. It was bc 50px==100%*/  
     font-weight: bold;
+    /* margin-left: 16px;  */
+    /* margin-left: auto; */
+    /* display: flex;  */
+    /* margin-right: auto; */
     margin-bottom: 3px; 
     font-size: 20px; /* important */ 
+    z-index: -2; 
+    pointer-events: none;
+    /* display: flex; */
+    /* height: 150px; */
+    /* horizontal-align: center; */
 }
 
 .new-letter-black {
     color: white; 
+    /* margin-left: 5px;  */
 }
 
 .play-display {
