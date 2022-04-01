@@ -1,6 +1,7 @@
 :root {
     --white-width: 50px;
-    --green: #58cf62;
+    --green: #51eb5e;
+    --background: rgb(46, 45, 45); 
 }
 
 .tile {
@@ -39,13 +40,17 @@
     background-color: rgb(59, 58, 58);
 }
 
-#container {
+#keyboard-container {
     margin-top: calc(var(--white-width)/10);
+    height: 303.8px; /* calc(var(--white-width)*4) */ 
+    /* height: fit-content;  */
     /* Actually important */
-    width: 300%;
+    width: 300%; /* Is 200% enough??? */  /* I don't get it */ 
     overflow: scroll;
     overflow: hidden;
-    background: white;
+    border-top: 5px solid rgb(155, 152, 152);
+    /* z-index: 2;  */ /* Fix this */
+    /* background: white; */
 }
 
 #accuracy {
@@ -146,13 +151,17 @@ div {
 #next-notes-container {
     /* height: 420px; */
     margin-top: none;
+    height: 100%; 
 }
 
 #piano-display {
     position: absolute;
     bottom: 0;
+    margin: none; 
+    background: var(--background); 
 }
 
-/* body {
-    background: grey; 
-} */
+body {
+    background: var(--background); 
+    margin: 0px; 
+}
