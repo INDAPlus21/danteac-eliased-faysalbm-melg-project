@@ -11,7 +11,7 @@ var notes = {
 // console.log(notes)
 
 // read a .mid binary (as base64)
-fs.readFile('./midis/sax_medley.mid', 'base64', function (err, data) {
+fs.readFile('./midis/Fr_Elise.mid', 'base64', function (err, data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(data);
 
@@ -27,7 +27,7 @@ fs.readFile('./midis/sax_medley.mid', 'base64', function (err, data) {
     // done!
     console.log(midiArray);
 
-    var track = midiArray.track[0].event // [2].event
+    var track = midiArray.track[1].event // [2].event
     // console.log(track )
     var data_array = []
     var notes_array = []
