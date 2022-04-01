@@ -31,19 +31,19 @@ function getKeyOctave(key) {
     return [key, octave]
 }
 
-function colorTile(key, octave) {
+function colorTile(key, octave, duration_ms) {
     var elem_with_key = document.getElementsByClassName(key)
     var key_elem = elem_with_key[octave - 2]
     if (key_elem.className.includes("white")) {
         key_elem.style.backgroundColor = "rgb(228, 228, 228)"
         setTimeout(function () {
             key_elem.style.backgroundColor = "white"
-        }, 200);
+        }, duration_ms);
     } else {
         key_elem.style.backgroundColor = "rgb(59, 58, 58)"
         setTimeout(function () {
             key_elem.style.backgroundColor = "black"
-        }, 200);
+        }, duration_ms);
     }
 }
 
@@ -58,7 +58,7 @@ async function playAutomatically() {
             playSound("./piano-mp3/" + key_with_octave + ".mp3")
             // console.log("took: ", performance.now() - start_time, "ms")
             var [key, octave] = getKeyOctave(key_with_octave)
-            colorTile(key, octave)
+            colorTile(key, octave, time_to_wait)
             console.log({ key }, { octave })
             await sleep(time_to_wait) // this is such a fascinating bug!!! that I put it before, and async function! that was ONE cause of it sounding iffy as ** 
             challengeFunc(key, octave)
@@ -198,19 +198,21 @@ function setUpKeyboard() {
         ["M", "K", ",", "L", ".", "Ö", "-", "↑", "*", "▲", "n4", "n1"],
         ["Q", "2", "W", "3", "E", "R", "5", "T", "6", "Y", "7", "U"],
         ["I", "9", "O", "0", "P", "Å", "`", "^", "←", "←", "Lk", "n7"],
-        ["n8", "NumpadDevide", "n9"]
+        ["n8", "n/", "n9"]
     ]
 
     for (var i = 0; i < octaves.length; i++) {
         octaves[i].className += " " + i
         var children = octaves[i].children
+        console.log(children.length)
         for (var j = 0; j < children.length; j++) {
             var letter = document.createElement("div")
             letter.className = "new-letter"
             if (children[j].className.includes("black")) {
                 letter.className += " new-letter-black"
             }
-            else if (i < 5 && !(i == 4 && j < letter_mapping[4].length)) {
+            if (i < 5 && !(i == 4 && j > 2)) { // so you don't painting undefined
+                console.log(letter_mapping[i][j])
                 letter.innerHTML = letter_mapping[i][j]
             }
             children[j].append(letter)
