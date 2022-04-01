@@ -16,7 +16,7 @@ fs.readFile('./sax_medley.mid', 'base64', function (err, data) {
     var midiArray = midiParser.parse(data);
 
     var json_content = JSON.stringify(midiArray)
-    fs.writeFile("./giveup.json", json_content, 'utf8', function (err) {
+    fs.writeFile("./midi_data.json", json_content, 'utf8', function (err) {
         if (err) {
             return console.log(err);
         }
