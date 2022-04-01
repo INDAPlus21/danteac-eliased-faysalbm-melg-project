@@ -8,18 +8,18 @@ var notes = {
 // console.log(notes)
 
 // read a .mid binary (as base64)
-fs.readFile('./the_entertainer_pnn.mid', 'base64', function (err, data) {
+fs.readFile('./fur_elise.mid', 'base64', function (err, data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(data);
 
-    /* var json_content = JSON.stringify(midiArray)
+    var json_content = JSON.stringify(midiArray)
     fs.writeFile("./giveup.json", json_content, 'utf8', function (err) {
         if (err) {
             return console.log(err);
         }
 
         console.log("The file was saved!");
-    }); */
+    });
 
     // done!
     console.log(midiArray);
