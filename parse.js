@@ -8,7 +8,7 @@ var notes = {
 // console.log(notes)
 
 // read a .mid binary (as base64)
-fs.readFile('./fur_elise.mid', 'base64', function (err, data) {
+fs.readFile('./nother_entertain.mid', 'base64', function (err, data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(data);
 
@@ -24,13 +24,14 @@ fs.readFile('./fur_elise.mid', 'base64', function (err, data) {
     // done!
     console.log(midiArray);
 
-    var track = midiArray.track[2].event // [2].event
+    var track = midiArray.track[1].event // [2].event
     // console.log(track )
     var data_array = []
     var notes_array = []
     var delta_times = []
 
     for (var i = 0; i < track.length; i++) {
+        console.log(track[i])
         var data = track[i].data
         // console.log(data)
         if (true /* track[i].channel == 3 */) { // 3 most promising, definitely not 5 (base), not 1 (too few), not 2 (too low)
@@ -46,6 +47,7 @@ fs.readFile('./fur_elise.mid', 'base64', function (err, data) {
 
     // first byte (yes, reasonable) is note number, second is velocity (force in which which a note is played)
     // you only care about the note number 
+    console.log({ data_array })
     console.log({ notes_array })
 
     // midiArray.events.
