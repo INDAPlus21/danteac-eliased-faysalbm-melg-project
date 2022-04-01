@@ -8,7 +8,7 @@ var notes = {
 // console.log(notes)
 
 // read a .mid binary (as base64)
-fs.readFile('./nother_entertain.mid', 'base64', function (err, data) {
+fs.readFile('./fur_elise.mid', 'base64', function (err, data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(data);
 
