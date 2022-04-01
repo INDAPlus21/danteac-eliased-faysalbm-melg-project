@@ -1,5 +1,13 @@
 :root {
   --white-width: 50px;
+  --green: #58cf62; 
+}
+
+.tile {
+    display: inline-block;
+    border-radius: 5px;
+    position: relative;
+    border-width: 2px;
 }
 
 .white {
@@ -11,11 +19,15 @@
     z-index: 0; 
 }
 
-.tile {
-    display: inline-block;
-    border-radius: 5px;
-    position: relative;
-    border-width: 2px;
+.black {
+    background-color: black;
+    height: calc(var(--white-width)*4);
+    width: calc(var(--white-width)/2);
+    vertical-align: top;
+    right: -18px;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    z-index: 1; 
 }
 
 .white:hover {
@@ -26,137 +38,30 @@
     background-color: rgb(59, 58, 58);
 }
 
-/* .letter {
-    display: inline;
-    position: relative;
-    font-weight: bold;
-} */
-
-.whole {
-    font-size: 30px;
-    margin-left: 13px;
-    margin-right: 13px;
-    top: -45px;
-    /* width: 100px;  */
-}
-
-.flat {
-    font-size: 20px;
-    top: -210px;
-    color: white;
-    margin-right: 8.8px;
-}
-
-.first {
-    margin-left: 41px;
-}
-
-.third {
-    margin-left: 75px;
-}
-
-.second, .fourth, .fifth {
-    margin-left: 22.5px;
-}
-
-.fifth {
-    margin-right: 41px;
-}
-
-#\^ {
-    font-weight: bold;
-}
-
 #container {
-    /* display: flex;  */
-    margin-top: 5px; 
-    width: 10000px;
-    height: 350px;
-    /* display: flex;  */
-    /* direction:rtl;  */
+    margin-top: calc(var(--white-width)/10); /* Actually important */ 
+    width: 300%;
     overflow: scroll;
     overflow: hidden;
+    background: white; 
 }
 
-/* #sheet-music {
-    position: absolute; 
-} */
-
-/* .sheet-note {
-    width: 70px; 
-    z-index: 1; 
-    position: absolute; 
-    top: 125px; 
-    margin-left: 5px; 
-} 
-
-#sheet2 {
-    left: 50px; 
-    top: 100px; 
-}
-
-#sheet3 {
-    left: 90px; 
-    top: 90px; 
-}
- */
 #accuracy {
     display: inline-block; 
 }
 
-/* .second {
-    right: -50px; 
-    margin-left: 10px;
-} */
-
-/* .line {
-    height: 2px; 
-    margin: 15px; 
-    margin-right: 3000px;
-    width: 100%; 
-    background-color: black; 
-} */
-
-.black {
-    background-color: black;
-    height: 200px;
-    width: 25px;
-    vertical-align: top;
-    position: relative;
-    right: -18px;
-    border-top-right-radius: 0px;
-    border-top-left-radius: 0px;
-    z-index: 1; 
-}
-
 .next-white {
     margin-right: -5px;
-    border-top-right-radius: 0px;
-    border-top-left-radius: 0px;
+    border-right-width: 0px;  
 }
 
-.next-white+div {
+.next-white+div, .end-white, .next {
     border-top-right-radius: 0px;
     border-top-left-radius: 0px;
 }
 
 .end-white {
-    border-top-right-radius: 0px;
-    border-top-left-radius: 0px;
-}
-
-.start-white {
-    border-top-right-radius: 0px;
-    border-top-left-radius: 0px;
-}
-
-#hmm {
-    color: #58cf62
-}
-
-#challenge {
-    font-size: 20px;
-
+    border-right-width: 0px;  
 }
 
 .note-to-play {
@@ -167,18 +72,10 @@
     display: inline-block;
     margin: 1px; 
     margin-right: 5px;
-    font-size: 20px;
     border-radius: 5px; 
     padding: 5px; 
+    font-size: 20px; 
 }
-
-/* .start:first-of-type {
-    border-top-left-radius: 5px !important; 
-} 
-
-#very-first:first-of-type{
-    border-top-left-radius: 5px !important; 
-} */
 
 .octave-container {
     display: inline-block;
@@ -202,26 +99,39 @@ div {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
+#challenge {
+    font-size: 20px; 
+}
+
 .new-letter {
     position: absolute; 
-    left: 0;
     bottom: 0;
-    margin: auto;
     text-align: center;
     width: 100%; 
     font-weight: bold;
-    font-size: 20px; 
     margin-bottom: 3px; 
+    font-size: 20px; /* important */ 
 }
 
 .new-letter-black {
     color: white; 
 }
 
-#play-now {
-    background-color: green; 
-    height: 40px; 
+.play-display {
+    background-color: var(--green); 
+    height: 100px; 
     width: 40px; 
     border-radius: 5px; 
     position: relative; 
+    margin-top: 5px; 
+    vertical-align: bottom; 
 }
+
+#next-notes-container {
+    height: 420px; 
+    margin-top: none; 
+}
+
+/* body {
+    background: grey; 
+} */
