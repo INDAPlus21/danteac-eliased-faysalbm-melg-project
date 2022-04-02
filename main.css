@@ -165,3 +165,14 @@ body {
     background: var(--background); 
     margin: 0px; 
 }
+
+#settings {
+    background-color: black;
+    color: white; 
+    width: 100%; 
+    height: 30px; 
+    z-index: 2; 
+    position: absolute; 
+    font-weight: bold; 
+    padding: 3px; 
+}

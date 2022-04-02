@@ -10,6 +10,23 @@
     <!-- <br> -->
     <!-- <div id="challenge">Play</div> -->
     <!-- <br></br> -->
+    <!-- <link href="nouislider.css" rel="stylesheet"> -->
+    <!-- <script src="./nouislider.js"></script>1 -->
+    <div id="settings">
+        <label for="tempo">Tempo</label>
+        <input
+            type="range"
+            oninput="setTempo(this.value)"
+            name="tempo"
+            min="0.1"
+            max="10"
+            value="1"
+        ></input>
+        <!-- <div id="slider"></div> -->
+        <label for="select-song">Song </label>
+        <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select>
+        <button id="self-play" onclick="stopSelfPlay()">Play yourself</button>
+    </div>
     <div id="piano-display">
         <template id="template">
             <div class="octave-container">
@@ -33,12 +50,12 @@
             <div class="play-display" id="play-4"></div>
             <div class="play-display" id="play-3"></div>
             <div class="play-display" id="play-2"></div>
-            <div class="play-display" id="play-1"></div> -->
-        </div>
+            <div class="play-display" id="play-1"></div> --></div>
         <div id="keyboard-container"></div>
         <!-- <div id="lower-container"></div> -->
     </div>
-    <script src="main.js"></script>
+    <script type="module" src="testbed.js"></script>
+    <script type="module" src="main.js"></script>
     <link rel="stylesheet" href="main.css">
 </body>
 </html>

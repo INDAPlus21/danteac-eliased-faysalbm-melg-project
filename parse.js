@@ -7,68 +7,127 @@ var notes = {
 
 // seems to correspond... but there's ghost notes 0-21 and 108-127 
 // the other site also agrees that only those 88 are for piano, but where do the ghost notes come from, still? 
+// this is nice, docs: https://github.com/colxi/midi-parser-js/wiki/MIDI-File-Format-Specifications
+// "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
-// console.log(notes)
 
 // read a .mid binary (as base64)
-fs.readFile('./midis/Fr_Elise.mid', 'base64', function (err, data) {
+var midi_file = "./midis/sax_medley.mid"
+fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
-    var midiArray = midiParser.parse(data);
+    var midiArray = midiParser.parse(raw_data);
 
-    var json_content = JSON.stringify(midiArray)
+    /* var json_content = JSON.stringify(midiArray)
     fs.writeFile("./midi_data.json", json_content, 'utf8', function (err) {
         if (err) {
             return console.log(err);
         }
 
-        console.log("The file was saved!");
-    });
+        console.log("JSON saved");
+    }); */
 
-    // done!
-    console.log(midiArray);
+    console.log(midiArray); // useful information 
 
-    var track = midiArray.track[1].event // [2].event
-    // console.log(track )
-    var data_array = []
-    var notes_array = []
-    var delta_times = []
-    // var notes_and_times = {} 
+    var track = midiArray.track[0].event // [2].event
+    // var notes_array = []
+    // var delta_times = []
     var notes_and_times = []
+    // var unpaused_notes = []
+    var pure_data = []
 
+    // maybe the 121 byte is there in every midi to estabish the upper range? 
+    // 
     for (var i = 0; i < track.length; i++) {
-        // console.log(track[i])
-        var data = track[i].data
-        // console.log(data)
-        if (true /* track[i].channel == 3 */) { // 3 most promising, definitely not 5 (base), not 1 (too few), not 2 (too low)
-            if (data && data[0] != 121 && data.length == 2 && data[0] >= 21 && data[0] <= 128) {
-                // data_array.push(data)
+        if (true /* track[i].channel == 3 */) {
+            var data = track[i].data
+            var type = track[i].type
+            var deltaTime = track[i].deltaTime 
+            // if (data && data[0] != 121 && data.length == 2 && data[0] >= 21 && data[0] <= 128) {
+            if (type == 9) {
                 var note = notes[data[0]]
-                // var notes_len = Object.keys(notes_array).length
-                if (notes_array[notes_array.length-1] == note) {
-                    // console.log(notes_len)
-                    notes_and_times.push([note, track[i].deltaTime]) // right!!! it will overwrite!!! 
-                } else if (track[i].deltaTime != 0 && track[i].deltaTime != 1) {
-                    notes_and_times.push(["Pause", track[i].deltaTime])
-                }
-                notes_array.push(note)
-                delta_times.push(track[i].deltaTime)
-                // notes_array.push(track[i].deltaTime)
+                // no fuck. it was the velocity 
+                notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
             } else {
-                // console.log("not 2: ", data)
+                // console.log("hi: ", i)
             }
+            // no it should be 12. that is entirely correct. 
+            // so it has something to do with the type (255, vs 11, vs 12)
+            // vs 9 which most of the actual note (NON; NOF) data seems to be 
+            pure_data.push(track[i])
         }
     }
 
+    console.log({ pure_data })
+
     // first byte (yes, reasonable) is note number, second is velocity (force in which which a note is played)
-    // you only care about the note number 
-    // console.log({ data_array })
-    console.log({ delta_times })
-    console.log({ notes_array })
-    console.log({notes_and_times})
+    // you currently only care about the note number 
+    // var max_length = track.length
+    // for (var i = 0; i < max_length; i++) {
+    //     if (true /* track[i].channel == 3 */) {
+    //         var data = track[i].data
+    //         if (data && data[0] != 121 && data.length == 2 && data[0] >= 21 && data[0] <= 128) {
+    //             // data_array.push(data)
+    //             var note = notes[data[0]]
+    //             // console.log(note)
+    //             var delta_note = 0
+    //             // console.log("next: ", notes[track[i + 1].data[0]])
+    //             for (var j = 1; j < track.slice(i).length; j++) {
+    //                 var inner_data = track[i + j].data
+    //                 // console.log(inner_data)
+    //                 delta_note += track[i + j].deltaTime
+    //                 // console.log("real next: ", notes[inner_data[0]], {i}, {j}, {delta_note})
+    //                 if (inner_data && note == notes[inner_data[0]]) {
+    //                     track.splice(i + j, 1);
+    //                     max_length--
+    //                     break;
+    //                 }
+    //             }
+    //             notes_and_times.push([note, delta_note])
+    //             // FUCKING WORKS !?!?!? 
+    //             if (track[i+1].data && note != notes[track[i+1].data[0]] && track[i+1].deltaTime != 0 && track[i+1].deltaTime != 1 ) {
+    //                 notes_and_times.push(["Pause", track[i+1].deltaTime])
+    //             }
 
-    // midiArray.events.
+    //             // var notes_len = Object.keys(notes_array).length
+    //             /* if (notes_array[notes_array.length - 1] == note && !unpaused_notes.includes(note)) {
+    //                 // console.log(notes_len)
+    //                 notes_and_times.push([note, track[i].deltaTime])
+    //                 for (var i = 0; i < track.length; i++) { 
 
-    // const jsonContent = JSON.stringify(notes_array);
+    //                 }
+    //             }  */
+
+    //             // so we have the times for each note... 
+    //             // but isn't a... we need the pauses!!! multiple notes can play at the same time... 
+    //             // shouldn't you just... um... play the note+ 
+
+    //             /* else if (track[i].deltaTime != 0 && track[i].deltaTime != 1) {
+    //                 notes_and_times.push(["Pause", track[i].deltaTime])
+    //             } */
+    //             /* notes_array.push(note)
+    //             delta_times.push(track[i].deltaTime) */
+    //             /* if (notes_array[notes_array.length-1] == note) {
+    //                 // console.log(notes_len)
+    //                 notes_and_times.push([note, track[i].deltaTime])  
+    //             } else if (track[i].deltaTime != 0 && track[i].deltaTime != 1) {
+    //                 notes_and_times.push(["Pause", track[i].deltaTime])
+    //             }
+    //             notes_array.push(note)
+    //             delta_times.push(track[i].deltaTime) */
+    //             // notes_array.push(track[i].deltaTime)
+    //         }/*  else if (track[i].deltaTime != 0 && track[i].deltaTime != 1) {
+    //             notes_and_times.push(["Pause", track[i].deltaTime])
+    //         } */
+    //         /* else {
+    //             // console.log("not 2: ", data)
+    //         }*/
+    //     }
+    // }
+
+    // console.log({ delta_times })
+    // console.log({ notes_array })
+    console.log({ notes_and_times })
+
     const jsonContent = JSON.stringify(notes_and_times);
 
     fs.writeFile("./notes_array.json", jsonContent, 'utf8', function (err) {
