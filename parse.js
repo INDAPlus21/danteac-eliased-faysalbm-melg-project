@@ -12,7 +12,7 @@ var notes = {
 
 
 // read a .mid binary (as base64)
-var midi_file = "./midis/sax_medley.mid"
+var midi_file = "./midis/rush_e.mid"
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(raw_data);
