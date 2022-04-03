@@ -36,8 +36,8 @@ var played_notes = []
 // PARSER, IN ORDER TO BUILD A BETTER AI (this project is way too ambitious)
 
 // aha! tee time doesn't work because you don't differentiate between notes (probably the cause of multiple fur elise not working either)
-var song_to_play = songs["lower_lose_yourself"] //.slice(0, 100) 
-console.log(song_to_play)
+var song_to_play = songs["sax_medley"] //.slice(0, 100) // now with real midi! 
+// 1console.log(song_to_play)
 var original_song_to_play = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
 /* var play_state = {
     has_won: false, 
@@ -48,7 +48,7 @@ var original_song_to_play = JSON.parse(JSON.stringify(song_to_play)) // js refer
 var has_won = false
 var notes_played = 0
 var false_notes = 0
-var self_play = false
+var self_play = true
 
 for (var elem in songs) {
     var opt = document.createElement("option");
@@ -87,7 +87,7 @@ function resetVars() {
 }
 
 function selectSong(song_name) {
-    resetVars() 
+    resetVars()
     setTimeout(() => {
         console.log("in select: ", song_name)
         song_to_play = songs[song_name]
@@ -104,9 +104,9 @@ function stopSelfPlay() {
     if (button.innerHTML == "Play yourself") button.innerHTML = "Autoplay"
     else button.innerHTML = "Play yourself"
     console.log("stopping")
-    resetVars() 
+    resetVars()
     setTimeout(() => {
-        song_to_play = JSON.parse(JSON.stringify(original_song_to_play)) 
+        song_to_play = JSON.parse(JSON.stringify(original_song_to_play))
         setUpKeyboard()
         /* updateNoteDisplay()
         if (self_play) {
@@ -142,10 +142,29 @@ for (var i = 0; i < songs["fur_elise_left_hand"].length; i++) {
 console.log("length after: ", should_play.length) */
 
 
-var playNote = function (url) {
+/* var playNote = function (url) {
     // console.log("trying to play: ", { url })
     const audio = new Audio(url);
     audio.play();
+} */
+
+var notes_audios = {}
+
+function playNote(note) {
+    const url = (note.includes("piano-mp3")) ? note : "./piano-mp3/" + note + ".mp3"
+    const audio = (notes_audios[note]) ? notes_audios[note] : new Audio(url) // controversial ternary operators 
+    audio.play();
+    notes_audios[note] = audio // is unneccessary for already assigned  
+}
+
+function pauseNote(note) {
+    const url = (note.includes("piano-mp3")) ? note : "./piano-mp3/" + note + ".mp3"
+    const audio = (notes_audios[note]) ? notes_audios[note] : new Audio(url) // controversial ternary operators 
+    // because otherwise it just sounds bad, wayyyy to short and robotic, not natural 
+    setTimeout(() => {
+        audio.pause();
+    }, 1000)
+    delete notes_audios[note]
 }
 
 function sleep(ms) {
@@ -176,8 +195,99 @@ function colorTile(key, octave, duration_ms) {
 
 // do math instead 
 async function selfPlay() {
+    // but this works!!!
+    /* var play_tiles = document.getElementsByClassName("play-display")
+    var playing_now_height = parseInt(play_tiles[play_tiles.length - 2].style.height)
+    console.log("animate: ", {play_tiles}, {playing_now_height})
+    for (var j = 0; j < play_tiles.length; j++) {
+        console.log("in animate loop")
+        play_tiles[j].animate([
+            { transform: 'translateY(0px)' },
+            { transform: 'translateY(' + playing_now_height + 'px)' }
+        ], {
+            duration: 486,
+            iterations: 1 // is this the default? 
+        });
+    }  */
+
     // iterate through all the notes in the song 
-    for (var i = 0; i < song_to_play.length; i++) {
+    for (var i = 0; i < song_to_play.length; i++) { // song_to_play.length
+        const note = song_to_play[i][0]
+        const delta_time = song_to_play[i][1] // wait yeah actually that's expected behaviour 
+        const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
+
+        // var next_delta_time = song_to_play[i+1][1] // this will cause bugs when nearing end of the track 
+
+        // console.log(JSON.parse(JSON.stringify(notes_audios)))
+
+        /* var play_tiles = document.getElementsByClassName("play-display")
+        var playing_now_height = parseInt(play_tiles[play_tiles.length - 1].style.height)
+        console.log("animate: ", {play_tiles}, {playing_now_height})
+        for (var j = 0; j < play_tiles.length; j++) {
+            console.log("in animate loop")
+            play_tiles[j].animate([
+                { transform: 'translateY(0px)' },
+                { transform: 'translateY(' + playing_now_height + 'px)' }
+            ], {
+                duration: 486,
+                iterations: 1 // is this the default? 
+            });
+        }   */
+
+        // animate tiles 
+        // no... playing now height isn't the real issue... 
+        // ok so it goes duration 476, then sleep(1) (bc current), then duration 1, 
+        // and messes everything up. should be solved by... 
+        // but seems like it should happen BEFORE the sleep... 
+        // but should it really be -2 
+        var play_tiles = document.getElementsByClassName("play-display")
+        var playing_now_height = parseInt(play_tiles[play_tiles.length - 1].style.height)
+        console.log("animate: ", { play_tiles }, { playing_now_height }, { next_delta_time })
+        for (var j = 0; j < play_tiles.length; j++) {
+            console.log("in animate loop")
+            play_tiles[j].animate([
+                { transform: 'translateY(0px)' },
+                { transform: 'translateY(' + playing_now_height + 'px)' }
+            ], {
+                duration: next_delta_time + 5,
+                iterations: 1 // is this the default? 
+            });
+        }
+
+        console.log("sleeping for: ", next_delta_time)
+
+        // animate tiles 
+        // no... playing now height isn't the real issue... 
+        /* var play_tiles = document.getElementsByClassName("play-display")
+        var playing_now_height = parseInt(play_tiles[play_tiles.length - 2].style.height)
+        console.log("animate: ", {play_tiles}, {playing_now_height}, {next_delta_time})
+        for (var j = 0; j < play_tiles.length; j++) {
+            console.log("in animate loop")
+            play_tiles[j].animate([
+                { transform: 'translateY(0px)' },
+                { transform: 'translateY(' + playing_now_height + 'px)' }
+            ], {
+                duration: next_delta_time + 5,
+                iterations: 1 // is this the default? 
+            });
+        } */
+
+        var [key, octave] = getKeyOctave(note)
+
+        if (notes_audios[note]) {
+            pauseNote(note)
+        } else {
+            playNote(note)
+            colorTile(key, octave, next_delta_time)
+        }
+
+        // it feels like you shouldn't be able to do this (wasn't this a cause of a previous bug?)
+        await sleep(next_delta_time)
+
+        if (song_to_play) challengeFunc(key, octave)
+    }
+
+    /* for (var i = 0; i < song_to_play.length; i++) {
         // console.log("continuing")
 
         var time_to_wait = song_to_play[i][1]
@@ -216,11 +326,65 @@ async function selfPlay() {
             await sleep(time_to_wait)
             if (song_to_play) challengeFunc("Pau", "se") // lolz 
         }
-    }
+    } */
 }
 
+// ok. this function actually needs to UNDERSTANDING 
 function updateNoteDisplay() {
     var notes_container = document.getElementById("next-notes-container")
+    notes_container.innerHTML = ""
+    var how_many_elem = Math.min(song_to_play.length-notes_played, 40)
+    // function stopDisplay() 
+    // function insertDisplay() 
+    var notes_elems = {}
+    // the code is so much nicer when you get to redo it!!! editing is orgasmic 
+    for (var i = 0; i < how_many_elem; i++) {
+        console.log(JSON.parse(JSON.stringify(notes_elems)))
+        // ok. above is just normal dom manipulation  
+
+        var index = notes_played + i // why???  
+        var key = song_to_play[index][0]
+
+        console.log({ index }, { key })
+
+        if (!notes_elems[key]) {
+            var falling_tile = document.createElement("div")
+            falling_tile.id = "play-" + (how_many_elem - i)
+            falling_tile.className = "play-display"
+            console.log("appending div") // well no it's actually only appending 2 divs total 
+            document.getElementById("next-notes-container").prepend(falling_tile)
+            console.log("falling tile actually is smth: ", falling_tile)
+            notes_elems[key] = falling_tile
+        } else {
+            // notes_elems[key].remove() // no... you shouldn't remove it. you should set its height here 
+
+            // Set tile height (was a function before, but too many common parameters, and only called here) 
+            // var play_number = falling_tile.id.match(/\d+/)[0] - 1 
+
+            var [key_without_octave, octave] = getKeyOctave(key)
+            console.log("apparent key", { key }, {octave}) // why were there an if (key) here? 
+
+            // position it directly above a piano keyboard key 
+            var key_elements = document.getElementsByClassName(key_without_octave)
+
+            // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
+            var left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5;
+
+            if (song_to_play[index][0].includes("b")) {
+                left_margin -= 14
+            }
+
+            falling_tile.style.marginLeft = left_margin + "px";
+
+            // sets the HEIGHT, not the relative position! that is done by the appending  
+            var height = song_to_play[notes_played + how_many_elem + 1][1] * 0.2 + "px"
+            falling_tile.style.height = height
+
+            console.log("deleted!")
+            delete notes_elems[key]
+        }
+    }
+    /* var notes_container = document.getElementById("next-notes-container")
     notes_container.innerHTML = ""
     var how_many_elem = Math.min(song_to_play.length-notes_played, 40)
     for (var i = 0; i < how_many_elem; i++) {
@@ -263,7 +427,7 @@ function updateNoteDisplay() {
                 // return height
             }
         }
-    }
+    } */
     /* var i = 0
     var added_height = 0
     console.log({added_height}, window.innerHeight, notes_container.style.height)
@@ -474,13 +638,13 @@ function computerKeyboardPress(event) {
                     // is this the cause of the other bug? 
                     var iter_find_non_pause = 0
                     var playing_now_height = parseInt(play_tiles[play_tiles.length - iter_find_non_pause - 1].style.height)
-                    while (song_to_play[notes_played-iter_find_non_pause][0] == "Pause" && iter_find_non_pause < 100) {
-                        console.log(song_to_play[notes_played-iter_find_non_pause][0])
+                    while (song_to_play[notes_played - iter_find_non_pause][0] == "Pause" && iter_find_non_pause < 100) {
+                        console.log(song_to_play[notes_played - iter_find_non_pause][0])
                         playing_now_height = parseInt(play_tiles[play_tiles.length - iter_find_non_pause - 1].style.height)
-                        iter_find_non_pause++ 
+                        iter_find_non_pause++
                     }
                     // var playing_now_height = parseInt(play_tiles[play_tiles.length - 1].style.height)
-                    console.log({play_tiles}, { playing_now_height }, { time_to_wait })
+                    console.log({ play_tiles }, { playing_now_height }, { time_to_wait })
 
                     key_elem.style.backgroundColor = "white"
                     for (var j = 0; j < play_tiles.length; j++) {
@@ -505,7 +669,7 @@ function computerKeyboardPress(event) {
             var url = "./piano-mp3/" + keys[key] + octave + ".mp3"
             console.log({ key_elem }, { url })
 
-    
+
 
             challengeFunc(keys[key], octave)
             playNote(url)
