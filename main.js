@@ -36,7 +36,7 @@ var played_notes = []
 // PARSER, IN ORDER TO BUILD A BETTER AI (this project is way too ambitious)
 
 // aha! tee time doesn't work because you don't differentiate between notes (probably the cause of multiple fur elise not working either)
-var song_to_play = songs["rush_e"] // .slice(0, 10) // now with real midi! 
+var song_to_play = songs["mario"] // .slice(0, 10) // now with real midi! 
 // i think that was still only the right hand 
 console.log(song_to_play)
 var original_song_to_play = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
@@ -247,7 +247,7 @@ async function selfPlay() {
     for (var i = 0; i < song_to_play.length; i++) { // song_to_play.length
         const note = song_to_play[i][0]
         const delta_time = song_to_play[i][1] // wait yeah actually that's expected behaviour 
-        
+
 
         // let's even do it w/o animations first 
         // but this shouldn't conflict with the pause if they're the same class! 
@@ -267,9 +267,9 @@ async function selfPlay() {
                 iterations: 1 // is this the default? 
             });
         } */
-        
+
         await sleep(delta_time)
-        
+
         // const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
 
         // var next_delta_time = song_to_play[i+1][1] // this will cause bugs when nearing end of the track 
@@ -372,7 +372,7 @@ async function selfPlay() {
 }
 
 // ok. this function actually needs to UNDERSTANDING 
-function updateNoteDisplay() {
+function updateFallingTiles() {
     var notes_container = document.getElementById("falling-tiles-container")
     notes_container.innerHTML = ""
     // aha! if it's odd-numbered (or more accurately if it hasn't gone into the else statement 
@@ -381,7 +381,7 @@ function updateNoteDisplay() {
     // no, but it is a bug. that's the cause of what's happening with the whole screen shifting 
     // well... no, they still have their elements... 
     // IT'S THIS THAT IS BLOCKING (that makes it so it can't go faster)
-    var how_many_elem = Math.min(song_to_play.length-notes_played, 40)
+    var how_many_elem = Math.min(song_to_play.length - notes_played, 40)
     // should you have a key // note naming convention? doesn't really make sense 
     // function stopDisplay() 
     // function insertDisplay() 
@@ -389,9 +389,12 @@ function updateNoteDisplay() {
     // or isn't the bigger issue that when you press a key... it isn't really ONE note that is played... 
     // ... how should you handle that 
     // (it's these things that software teaches you best, I mean...)
+    // okay so the issue is that the elements on the same row are both (1) adjusted upwards and (2) have no height 
+    // okay we have an explanation for the upwards adjustment, but why doesn't it have height 
+
     var notes_elems = {}
     console.log("in updatenotedisplay")
-    var previous_heights = 0 
+    var previous_heights = 0
     // the code is so much nicer when you get to redo it!!! editing is orgasmic 
     for (var i = 0; i < how_many_elem; i++) {
         console.log(JSON.parse(JSON.stringify(notes_elems)))
@@ -409,7 +412,7 @@ function updateNoteDisplay() {
         // console.log("should've inserted, but didn't: ")
         // js is a horrific language 
         // I FUCKING DID IT 
-        /* if (isEmpty(notes_elems)) {
+        if (isEmpty(notes_elems)) {
             // console.log("inserting a pause")
             var falling_tile = document.createElement("div")
             // falling_tile.id = "A PAUSE SHOULD BE HERE"
@@ -420,15 +423,35 @@ function updateNoteDisplay() {
             falling_tile.style.height = height
             // you don't properly remove these
             // yes you do, everytime you reset the inner HTML and rerender everything 
-        } */
+        }
+
+
+
+        // aha! so it's laggiing behind. ahuh, apparently not 
+        var height = song_to_play[notes_played + i][1] * 0.2 // ohno. ohno. wrong. wrong. wrong!!!! right!!!
+        console.log({song_to_play}, {notes_played}, {i}, {height}, song_to_play[notes_played + i])
+        // so you're rotating through all the non-deleted keys, but it's previous heights that really storing the height difference 
+        // and now everything has the same height 
+        // DUUUUDE 
+        for (var individual_key in notes_elems) {
+            // NaN px big surprise 
+            // parseInt(notes_elems[individual_key].style.height) 
+            // fucking js nan values i hate you 
+            var current_height = parseInt(notes_elems[individual_key].style.height) || 0 
+            console.log({current_height}, "adding: ", height) 
+            notes_elems[individual_key].style.height = current_height + height + "px"
+            // previous_heights += parseInt(height) || 0 
+            // console.log({previous_heights})
+        }
 
         if (!notes_elems[key]) {
             var falling_tile = document.createElement("div")
             falling_tile.id = "play-" + i
             falling_tile.className = "falling-tile"
+
             // console.log("appending div") // well no it's actually only appending 2 divs total 
             document.getElementById("falling-tiles-container").prepend(falling_tile)
-            console.log({falling_tile})
+            console.log({ falling_tile })
             notes_elems[key] = falling_tile
         } else {
             // notes_elems[key].remove() // no... you shouldn't remove it. you should set its height here 
@@ -437,7 +460,7 @@ function updateNoteDisplay() {
             // var play_number = falling_tile.id.match(/\d+/)[0] - 1 
 
             var [key_without_octave, octave] = getKeyOctave(key)
-            console.log("apparent key", { key }, {octave}) // why were there an if (key) here? 
+            // console.log("apparent key", { key }, { octave }) // why were there an if (key) here? 
 
             // position it directly above a piano keyboard key 
             var key_elements = document.getElementsByClassName(key_without_octave)
@@ -445,12 +468,16 @@ function updateNoteDisplay() {
             // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
             var left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5;
 
-            console.log({left_margin})
+            console.log({ left_margin })
 
             if (song_to_play[index][0].includes("b")) {
                 left_margin -= 14
             }
 
+            // var height = song_to_play[notes_played + i][1] * 0.2 // ohno. ohno. wrong. wrong. wrong!!!! right!!!
+            previous_heights += parseInt(height)
+
+            // notes_elems[key].style.height = height + "px"
             notes_elems[key].style.left = left_margin + "px" // marginLeft = left_margin + "px"; // WHAT THE HELL YOU*RE NOT SETTING THE FALLING_TILE VALUE??? aha and it used the previous iterations values 
             notes_elems[key].style.bottom = previous_heights + "px"
             // js is so cursed 
@@ -461,10 +488,15 @@ function updateNoteDisplay() {
             // happens in midi when there's deltatime between a note and a note which 
             // isn't the same (so now there will be parallell pausing tiles, how exciting!)
             // sets the HEIGHT, not the relative position! that is done by the appending 
-             
-            var height = song_to_play[notes_played + i][1] * 0.2
+
+            // bc you've already done the checking that this is the right element... no 
+            // it's still wrong because you need to add up all the delays from the previous
+            // so you need to sum up all the previous elements 
+            // or, alternatively, continually update it 
+            /* var height = song_to_play[notes_played + i][1] * 0.2 // ohno. ohno. wrong. wrong. wrong!!!! right!!!
             notes_elems[key].style.height = height + "px"
             previous_heights += height
+            console.log({previous_heights}) */
 
             console.log("deleted!")
             delete notes_elems[key]
@@ -546,13 +578,13 @@ function challengeFunc(key, octave) {
         played_notes.push(key + octave)
     } */
 
-    console.log("in challengefunc: ", {key}, {octave})
+    console.log("in challengefunc: ", { key }, { octave })
     played_notes.push(key + octave)
     // if (key + octave != "Pause" && )
     if (song_to_play[notes_played][0] == key + octave /*|| song_to_play[notes_played][0] == "Pause"*/) {
         // console.log("one more correct")
         // notes_played += 2
-        updateNoteDisplay() // aha! I don't think this gets called 
+        updateFallingTiles() // aha! I don't think this gets called 
     } else {
         false_notes++
     }
@@ -678,7 +710,7 @@ function setUpKeyboard() {
     }
 
     setTimeout(() => {
-        updateNoteDisplay()
+        updateFallingTiles()
         if (self_play) {
             selfPlay()
         }
