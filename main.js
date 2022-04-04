@@ -45,6 +45,17 @@ function setTempo(tempo, song_to_play, original_song_to_play) {
 
 window.setTempo = setTempo
 
+function preLoad() {
+    var order_some_don = ["A", "Ab", "B", "Bb", "C", "D", "Db", "E", "Eb", "F", "G", "Gb"]
+    for (var i = 0; i < order_some_don.length; i++) {
+        for (var j = 1; j < 8; j++) {
+            var url = "./piano-mp3/" + order_some_don[i] + j + ".mp3"
+            console.log({url})
+            var audio = new Audio(url) // controversial ternary operators 
+        }
+    }
+}
+
 // setTempo(3) // it's possible to set an absurdly high tempo, but it's limited by the css rendering 
 
 function resetVars() {
@@ -175,7 +186,7 @@ function arraysEqual(a, b) {
 }
 
 
-async function selfPlay(song_to_play) {
+async function selfPlay(song_to_play, reset_tiles = true) {
     // iterate through all the notes in the song 
     for (var i = 0; i < song_to_play.length; i++) { // song_to_play.length
         const note = song_to_play[i][0]
@@ -224,7 +235,7 @@ async function selfPlay(song_to_play) {
             i--
             // console.log({ song_to_play })
             if (song_to_play.length % 2 == 0) { // hack 
-                updateFallingTiles(song_to_play)
+                updateFallingTiles(song_to_play, reset_tiles)
             }
             unColorTile(key, octave)
         } else {
@@ -243,11 +254,14 @@ async function selfPlay(song_to_play) {
 }
 
 // IT'S THIS THAT IS BLOCKING (that makes it so it can't go faster)
-function updateFallingTiles(song_to_play) {
+function updateFallingTiles(song_to_play, reset_tiles = true) {
     // reset all values 
     var notes_container = document.getElementById("falling-tiles-container")
-    notes_container.innerHTML = ""
-    var how_many_elem = Math.min(song_to_play.length, 40)
+    if (reset_tiles) {
+        notes_container.innerHTML = ""
+    }
+    // yes so next step is to cache all the mp3s 
+    var how_many_elem = Math.min(song_to_play.length, 10)
     var notes_elems = {}
     var previous_heights = 0
 
@@ -485,7 +499,9 @@ function setUpKeyboard() {
         });
     }
 
-    setTimeout(() => {
+    setTimeout(async () => {
+        preLoad()
+        await sleep(10000)
         var left_hand = songs["mario_left"] //.slice(4, 100)
         // var original_song_to_play = JSON.parse(JSON.stringify(left_hand)) // js references, man  
         // setTempo(3, song_to_play, original_song_to_play) 
@@ -496,10 +512,10 @@ function setUpKeyboard() {
         var right_hand = songs["mario"] //.slice(4, 100)
         // original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
         // setTempo(3, song_to_play, original_song_to_play) 
-        updateFallingTiles(right_hand)
+        updateFallingTiles(right_hand, false)
         if (self_play) {
-            selfPlay(left_hand)
-            // selfPlay(right_hand)
+            selfPlay(left_hand, true)
+            selfPlay(right_hand, false)
         }
     }, 0) //??? 0 second wait works, but no timeout doesn't??? 
 }
