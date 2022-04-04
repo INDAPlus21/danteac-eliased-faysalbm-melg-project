@@ -17,14 +17,16 @@ fn main() {
             let window_width = 10; // Send a sequence of 10 notes at a time as input
             let mut window: VecDeque<Note> = VecDeque::new();
             window.extend(song.notes[0..window_width].iter().copied());
-            for i in 0..(song.notes.len() - window_width - 1) {
-                println!("{}: {:?}", i, window);
+            let mut label = song.notes[window_width + 1];
+            for i in 0..(song.notes.len() - window_width - 2) {
+                println!("{}: {:?} {:?}", i, window, label);
                 // Send sequence to machine learning and predict next note
                 // TODO
 
                 // Update window
                 window.pop_front();
-                window.push_back(song.notes[i + window_width]);
+                window.push_back(label);
+                label = song.notes[i + window_width];
             }
         }
     }
