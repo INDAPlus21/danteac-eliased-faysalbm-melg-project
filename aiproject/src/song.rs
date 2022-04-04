@@ -3,11 +3,11 @@ use midly::*;
 
 #[derive(Debug)]
 pub struct Song {
-    notes: Vec<Note>,
+    pub notes: Vec<Note>,
 }
 
-#[derive(Debug)]
-struct Note {
+#[derive(Debug, Copy, Clone)]
+pub struct Note {
     note: u7,
     volume: u7,
     length: u28,
