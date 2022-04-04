@@ -1,5 +1,7 @@
+mod song;
 use midly::num::{u15, u28, u4, u7};
 use midly::*;
+use song::Song;
 use std::fs;
 
 fn main() {
@@ -7,7 +9,8 @@ fn main() {
     let path = "test-asset_Levels.mid";
     if let Ok(data) = fs::read(path) {
         if let Ok(smf) = Smf::parse(&data) {
-            println!("TRACK 1: {:?}", smf.tracks[1]);
+            let song = Song::parse_midi(&smf.tracks[4]);
+            println!("{:?}", song);
         }
     }
 
