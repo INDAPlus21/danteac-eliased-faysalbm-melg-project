@@ -12,7 +12,7 @@ var notes = {
 
 
 // read a .mid binary (as base64)
-var midi_file = "./midis/rush_e.mid"
+var midi_file = "./midis/musemario.mid"
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
     var midiArray = midiParser.parse(raw_data);
@@ -28,36 +28,52 @@ fs.readFile(midi_file, 'base64', function (err, raw_data) {
 
     console.log(midiArray); // useful information 
 
-    var track = midiArray.track[0].event // [2].event
     // var notes_array = []
     // var delta_times = []
-    var notes_and_times = []
     // var unpaused_notes = []
-    var pure_data = []
+    // var pure_data = []
 
     // maybe the 121 byte is there in every midi to estabish the upper range? 
     // 
-    for (var i = 0; i < track.length; i++) {
-        if (true /* track[i].channel == 3 */) {
+    function getNotesAndTimes() {
+        var notes_and_times = []
+        for (var i = 0; i < track.length; i++) {
             var data = track[i].data
             var type = track[i].type
-            var deltaTime = track[i].deltaTime 
-            // if (data && data[0] != 121 && data.length == 2 && data[0] >= 21 && data[0] <= 128) {
+            var deltaTime = track[i].deltaTime
+            // var deltaTime_2 = track_2[i].deltaTime
+            // var data_2 = track_2[i].data
             if (type == 9) {
                 var note = notes[data[0]]
-                // no fuck. it was the velocity 
+                // var note_2 = notes[data_2[0]]
                 notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
-            } else {
-                // console.log("hi: ", i)
+                // notes_and_times.push([note_2, deltaTime_2]) 
             }
-            // no it should be 12. that is entirely correct. 
-            // so it has something to do with the type (255, vs 11, vs 12)
-            // vs 9 which most of the actual note (NON; NOF) data seems to be 
-            pure_data.push(track[i])
         }
+        return notes_and_times
     }
 
-    console.log({ pure_data })
+    var track = midiArray.track[1].event // [2].event
+    var notes_and_times = getNotesAndTimes()
+
+    /* var new_notes_and_times 
+    var track = midiArray.track[0].event 
+    for (var i = 0; i < track.length; i++) {
+        notes_and_times.splice(i, 0, item); 
+        var data = track[i].data
+        var type = track[i].type
+        var deltaTime = track[i].deltaTime
+        // var deltaTime_2 = track_2[i].deltaTime
+        // var data_2 = track_2[i].data
+        if (type == 9) {
+            var note = notes[data[0]]
+            // var note_2 = notes[data_2[0]]
+            notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
+            // notes_and_times.push([note_2, deltaTime_2]) 
+        }
+    } */
+
+    // console.log({ pure_data })
 
     // first byte (yes, reasonable) is note number, second is velocity (force in which which a note is played)
     // you currently only care about the note number 

@@ -170,7 +170,7 @@ div {
     left: 0px;
     right: 0px;
     bottom: 0px;
-    border: 2px solid var(--background); 
+    border: 2px solid blue;  /* var(--background);*/  
     border-radius: 5px; /* Needs to be smaller than falling tile's */ 
 }
 
@@ -192,6 +192,7 @@ div {
 body {
     background: var(--background);
     margin: 0px;
+    overflow-y: hidden; 
 }
 
 #settings {
