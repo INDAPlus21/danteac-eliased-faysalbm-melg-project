@@ -1,4 +1,4 @@
-# Marcus Elias Faysal Dantes AI projekt
+A project that uses AI for generating a song based on inputted tunes. Written in JS and Rust.
 
 A project that uses AI for generating a song based on inputted tunes. Written in JS and Rust.
 
