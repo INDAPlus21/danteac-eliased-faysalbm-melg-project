@@ -8,7 +8,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _pkg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pkg */ \"./pkg/aiproject.js\");\n\r\n\r\nlet result = _pkg__WEBPACK_IMPORTED_MODULE_0__[\"add\"](2,2);\r\n\r\nconsole.log(result);\n\n//# sourceURL=webpack:///./init.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _pkg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pkg */ \"./pkg/aiproject.js\");\n\r\n\r\nlet result = _pkg__WEBPACK_IMPORTED_MODULE_0__[\"add\"](2, 3);\r\n\r\nconsole.log(result);\r\n\n\n//# sourceURL=webpack:///./init.js?");
 
 /***/ }),
 
