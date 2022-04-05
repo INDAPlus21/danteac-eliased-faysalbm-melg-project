@@ -14,3 +14,17 @@ TODO when adding a feature/fixing a bug:
 [Issue Board](https://github.com/INDAPlus21/danteac-eliased-faysalbm-melg-project/projects/2)
 
 We will devide the project according to the [milestones](https://github.com/INDAPlus21/danteac-eliased-faysalbm-melg-project/milestones)
+
+## Installation instructions
+
+Requires NodeJS (LTS not latest), Js, npm and Rust
+
+Run the following commands:
+- cargo install wasm-pack
+- npm install
+- wasm-pack build
+- .\node_modules.bin\webpack
+- cd dist
+- ..\node_modules.bin\wasm-server
+
+This starts the front-end wasm server
