@@ -155,7 +155,7 @@
 /******/ 				promises.push(installedWasmModuleData);
 /******/ 			else {
 /******/ 				var importObject = wasmImportObjects[wasmModuleId]();
-/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/aiproject_bg.wasm":"6c52226e9d0a454557f0"}[wasmModuleId] + ".module.wasm");
+/******/ 				var req = fetch(__webpack_require__.p + "" + {"./pkg/aiproject_bg.wasm":"decec90e9679840307c4"}[wasmModuleId] + ".module.wasm");
 /******/ 				var promise;
 /******/ 				if(importObject instanceof Promise && typeof WebAssembly.compileStreaming === 'function') {
 /******/ 					promise = Promise.all([WebAssembly.compileStreaming(req), importObject]).then(function(items) {
@@ -256,7 +256,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./init.js */ \"./init.js\"))\n\n//# sourceURL=webpack:///./index.js?");
+eval("__webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./init.js */ \"./init.js\"));\r\n\n\n//# sourceURL=webpack:///./index.js?");
 
 /***/ })
 

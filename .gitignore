@@ -24,3 +24,6 @@ aiproject/src/main.exe
 
 /target
 #Cargo.lock
+
+# Nodejs
+aiproject/node_modules/
