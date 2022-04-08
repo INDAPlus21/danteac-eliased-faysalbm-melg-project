@@ -1,7 +1,8 @@
 use crate::vector::Vector;
 use std::cmp::min;
-use std::ops::{Add, Index, IndexMut, Mul};
+use std::ops::{Index, IndexMut, Mul};
 
+#[derive(Debug, Clone)]
 pub struct Matrix {
     vectors: Vec<Vector>,
 }
