@@ -19,7 +19,7 @@ impl Matrix {
             vectors.push(Vector::from_vec(vec))
         }
 
-        Matrix { vectors: vectors }
+        Matrix { vectors }
     }
 
     // Create matrix with size
@@ -33,16 +33,27 @@ impl Matrix {
         Matrix { vectors }
     }
 
+    // Create randomized matrix with size
+    pub fn with_random(width: usize, length: usize) -> Matrix {
+        let mut vectors = vec![];
+
+        for _ in 0..width {
+            vectors.push(Vector::with_random(length));
+        }
+
+        Matrix { vectors }
+    }
+
     pub fn get_width(&self) -> usize {
         self.vectors.len()
     }
 
     pub fn get_height(&self) -> usize {
-        self.vectors[0].len()
+        self.vectors[0].get_length()
     }
 
     // Converts a vector of vectors with one element each to a vector of elements
-    fn flatten_2d(&self) -> Vector {
+    pub fn flatten_2d(&self) -> Vector {
         let mut output = Vector::with_size(self.get_width());
 
         for column in 0..self.get_width() {
@@ -57,7 +68,7 @@ impl Mul<Vector> for Matrix {
     type Output = Vector;
 
     fn mul(self, _rhs: Vector) -> Vector {
-        let length = min(self.get_width(), _rhs.len()); // Length of result vector
+        let length = min(self.get_width(), _rhs.get_length()); // Length of result vector
         let mut output_vector = Vector::with_size(self.get_height());
 
         for y in 0..self.get_height() {

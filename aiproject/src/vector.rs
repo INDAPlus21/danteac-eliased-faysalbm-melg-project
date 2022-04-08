@@ -24,7 +24,18 @@ impl Vector {
         }
     }
 
-    pub fn len(&self) -> usize {
+    // Create randomized vector with size
+    pub fn with_random(length: usize) -> Vector {
+        let mut vector = vec![0.0; length];
+
+        for i in 0..vector.len() {
+            vector[i] = rand::random::<f32>();
+        }
+
+        Vector { vector: vector }
+    }
+
+    pub fn get_length(&self) -> usize {
         self.vector.len()
     }
 }
@@ -33,7 +44,7 @@ impl Add<Vector> for Vector {
     type Output = Vector;
 
     fn add(self, _rhs: Vector) -> Vector {
-        let length = min(self.vector.len(), _rhs.len());
+        let length = min(self.vector.len(), _rhs.get_length());
         let mut output = Vector::with_size(length);
         for i in 0..length {
             output[i] = self[i] + _rhs[i];
@@ -48,7 +59,7 @@ impl Mul<Vector> for Vector {
     type Output = f32;
 
     fn mul(self, _rhs: Vector) -> f32 {
-        let length = min(self.vector.len(), _rhs.len());
+        let length = min(self.vector.len(), _rhs.get_length());
         let mut output = 0.0;
 
         for i in 0..length {
