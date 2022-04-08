@@ -131,11 +131,16 @@ console.log("length after: ", should_play.length) */
 
 var notes_audios = {}
 
+// do not use audio elements!!! 
+// https://stackoverflow.com/questions/54509959/how-do-i-play-audio-files-synchronously-in-javascript
+
 function playNote(note) {
     const url = (note.includes("piano-mp3")) ? note : "./piano-mp3/" + note + ".mp3"
     // console.log(url)
     const audio = (notes_audios[note]) ? notes_audios[note] : new Audio(url) // controversial ternary operators 
-    audio.play();
+    audio.addEventListener('canplaythrough', (event) => {
+        audio.play();
+    }) 
     notes_audios[note] = audio // is unneccessary for already assigned  
 }
 
@@ -185,7 +190,6 @@ function arraysEqual(a, b) {
     return true;
 }
 
-
 async function selfPlay(song_to_play, reset_tiles = true) {
     // iterate through all the notes in the song 
     for (var i = 0; i < song_to_play.length; i++) { // song_to_play.length
@@ -214,7 +218,7 @@ async function selfPlay(song_to_play, reset_tiles = true) {
 
         await sleep(delta_time)
 
-        // const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
+        const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
 
         // var next_delta_time = song_to_play[i+1][1] // this will cause bugs when nearing end of the track 
 
@@ -234,7 +238,7 @@ async function selfPlay(song_to_play, reset_tiles = true) {
             song_to_play.splice(i, 1)
             i--
             // console.log({ song_to_play })
-            if (song_to_play.length % 2 == 0) { // hack 
+            if (song_to_play.length % 2 == 0 && next_delta_time != 0) { // hack 
                 updateFallingTiles(song_to_play, reset_tiles)
             }
             unColorTile(key, octave)
@@ -261,7 +265,7 @@ function updateFallingTiles(song_to_play, reset_tiles = true) {
         notes_container.innerHTML = ""
     }
     // yes so next step is to cache all the mp3s 
-    var how_many_elem = Math.min(song_to_play.length, 10)
+    var how_many_elem = Math.min(song_to_play.length, 40)
     var notes_elems = {}
     var previous_heights = 0
 
@@ -500,22 +504,22 @@ function setUpKeyboard() {
     }
 
     setTimeout(async () => {
-        preLoad()
-        await sleep(10000)
+        // preLoad()
+        // await sleep(3000)
         var left_hand = songs["mario_left"] //.slice(4, 100)
-        // var original_song_to_play = JSON.parse(JSON.stringify(left_hand)) // js references, man  
-        // setTempo(3, song_to_play, original_song_to_play) 
+        var original_left = JSON.parse(JSON.stringify(left_hand)) // js references, man  
+        setTempo(3, left_hand, original_left) 
         updateFallingTiles(left_hand)
         /* if (self_play) {
             selfPlay(left_hand)
         } */
-        var right_hand = songs["mario"] //.slice(4, 100)
-        // original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
-        // setTempo(3, song_to_play, original_song_to_play) 
+        var right_hand = songs["mario"] //.slice(21, 100)
+        var original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
+        setTempo(3, right_hand, original_right) 
         updateFallingTiles(right_hand, false)
         if (self_play) {
             selfPlay(left_hand, true)
-            selfPlay(right_hand, false)
+            // selfPlay(right_hand, true)
         }
     }, 0) //??? 0 second wait works, but no timeout doesn't??? 
 }
