@@ -1,6 +1,6 @@
 use std::cmp::min;
 use std::fmt::{Debug, Formatter, Result};
-use std::ops::{Add, Index, IndexMut, Mul, Sub};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
 
 #[derive(PartialEq, Clone)]
 pub struct Vector {
@@ -20,8 +20,13 @@ impl Vector {
 
     // Create vector with size
     pub fn with_size(length: usize) -> Vector {
+        Vector::with_value(length, 0.0)
+    }
+
+    // Create vector with value
+    pub fn with_value(length: usize, value: f32) -> Vector {
         Vector {
-            vector: vec![Default::default(); length],
+            vector: vec![value; length],
         }
     }
 
@@ -41,21 +46,23 @@ impl Vector {
     }
 
     // Clamp every element
-    pub fn clamp(&mut self, min: f32, max: f32) -> Vector {
+    pub fn clamp(&self, min: f32, max: f32) -> Vector {
+        let mut output = Vector::with_size(self.get_length());
         for i in 0..self.get_length() {
-            self[i] = self[i].clamp(min, max);
+            output[i] = self[i].clamp(min, max);
         }
 
-        self.to_owned()
+        output
     }
 
     // Take 1 minus every element
-    pub fn one_minus(&mut self) -> Vector {
+    pub fn one_minus(self) -> Vector {
+        let mut output = Vector::with_size(self.get_length());
         for i in 0..self.get_length() {
-            self[i] = 1.0 - self[i];
+            output[i] = 1.0 - self[i];
         }
 
-        self.to_owned()
+        output
     }
 }
 
@@ -80,6 +87,14 @@ impl Add<Vector> for Vector {
     }
 }
 
+impl AddAssign<Vector> for Vector {
+    fn add_assign(&mut self, _rhs: Vector) {
+        for i in 0..self.get_length() {
+            self[i] = self[i] + _rhs[i];
+        }
+    }
+}
+
 impl Sub<Vector> for Vector {
     type Output = Vector;
 
@@ -91,6 +106,14 @@ impl Sub<Vector> for Vector {
         }
 
         output
+    }
+}
+
+impl SubAssign<Vector> for Vector {
+    fn sub_assign(&mut self, _rhs: Vector) {
+        for i in 0..self.get_length() {
+            self[i] = self[i] - _rhs[i];
+        }
     }
 }
 
