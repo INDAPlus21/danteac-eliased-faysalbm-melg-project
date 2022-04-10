@@ -1,7 +1,7 @@
 use crate::vector::Vector;
 use std::cmp::min;
 use std::fmt::{Debug, Formatter, Result};
-use std::ops::{Index, IndexMut, Mul};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
 
 #[derive(Clone, PartialEq)]
 pub struct Matrix {
@@ -74,14 +74,15 @@ impl Matrix {
     }
 
     // Clamp every element
-    pub fn clamp(&mut self, min: f32, max: f32) -> Matrix {
+    pub fn clamp(&self, min: f32, max: f32) -> Matrix {
+        let mut output = Matrix::with_size_tuple(self.get_size());
         for x in 0..self.get_width() {
             for y in 0..self.get_height() {
-                self[x][y] = self[x][y].clamp(min, max);
+                output[x][y] = self[x][y].clamp(min, max);
             }
         }
 
-        self.to_owned()
+        output
     }
 }
 
@@ -103,6 +104,48 @@ impl Debug for Matrix {
         }
 
         formatter.write_str("]")
+    }
+}
+
+impl Add<Matrix> for Matrix {
+    type Output = Matrix;
+
+    fn add(self, _rhs: Matrix) -> Matrix {
+        let mut output = Matrix::with_size_tuple(self.get_size());
+        for i in 0..self.get_width() {
+            output[i] = self[i].to_owned() + _rhs[i].to_owned();
+        }
+
+        output
+    }
+}
+
+impl AddAssign<Matrix> for Matrix {
+    fn add_assign(&mut self, _rhs: Matrix) {
+        for i in 0..self.get_width() {
+            self[i] = self[i].to_owned() + _rhs[i].to_owned();
+        }
+    }
+}
+
+impl Sub<Matrix> for Matrix {
+    type Output = Matrix;
+
+    fn sub(self, _rhs: Matrix) -> Matrix {
+        let mut output = Matrix::with_size_tuple(self.get_size());
+        for i in 0..self.get_width() {
+            output[i] = self[i].to_owned() - _rhs[i].to_owned();
+        }
+
+        output
+    }
+}
+
+impl SubAssign<Matrix> for Matrix {
+    fn sub_assign(&mut self, _rhs: Matrix) {
+        for i in 0..self.get_width() {
+            self[i] = self[i].to_owned() - _rhs[i].to_owned();
+        }
     }
 }
 
