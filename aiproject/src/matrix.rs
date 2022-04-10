@@ -3,7 +3,7 @@ use std::cmp::min;
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Index, IndexMut, Mul};
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq)]
 pub struct Matrix {
     vectors: Vec<Vector>,
 }
@@ -101,6 +101,23 @@ impl Mul<Vector> for Matrix {
         }
 
         output_vector
+    }
+}
+
+// Scalar multiplication
+impl Mul<f32> for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, _rhs: f32) -> Matrix {
+        let mut output = Matrix::with_size(self.get_width(), self.get_height());
+
+        for y in 0..self.get_height() {
+            for x in 0..self.get_width() {
+                output[x][y] = self[x][y] * _rhs;
+            }
+        }
+
+        output
     }
 }
 

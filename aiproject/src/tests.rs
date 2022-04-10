@@ -53,9 +53,9 @@ mod tests {
         );
     }
 
-    // Text matrices
+    // Test matrices
     #[test]
-    fn test_matrix_vector_mult() {
+    fn test_matrix_vector_mul() {
         let vector = Vector::from_vec(vec![2.0, 3.0, 4.0, 5.0]);
         let matrix = Matrix::from_vecs(vec![
             vec![1.0, 2.0, 3.0],
@@ -65,5 +65,22 @@ mod tests {
         ]);
         let output = Vector::from_vec(vec![28.0, 60.0, 47.0]);
         assert_eq!(matrix * vector, output)
+    }
+
+    #[test]
+    fn test_matrix_mul() {
+        let input = Matrix::from_vecs(vec![
+            vec![1.0, 2.0, 3.0],
+            vec![4.0, 5.0, 6.0],
+            vec![1.0, 4.0, 2.0],
+            vec![2.0, 5.0, 3.0],
+        ]);
+        let output = Matrix::from_vecs(vec![
+            vec![2.0, 4.0, 6.0],
+            vec![8.0, 10.0, 12.0],
+            vec![2.0, 8.0, 4.0],
+            vec![4.0, 10.0, 6.0],
+        ]);
+        assert_eq!(input * 2.0, output)
     }
 }
