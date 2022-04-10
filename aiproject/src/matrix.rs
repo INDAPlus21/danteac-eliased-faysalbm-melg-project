@@ -1,8 +1,9 @@
 use crate::vector::Vector;
 use std::cmp::min;
+use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Index, IndexMut, Mul};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Matrix {
     vectors: Vec<Vector>,
 }
@@ -62,6 +63,27 @@ impl Matrix {
         }
 
         output
+    }
+}
+
+impl Debug for Matrix {
+    // Print matrix as grid
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
+        formatter.write_str("[")?;
+        for y in 0..self.get_height() {
+            for x in 0..self.get_width() {
+                formatter.write_fmt(format_args!("{}", self[x][y]))?;
+                if x < self.get_width() - 1 {
+                    formatter.write_str(", ")?;
+                }
+            }
+
+            if y < self.get_height() - 1 {
+                formatter.write_str("\n")?;
+            }
+        }
+
+        formatter.write_str("]")
     }
 }
 
