@@ -1,7 +1,8 @@
 use std::cmp::min;
-use std::ops::{Add, Index, IndexMut, Mul};
+use std::fmt::{Debug, Formatter, Result};
+use std::ops::{Add, Index, IndexMut, Mul, Sub};
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct Vector {
     vector: Vec<f32>,
 }
@@ -40,6 +41,13 @@ impl Vector {
     }
 }
 
+impl Debug for Vector {
+    // Print vector as Vec
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self.vector.clone()).finish()
+    }
+}
+
 impl Add<Vector> for Vector {
     type Output = Vector;
 
@@ -48,6 +56,20 @@ impl Add<Vector> for Vector {
         let mut output = Vector::with_size(length);
         for i in 0..length {
             output[i] = self[i] + _rhs[i];
+        }
+
+        output
+    }
+}
+
+impl Sub<Vector> for Vector {
+    type Output = Vector;
+
+    fn sub(self, _rhs: Vector) -> Vector {
+        let length = min(self.vector.len(), _rhs.get_length());
+        let mut output = Vector::with_size(length);
+        for i in 0..length {
+            output[i] = self[i] - _rhs[i];
         }
 
         output
@@ -64,6 +86,21 @@ impl Mul<Vector> for Vector {
 
         for i in 0..length {
             output += self[i] * _rhs[i];
+        }
+
+        output
+    }
+}
+
+// Scalar multiplication
+impl Mul<f32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, _rhs: f32) -> Vector {
+        let mut output = Vector::with_size(self.get_length());
+
+        for i in 0..self.vector.len() {
+            output[i] = self[i] * _rhs;
         }
 
         output
