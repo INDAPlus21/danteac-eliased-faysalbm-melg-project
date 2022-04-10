@@ -35,6 +35,10 @@ impl Matrix {
         Matrix { vectors }
     }
 
+    pub fn with_size_tuple(size: (usize, usize)) -> Matrix {
+        Matrix::with_size(size.0, size.1)
+    }
+
     // Create randomized matrix with size
     pub fn with_random(width: usize, length: usize) -> Matrix {
         let mut vectors = vec![];
@@ -52,6 +56,10 @@ impl Matrix {
 
     pub fn get_height(&self) -> usize {
         self.vectors[0].get_length()
+    }
+
+    pub fn get_size(&self) -> (usize, usize) {
+        (self.get_width(), self.get_height())
     }
 
     // Converts a vector of vectors with one element each to a vector of elements
@@ -109,7 +117,7 @@ impl Mul<f32> for Matrix {
     type Output = Matrix;
 
     fn mul(self, _rhs: f32) -> Matrix {
-        let mut output = Matrix::with_size(self.get_width(), self.get_height());
+        let mut output = Matrix::with_size_tuple(self.get_size());
 
         for y in 0..self.get_height() {
             for x in 0..self.get_width() {
