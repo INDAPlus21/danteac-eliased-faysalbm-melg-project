@@ -5,6 +5,7 @@ use crate::vector::Vector;
 mod tests {
     use super::*;
 
+    // Test vectors
     #[test]
     fn test_vec_add() {
         assert_eq!(
@@ -15,6 +16,19 @@ mod tests {
         assert_ne!(
             Vector::from_vec(vec![1.0, 5.0, 15.0]) + (Vector::from_vec(vec![1.0, 2.0, 2.0])),
             Vector::from_vec(vec![2.0, 10.0, 17.0])
+        );
+    }
+
+    #[test]
+    fn test_vec_sub() {
+        assert_eq!(
+            Vector::from_vec(vec![1.0, 3.0, 5.0]) - (Vector::from_vec(vec![1.0, 3.0, 5.0])),
+            Vector::from_vec(vec![0.0, 0.0, 0.0])
+        );
+
+        assert_ne!(
+            Vector::from_vec(vec![1.0, 5.0, 16.0]) - (Vector::from_vec(vec![1.0, 2.0, 2.0])),
+            Vector::from_vec(vec![0.0, 3.0, 14.0])
         );
     }
 
@@ -31,6 +45,15 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_vec_mul() {
+        assert_eq!(
+            Vector::from_vec(vec![2.0, 4.0, 3.0]) * 3.0,
+            Vector::from_vec(vec![6.0, 12.0, 9.0])
+        );
+    }
+
+    // Text matrices
     #[test]
     fn test_matrix_vector_mult() {
         let vector = Vector::from_vec(vec![2.0, 3.0, 4.0, 5.0]);
