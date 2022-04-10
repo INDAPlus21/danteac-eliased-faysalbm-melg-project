@@ -1,8 +1,9 @@
 use crate::vector::Vector;
 use std::cmp::min;
+use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Index, IndexMut, Mul};
 
-#[derive(Debug, Clone)]
+#[derive(Clone, PartialEq)]
 pub struct Matrix {
     vectors: Vec<Vector>,
 }
@@ -34,6 +35,10 @@ impl Matrix {
         Matrix { vectors }
     }
 
+    pub fn with_size_tuple(size: (usize, usize)) -> Matrix {
+        Matrix::with_size(size.0, size.1)
+    }
+
     // Create randomized matrix with size
     pub fn with_random(width: usize, length: usize) -> Matrix {
         let mut vectors = vec![];
@@ -53,6 +58,10 @@ impl Matrix {
         self.vectors[0].get_length()
     }
 
+    pub fn get_size(&self) -> (usize, usize) {
+        (self.get_width(), self.get_height())
+    }
+
     // Converts a vector of vectors with one element each to a vector of elements
     pub fn flatten_2d(&self) -> Vector {
         let mut output = Vector::with_size(self.get_width());
@@ -62,6 +71,27 @@ impl Matrix {
         }
 
         output
+    }
+}
+
+impl Debug for Matrix {
+    // Print matrix as grid
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
+        formatter.write_str("[")?;
+        for y in 0..self.get_height() {
+            for x in 0..self.get_width() {
+                formatter.write_fmt(format_args!("{}", self[x][y]))?;
+                if x < self.get_width() - 1 {
+                    formatter.write_str(", ")?;
+                }
+            }
+
+            if y < self.get_height() - 1 {
+                formatter.write_str("\n")?;
+            }
+        }
+
+        formatter.write_str("]")
     }
 }
 
@@ -79,6 +109,23 @@ impl Mul<Vector> for Matrix {
         }
 
         output_vector
+    }
+}
+
+// Scalar multiplication
+impl Mul<f32> for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, _rhs: f32) -> Matrix {
+        let mut output = Matrix::with_size_tuple(self.get_size());
+
+        for y in 0..self.get_height() {
+            for x in 0..self.get_width() {
+                output[x][y] = self[x][y] * _rhs;
+            }
+        }
+
+        output
     }
 }
 
