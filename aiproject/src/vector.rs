@@ -39,6 +39,24 @@ impl Vector {
     pub fn get_length(&self) -> usize {
         self.vector.len()
     }
+
+    // Clamp every element
+    pub fn clamp(&mut self, min: f32, max: f32) -> Vector {
+        for i in 0..self.get_length() {
+            self[i] = self[i].clamp(min, max);
+        }
+
+        self.to_owned()
+    }
+
+    // Take 1 minus every element
+    pub fn one_minus(&mut self) -> Vector {
+        for i in 0..self.get_length() {
+            self[i] = 1.0 - self[i];
+        }
+
+        self.to_owned()
+    }
 }
 
 impl Debug for Vector {

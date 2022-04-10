@@ -72,6 +72,17 @@ impl Matrix {
 
         output
     }
+
+    // Clamp every element
+    pub fn clamp(&mut self, min: f32, max: f32) -> Matrix {
+        for x in 0..self.get_width() {
+            for y in 0..self.get_height() {
+                self[x][y] = self[x][y].clamp(min, max);
+            }
+        }
+
+        self.to_owned()
+    }
 }
 
 impl Debug for Matrix {
