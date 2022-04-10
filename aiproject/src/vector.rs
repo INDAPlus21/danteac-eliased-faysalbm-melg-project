@@ -1,7 +1,8 @@
 use std::cmp::min;
 use std::ops::{Add, Index, IndexMut, Mul};
+use std::fmt::{Debug, Formatter, Result};
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct Vector {
     vector: Vec<f32>,
 }
@@ -37,6 +38,13 @@ impl Vector {
 
     pub fn get_length(&self) -> usize {
         self.vector.len()
+    }
+}
+
+impl Debug for Vector {
+    // Print vector as Vec
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries(self.vector.clone()).finish()
     }
 }
 
