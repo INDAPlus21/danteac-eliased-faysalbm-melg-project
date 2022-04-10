@@ -1,4 +1,7 @@
+mod matrix;
 mod song;
+mod tests;
+mod vector;
 use midly::num::{u15, u28, u4, u7};
 use midly::*;
 use song::{Note, Song};
