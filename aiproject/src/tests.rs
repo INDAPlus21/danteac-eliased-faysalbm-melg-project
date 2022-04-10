@@ -53,6 +53,14 @@ mod tests {
         );
     }
 
+    #[test]
+    fn test_vec_one_minus() {
+        assert_eq!(
+            Vector::from_vec(vec![0.3, 0.7, 0.1]).one_minus(),
+            Vector::from_vec(vec![0.7, 0.3, 0.9])
+        );
+    }
+
     // Test matrices
     #[test]
     fn test_matrix_vector_mul() {
@@ -82,5 +90,12 @@ mod tests {
             vec![4.0, 10.0, 6.0],
         ]);
         assert_eq!(input * 2.0, output)
+    }
+
+    #[test]
+    fn test_matrix_clamp() {
+        let mut input = Matrix::from_vecs(vec![vec![1.0, 5.0], vec![3.0, 15.0]]);
+        let output = Matrix::from_vecs(vec![vec![2.0, 5.0], vec![3.0, 7.0]]);
+        assert_eq!(input.clamp(2.0, 7.0), output)
     }
 }
