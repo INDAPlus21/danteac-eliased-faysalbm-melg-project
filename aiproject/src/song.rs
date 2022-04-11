@@ -3,21 +3,24 @@ use midly::*;
 
 #[derive(Debug)]
 pub struct Song {
-    pub notes: Vec<Note>,
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct Note {
-    note: u7,
-    volume: u7,
-    length: u28,
-    offset: u28,
+    pub notes: Vec<f32>,
+    pub volumes: Vec<f32>,
+    pub lengths: Vec<f32>,
+    pub offsets: Vec<f32>,
 }
 
 impl Song {
+    pub fn new() -> Song {
+        Song {
+            notes: vec![],
+            volumes: vec![],
+            lengths: vec![],
+            offsets: vec![],
+        }
+    }
+
     // Takes in a track and converts it to a vector of data
-    pub fn parse_midi(track: &Vec<TrackEvent>) -> Song {
-        let mut notes = vec![];
+    pub fn parse_midi(&mut self, track: &Vec<TrackEvent>) {
         let mut start_note = (u7::new(0), u7::new(0), u28::new(0)); // Key Volume Delta
 
         for track_event in track {
@@ -37,12 +40,10 @@ impl Song {
                         // End note
                         else {
                             // Accually create note
-                            notes.push(Note {
-                                note: start_note.0,
-                                volume: start_note.1,
-                                length: delta,
-                                offset: start_note.2,
-                            })
+                            self.notes.push(start_note.0.as_int() as f32 / 100.0);
+                            self.volumes.push(start_note.1.as_int() as f32);
+                            self.lengths.push(delta.as_int() as f32);
+                            self.offsets.push(start_note.2.as_int() as f32);
                         }
                     }
                     _ => continue,
@@ -50,7 +51,5 @@ impl Song {
                 _ => continue,
             }
         }
-
-        Song { notes }
     }
 }

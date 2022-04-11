@@ -1,10 +1,12 @@
 mod matrix;
+mod nn;
 mod song;
 mod tests;
 mod vector;
 use midly::num::{u15, u28, u4, u7};
 use midly::*;
-use song::{Note, Song};
+use nn::NeuralNetwork;
+use song::Song;
 use std::collections::VecDeque;
 use std::fs;
 
@@ -12,19 +14,24 @@ fn main() {
     // Parse MIDI
     let path = "test-asset_Levels.mid";
     if let Ok(data) = fs::read(path) {
+        //println!("{:?}", Smf::parse(&data));
         if let Ok(smf) = Smf::parse(&data) {
-            let song = Song::parse_midi(&smf.tracks[4]);
-            //println!("{:?}", song);
+            let mut song = Song::new();
+            song.parse_midi(&smf.tracks[4]);
+            let mut nn = NeuralNetwork::new();
 
             // Sliding window of data
+            println!("START TRAINING");
             let window_width = 10; // Send a sequence of 10 notes at a time as input
-            let mut window: VecDeque<Note> = VecDeque::new();
+            let mut window: VecDeque<f32> = VecDeque::new();
             window.extend(song.notes[0..window_width].iter().copied());
             let mut label = song.notes[window_width + 1];
             for i in 0..(song.notes.len() - window_width - 2) {
                 println!("{}: {:?} {:?}", i, window, label);
                 // Send sequence to machine learning and predict next note
-                // TODO
+                nn.train(&window, label);
+                println!("PREDICTION {}", nn.get_prediction(&window));
+                break;
 
                 // Update window
                 window.pop_front();
@@ -34,7 +41,10 @@ fn main() {
         }
     }
 
-    // Create MIDI
+    // create_midi()
+}
+
+fn create_midi() {
     let header = Header::new(Format::Parallel, Timing::Metrical(u15::new(10))); // Set timing (ticks per beat)
     let mut smf = Smf::new(header); // Smf = Standard midi file
 
