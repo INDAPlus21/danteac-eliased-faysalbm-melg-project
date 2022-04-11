@@ -27,3 +27,6 @@ aiproject/src/main.exe
 
 # Nodejs
 aiproject/node_modules/
+
+# MacOS
+.DS_Store
