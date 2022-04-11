@@ -63,6 +63,22 @@ mod tests {
 
     // Test matrices
     #[test]
+    fn test_matrix_add() {
+        let a = Matrix::from_vecs(vec![vec![1.0, 5.0], vec![3.0, 15.0]]);
+        let b = Matrix::from_vecs(vec![vec![2.0, 3.0], vec![2.0, 1.0]]);
+        let output = Matrix::from_vecs(vec![vec![3.0, 8.0], vec![5.0, 16.0]]);
+        assert_eq!(a + b, output)
+    }
+
+    #[test]
+    fn test_matrix_sub() {
+        let a = Matrix::from_vecs(vec![vec![1.0, 5.0], vec![3.0, 15.0]]);
+        let b = Matrix::from_vecs(vec![vec![2.0, 3.0], vec![2.0, 1.0]]);
+        let output = Matrix::from_vecs(vec![vec![-1.0, 2.0], vec![1.0, 14.0]]);
+        assert_eq!(a - b, output)
+    }
+
+    #[test]
     fn test_matrix_vector_mul() {
         let vector = Vector::from_vec(vec![2.0, 3.0, 4.0, 5.0]);
         let matrix = Matrix::from_vecs(vec![
@@ -94,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_matrix_clamp() {
-        let mut input = Matrix::from_vecs(vec![vec![1.0, 5.0], vec![3.0, 15.0]]);
+        let input = Matrix::from_vecs(vec![vec![1.0, 5.0], vec![3.0, 15.0]]);
         let output = Matrix::from_vecs(vec![vec![2.0, 5.0], vec![3.0, 7.0]]);
         assert_eq!(input.clamp(2.0, 7.0), output)
     }
