@@ -1,19 +1,17 @@
 mod matrix;
-mod song;
 mod tests;
 mod vector;
 use std::collections::VecDeque;
-use std::fs;
 
 fn main() {
     // Parse MIDI
     if let Some(data) = midiparser::parse_midi("test-asset_Levels") {
         println!("DATA: {:?}", data);
-        let song = data.tracks[0];
+        let song = &data.tracks[0];
 
         // Sliding window of data
         let window_width = 10; // Send a sequence of 10 notes at a time as input
-        let mut window: VecDeque<Note> = VecDeque::new();
+        let mut window: VecDeque<f32> = VecDeque::new();
         window.extend(song.notes[0..window_width].iter().copied());
         let mut label = song.notes[window_width + 1];
         for i in 0..(song.notes.len() - window_width - 2) {
