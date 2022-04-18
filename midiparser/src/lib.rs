@@ -59,7 +59,7 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                             notes.push(data[i] as f32);
 
                             // Note off should always have volume 0
-                            if event_type == 9 {
+                            if event_type == 8 {
                                 volumes.push(0f32);
                             } else {
                                 volumes.push(data[i + 1] as f32);
