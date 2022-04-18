@@ -1,15 +1,10 @@
+pub mod song;
 use core::convert::TryInto;
-use std::fs;
-mod song;
 use song::{Song, Track};
-
-fn main() {
-    parse_midi("test");
-    parse_midi("test-asset_Levels");
-}
+use std::fs;
 
 // Filename without extension suffix
-fn parse_midi(filename: &str) -> Option<Song> {
+pub fn parse_midi(filename: &str) -> Option<Song> {
     if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
         let mut tracks = vec![];
 
