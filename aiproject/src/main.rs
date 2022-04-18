@@ -7,8 +7,7 @@ use std::fs;
 
 fn main() {
     // Parse MIDI
-    let path = "test-asset_Levels.mid";
-    if let Some(data) = midiparser::parse_midi(path) {
+    if let Some(data) = midiparser::parse_midi("test-asset_Levels") {
         println!("DATA: {:?}", data);
         let song = data.tracks[0];
 
