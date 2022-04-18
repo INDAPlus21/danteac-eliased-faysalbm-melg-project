@@ -12,7 +12,6 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
         while i < data.len() {
             if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
                 // Parse header
-                print!("Header");
                 i += 4;
 
                 // Header length
