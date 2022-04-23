@@ -23,8 +23,8 @@ test_xor() # yes works :P  '''
 import numpy as np
 import matplotlib.pyplot as plt
 
-train_ex = np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
-target = np.array([[0, 1, 1, 0]])  # expected output
+train_ex = np.array([[0, 0], [0, 1], [1, 0], [1, 1]]) # np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
+target = np.array([0, 1, 1, 0]) # np.array([[0, 1, 1, 0]])  # expected output
 
 n_hidden_neurons = 2  # but only one layer, two neurons are needed bc both NOT AND and OR need to be implemented, xor is two-dimensional logic
 
