@@ -50,7 +50,7 @@ class NN:
 
         np.random.seed(2)  # if not set different random numbers will be generated each run
 
-        self.hidden_weights = np.random.rand(self.n_hidden_neurons, len(self.train_ex))  # np.random.uniform( size=(len(train_ex), n_hidden_neurons)) # np.array([[0, 0], [0, 0]])
+        self.hidden_weights = np.random.rand(self.n_hidden_neurons, 1) # len(self.train_ex))  # np.random.uniform( size=(len(train_ex), n_hidden_neurons)) # np.array([[0, 0], [0, 0]])
         # yes, output should be one-dimensional
         # self.output_weights = np.random.rand(self.n_hidden_neurons, len(self.target))  # np.random.rand(1, 4)
         self.output_weights = np.random.rand(len(self.target), self.n_hidden_neurons)  # np.random.rand(1, 4)
