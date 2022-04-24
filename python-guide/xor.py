@@ -23,8 +23,9 @@ test_xor() # yes works :P  '''
 import numpy as np
 import matplotlib.pyplot as plt
 
-train_ex = np.array([[0, 0], [0, 1], [1, 0], [1, 1]]) # np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
-target = np.array([0, 1, 1, 0]) # np.array([[0, 1, 1, 0]])  # expected output
+train_ex = np.array([[0, 0, 1, 1], [0, 1, 0, 1]]) # np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+target = np.array([[0, 1, 1, 0]])  # expected output #np.array([0, 1, 1, 0])
+# aha! by matrix multiplcation you get the xor data? 
 
 n_hidden_neurons = 2  # but only one layer, two neurons are needed bc both NOT AND and OR need to be implemented, xor is two-dimensional logic
 
@@ -32,7 +33,7 @@ n_hidden_neurons = 2  # but only one layer, two neurons are needed bc both NOT A
 n_train_ex = train_ex.shape[1]
 
 learning_rate = 0.9
-epochs = 1000
+epochs = 1
 
 # if not set different random numbers will be generated each run
 np.random.seed(2)
@@ -46,7 +47,7 @@ np.random.seed(2)
 hidden_weights = np.random.rand(n_hidden_neurons, len(train_ex))  # np.random.uniform( size=(len(train_ex), n_hidden_neurons)) # np.array([[0, 0], [0, 0]])
 # hidden_bias = np.random.uniform(size=(1, n_hidden_neurons*2))
 # np.random.uniform(size=(n_hidden_neurons, len(target)))
-output_weights = np.random.rand(len(target), n_hidden_neurons)
+output_weights = np.random.rand(len(target), n_hidden_neurons) #  np.random.rand(1, 4) 
 # output_bias = np.random.uniform(size=(2, len(target)*4))
 #  # np.array([[0, 0]])
 print("hidden", hidden_weights, "output", output_weights)
@@ -55,16 +56,20 @@ print("hidden", hidden_weights, "output", output_weights)
 # this can be interpreted as the probability of it being 0 or 1 (the binary values we try to predict)
 # yeah right, the sigmoid function is heavily scewed towards the tail ends (0 and 1)
 
-
 def sigmoid(z):
     return 1/(1+np.exp(-z))
 
 
-def forward_prop(hidden_weights, output_weights, input):
-    z1 = hidden_weights.dot(input)  # + hidden_bias
-    activ_1 = sigmoid(z1)
-    z2 = output_weights.dot(activ_1)  # + output_bias
-    predicted_output = sigmoid(z2)
+def forward_prop(hidden_weights, output_weights, train_ex):
+    print("hidden:", hidden_weights, "train:", train_ex)
+    z1 = hidden_weights.dot(train_ex)  # + hidden_bias
+    print("z1", z1)
+    activ_1 = sigmoid(z1) # aha! detta e också en array av samma dimensioner som z1 
+    z2 = output_weights.dot(activ_1) # det blir matrismultiplation här också, fast... # + output_bias
+    print("z2", z2)
+    # aha! det är att output weights blir modifierade av aktiveringen! (genom nätverket)
+    predicted_output = sigmoid(z2) # aha! it processes all training data at the same time! 
+    print("predicted output", predicted_output)
     return activ_1, predicted_output
 
 # each parameter should change in proportion to its effect on the output/error
@@ -75,8 +80,8 @@ def back_prop(n_train_ex, activ_1, predicted_output, target):
     global hidden_weights
     global output_weights
 
-    error = predicted_output-target
-    diff_output_w = error.dot(activ_1.T)/n_train_ex
+    error = predicted_output-target # aha! det är så man får error för varje indivudell nod! och det har är automatiskt en numpy subtraktion
+    diff_output_w = error.dot(activ_1.T)/n_train_ex # .T är den transponerade arrayen 
     dz1 = output_weights.T.dot(error) * activ_1 * (1-activ_1) # is THIS node * (actual - computed)
     diff_hidden_w = dz1.dot(train_ex.T)/n_train_ex
 
@@ -89,11 +94,12 @@ def back_prop(n_train_ex, activ_1, predicted_output, target):
 def train(epochs):
     losses = []
     for _ in range(epochs):
-        activ_1, predicted_output = forward_prop(
-            hidden_weights, output_weights, train_ex)
+        activ_1, predicted_output = forward_prop(hidden_weights, output_weights, train_ex)
         # if i % 1000 == 0:
         # print("z1: ", z1, "a1: ", a1, "z2: ", z2, "a2: ", a2)
+        # jag har hittat loss-funktionen! 
         loss = -(1/n_train_ex)*np.sum(target * np.log(predicted_output)+(1-target)*np.log(1-predicted_output))
+        print("loss", loss)
         losses.append(loss)
         back_prop(n_train_ex, activ_1, predicted_output, target)
     return losses
@@ -118,4 +124,4 @@ def predict(tests):
 
 
 tests = np.array([[[1], [0]], [[0], [1]], [[0], [0]], [[1], [1]]])
-predict(tests)
+# predict(tests)
