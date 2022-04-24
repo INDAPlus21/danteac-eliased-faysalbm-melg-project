@@ -23,7 +23,9 @@ test_xor() # yes works :P  '''
 import numpy as np
 import matplotlib.pyplot as plt
 
+# training examples "by columns"
 train_ex = np.array([[0, 0, 1, 1], [0, 1, 0, 1]]) # np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+
 target = np.array([[0, 1, 1, 0]])  # expected output #np.array([0, 1, 1, 0])
 # aha! by matrix multiplcation you get the xor data? 
 
