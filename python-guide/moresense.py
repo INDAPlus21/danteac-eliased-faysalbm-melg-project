@@ -70,7 +70,7 @@ class NN:
     def forward_prop(self, one_train_ex):
         one_train_ex = np.array(one_train_ex)
         # okay, so the 4 different values in each hidden neuron represents the probability of it being 0, 1, 1, 0
-        print("hidden:", self.hidden_weights, "train:", one_train_ex)
+        print("in forward prop, hidden:", self.hidden_weights, "train:", one_train_ex)
         dot_hidden = one_train_ex.dot(self.hidden_weights)  # + hidden_bias # acts as input
         print("dot_product", dot_hidden)
         # aha! 0 blir 0.5 med sigmoid # acts as output # aha! detta e också en array av samma dimensioner som z1, och det makar sense eftersom den ska vara en activation för VARJE nod i matrisen!
@@ -79,15 +79,6 @@ class NN:
         # det blir matrismultiplation här också, fast... # + output_bias # aha! det är att output weights blir modifierade av aktiveringen! (genom nätverket)
         dot_output = np.dot(self.output_weights, activ_1.T)  # .dot(activ_1)
         print("dot_output", dot_output)  # okay, this dot product has the same "form" as the output array
-
-        # define vectorized sigmoid
-
-        ''' predicted_output = np.array([])  # np.empty((1,4), int)
-        for pred in dot_output:
-            predicted_output = np.append(predicted_output, sigmoid(pred))
-        print("predicted output", predicted_output)
-
-        predicted_output = np.squeeze(predicted_output) '''
 
         # sigmoid_v = np.vectorize(sigmoid)
         # predicted_output = sigmoid_v(dot_output) # # aha! it processes all training data at the same time!
