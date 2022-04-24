@@ -40,7 +40,7 @@ def plot(losses):
 class NN:
     def __init__(self):
         self.train_ex = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])  # np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
-        self.target = np.array([[0], [1], [1], [0]])  # np.array([0, 1, 1, 0])  # expected output #
+        self.target = np.array([0, 1, 1, 0])  # np.array([0, 1, 1, 0])  # expected output #
 
         self.n_inputs = self.train_ex.shape[1]
         self.n_target = len(self.target)
@@ -51,7 +51,7 @@ class NN:
 
         np.random.seed(2)  # if not set different random numbers will be generated each run
 
-        self.hidden_weights = np.random.rand(self.n_hidden_neurons, 1)  # len(self.train_ex))  # np.random.uniform( size=(len(train_ex), n_hidden_neurons)) # np.array([[0, 0], [0, 0]])
+        self.hidden_weights = np.random.rand(self.n_hidden_neurons, self.n_inputs)  # len(self.train_ex))  # np.random.uniform( size=(len(train_ex), n_hidden_neurons)) # np.array([[0, 0], [0, 0]])
         # yes, output should be one-dimensional
         # self.output_weights = np.random.rand(self.n_hidden_neurons, len(self.target))  # np.random.rand(1, 4)
         # okay... kinda makes sense that the output will have an entire weightn matrix
@@ -64,15 +64,14 @@ class NN:
         # aha! the output "neuron" is ALSO going to apply the identical sigmoid function with 
         # the previous two neurons as input 
         # confusing because you're trying to do two things at once 
-        self.output_weights = np.random.rand(1, 1)  # np.random.rand(1, 4)
-        print(self.hidden_weights.shape, self.output_weights.shape)
+        self.output_weights = np.random.rand(1, 2)  # np.random.rand(1, 4)
         print("hidden", self.hidden_weights, "output", self.output_weights)
 
-    def forward_prop(self, train_ex):
-        # one_train_ex = np.array(train_ex)
+    def forward_prop(self, one_train_ex):
+        one_train_ex = np.array(one_train_ex)
         # okay, so the 4 different values in each hidden neuron represents the probability of it being 0, 1, 1, 0
         # print("in forward prop, hidden:", self.hidden_weights, "train:", one_train_ex)
-        dot_hidden = train_ex.dot(self.hidden_weights)  # + hidden_bias # acts as input
+        dot_hidden = one_train_ex.dot(self.hidden_weights)  # + hidden_bias # acts as input
         # print("dot_product", dot_hidden)
         # aha! 0 blir 0.5 med sigmoid # acts as output # aha! detta e också en array av samma dimensioner som z1, och det makar sense eftersom den ska vara en activation för VARJE nod i matrisen!
         activ_1 = np.expand_dims(sigmoid(dot_hidden), axis=0)
@@ -111,14 +110,20 @@ class NN:
     def train(self):
         losses = []
         for _ in range(self.epochs):
-            for ind_ex in train_ex: 
-                activ_1, predicted_output = self.forward_prop(self.train_ex)
-                # mean squared error, and sum and devide to get a scalar 
+            i = 0
+            for one_train_ex in self.train_ex: 
+                # print("one train ex", one_train_ex)
+                activ_1, predicted_output = self.forward_prop(one_train_ex)
+                # if i % 1000 == 0:
+                # print("z1: ", z1, "a1: ", a1, "z2: ", z2, "a2: ", a2)
+                # jag har hittat loss-funktionen!dot
+                # mean squared error, and sum and devide to get a scalar, and it looks "worse" than the binary cross-entropy because it doesn't use log
                 # print("target", self.target, "predicted_output", predicted_output)
-                # loss = self.target-predicted_output 
+                # loss = self.target-predicted_output  # (1/self.n_target)*np.sum((1/self.n_train_ex)*(np.square(predicted_output-self.target)))
                 # print("loss", loss)
                 # losses.append(loss)
-                self.back_prop(predicted_output, activ_1)
+                self.back_prop(predicted_output, activ_1, one_train_ex, self.target[i], i)
+                i += 1
         return losses
 
     def predict(self, tests):
