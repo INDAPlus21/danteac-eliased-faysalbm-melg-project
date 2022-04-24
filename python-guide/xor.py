@@ -33,7 +33,7 @@ n_hidden_neurons = 2  # but only one layer, two neurons are needed bc both NOT A
 n_train_ex = train_ex.shape[1]
 
 learning_rate = 0.9
-epochs = 1
+epochs = 1000
 
 # if not set different random numbers will be generated each run
 np.random.seed(2)
@@ -61,15 +61,15 @@ def sigmoid(z):
 
 
 def forward_prop(hidden_weights, output_weights, train_ex):
-    print("hidden:", hidden_weights, "train:", train_ex)
+    # print("hidden:", hidden_weights, "train:", train_ex)
     z1 = hidden_weights.dot(train_ex)  # + hidden_bias
-    print("z1", z1)
+    # print("z1", z1)
     activ_1 = sigmoid(z1) # aha! detta e också en array av samma dimensioner som z1 
     z2 = output_weights.dot(activ_1) # det blir matrismultiplation här också, fast... # + output_bias
-    print("z2", z2)
+    # print("z2", z2)
     # aha! det är att output weights blir modifierade av aktiveringen! (genom nätverket)
     predicted_output = sigmoid(z2) # aha! it processes all training data at the same time! 
-    print("predicted output", predicted_output)
+    # print("predicted output", predicted_output)
     return activ_1, predicted_output
 
 # each parameter should change in proportion to its effect on the output/error
@@ -99,7 +99,7 @@ def train(epochs):
         # print("z1: ", z1, "a1: ", a1, "z2: ", z2, "a2: ", a2)
         # jag har hittat loss-funktionen! 
         loss = -(1/n_train_ex)*np.sum(target * np.log(predicted_output)+(1-target)*np.log(1-predicted_output))
-        print("loss", loss)
+        # print("loss", loss)
         losses.append(loss)
         back_prop(n_train_ex, activ_1, predicted_output, target)
     return losses
@@ -108,15 +108,14 @@ def train(epochs):
 losses = train(epochs)
 
 plt.plot(losses)
-plt.xlabel("EPOCHS")
+plt.xlabel("Epochs")
 plt.ylabel("Loss value")
 # plt.show() # why exactly is the loss function not 0 when it always predicts correctly? 
 
 def predict(tests):
     for test in tests:
         _, activ_2 = forward_prop(hidden_weights, output_weights, test)
-        # squeeze removes the unneccessary nested layers
-        activ_2 = np.squeeze(activ_2)
+        activ_2 = np.squeeze(activ_2) # squeeze removes the unneccessary nested layers
         if activ_2 >= 0.5:  # as already mentioned, the sigmoid function is interpreted as probability
             print([i[0] for i in test], "-->", 1)  # just formatting
         else:
@@ -124,4 +123,4 @@ def predict(tests):
 
 
 tests = np.array([[[1], [0]], [[0], [1]], [[0], [0]], [[1], [1]]])
-# predict(tests)
+predict(tests)
