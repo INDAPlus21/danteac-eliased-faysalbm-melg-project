@@ -25,9 +25,12 @@ test_xor() # yes works :P  '''
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+"Note that when the input z is a vector or Numpy array, Numpy automatically applies the function sigmoid elementwise, that is, in vectorized form."
 def sigmoid(z):
     return 1/(1+np.exp(-z))
+
+def sigmoid_prime(z): 
+    return sigmoid(z)*(1-sigmoid(z))
 
 
 def plot(losses):
@@ -61,9 +64,9 @@ class NN:
         # aha!!!! because the inputs really ARE two dimensional (although you're here kinda treating them as 1)
         # watch --> https://www.youtube.com/watch?v=kNPGXgzxoHw
         # watch --> https://www.youtube.com/watch?v=s7nRWh_3BtA
-        # aha! the output "neuron" is ALSO going to apply the identical sigmoid function with 
-        # the previous two neurons as input 
-        # confusing because you're trying to do two things at once 
+        # aha! the output "neuron" is ALSO going to apply the identical sigmoid function with
+        # the previous two neurons as input
+        # confusing because you're trying to do two things at once
         self.output_weights = np.random.rand(1, 2)  # np.random.rand(1, 4)
         print("hidden", self.hidden_weights, "output", self.output_weights)
 
@@ -94,24 +97,23 @@ class NN:
         diff_output_w = np.dot(error, activ_1/self.n_train_ex)  # .T är den transponerade arrayen
         # print("diff_output_w", diff_output_w)
 
-        # activ_1 * (1-activ_1) IS THE DERIVATIVE OF SIGMOID!!! 
-        # and this looks much simpler because it's only one layer? 
-        # yes, and it's the error for the very first layer 
-        # but shouldn't you multiple everything even for just one training example? 
+        # activ_1 * (1-activ_1) IS THE DERIVATIVE OF SIGMOID!!!
+        # and this looks much simpler because it's only one layer?
+        # yes, and it's the error for the very first layer
+        # but shouldn't you multiple everything even for just one training example?
         dz1 = np.dot(error, self.output_weights) * activ_1 * (1-activ_1)  # is THIS node * (actual - computed)
         # print("dz1", dz1)
-        diff_hidden_w = np.dot(dz1, one_train_ex)/self.n_train_ex
+        diff_hidden_w = np.dot(dz1, one_train_ex)
         # print("diff_hidden_w", diff_hidden_w)
-
-        # update weights (and potentially biases later)
-        self.output_weights = self.output_weights-self.learning_rate*diff_output_w
-        self.hidden_weights = self.hidden_weights-self.learning_rate*diff_hidden_w
+        return diff_output_w, diff_hidden_w
 
     def train(self):
         losses = []
+        diff_output_w = 0 
+        diff_hidden_w = 0
         for _ in range(self.epochs):
             i = 0
-            for one_train_ex in self.train_ex: 
+            for one_train_ex in self.train_ex:
                 # print("one train ex", one_train_ex)
                 activ_1, predicted_output = self.forward_prop(one_train_ex)
                 # if i % 1000 == 0:
@@ -119,11 +121,17 @@ class NN:
                 # jag har hittat loss-funktionen!dot
                 # mean squared error, and sum and devide to get a scalar, and it looks "worse" than the binary cross-entropy because it doesn't use log
                 # print("target", self.target, "predicted_output", predicted_output)
-                # loss = self.target-predicted_output  # (1/self.n_target)*np.sum((1/self.n_train_ex)*(np.square(predicted_output-self.target)))
+                loss = (1/self.n_target)*np.sum((1/self.n_train_ex)*(np.square(predicted_output-self.target)))
                 # print("loss", loss)
-                # losses.append(loss)
-                self.back_prop(predicted_output, activ_1, one_train_ex, self.target[i], i)
+                losses.append(loss)
+                one_diff_output_w, one_diff_hidden_w = self.back_prop(predicted_output, activ_1, one_train_ex, self.target[i], i)
                 i += 1
+                diff_output_w += one_diff_output_w
+                diff_hidden_w += one_diff_hidden_w
+
+            # update weights (and potentially biases later)
+            self.output_weights = self.output_weights-self.learning_rate*(diff_output_w/self.n_train_ex)
+            self.hidden_weights = self.hidden_weights-self.learning_rate*(diff_hidden_w/self.n_train_ex)
         return losses
 
     def predict(self, tests):
@@ -138,7 +146,6 @@ class NN:
 
 xor_nn = NN()
 losses = xor_nn.train()
-# print(losses)
 # plot(losses)
 tests = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
 xor_nn.predict(tests)
