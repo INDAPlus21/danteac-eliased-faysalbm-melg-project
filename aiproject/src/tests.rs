@@ -28,7 +28,7 @@ mod tests {
 
         assert_ne!(
             Vector::from_vec(vec![1.0, 5.0, 16.0]) - (Vector::from_vec(vec![1.0, 2.0, 2.0])),
-            Vector::from_vec(vec![0.0, 3.0, 14.0])
+            Vector::from_vec(vec![0.0, 2.0, 14.0])
         );
     }
 
