@@ -28,3 +28,9 @@ Run the following commands:
 - ..\node_modules.bin\wasm-server
 
 This starts the front-end wasm server
+
+## Activity Diagram
+
+Decribes the overall flow of the program. May change in the future. (Requires basic knowledge of swedish).
+
+![Activity diagram](activity_diagram.png)
