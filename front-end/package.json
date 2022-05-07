@@ -20,6 +20,7 @@
     "dependencies": {
         "eslint-plugin-promise": "^6.0.0",
         "eslint-plugin-unicorn": "^42.0.0",
+        "fs": "^0.0.1-security",
         "midi-parser-js": "^4.0.4",
         "nouislider": "^15.5.1",
         "parse-midi": "^2.0.2",
