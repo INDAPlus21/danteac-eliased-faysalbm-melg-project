@@ -1,7 +1,7 @@
 :root {
     --white-width: 50px;
     --green: #51eb5e;
-    --background: rgb(46, 45, 45);
+    --background: rgb(22, 22, 22);
 }
 
 .tile {
@@ -19,6 +19,7 @@
     margin-right: -35px;
     z-index: 0;
     background-color: white;
+    /* box-shadow: 1px 1px 5px #555 inset; */
 }
 
 .black {
@@ -51,7 +52,7 @@
     /* I don't get it */
     overflow: scroll;
     overflow: hidden;
-    border-top: 5px solid rgb(155, 152, 152);
+    border-top: 5px solid rgb(177, 14, 14);
     /* z-index: 2;  */
     /* Fix this */
     /* background: white; */
@@ -161,7 +162,7 @@ div {
     /* transition: all .5s ease-in-out; */
 }
 
-/* To create spacing between the tiles, everything here is essential */ 
+/* To create spacing between the tiles, everything here is essential */
 .falling-tile:before {
     content: "";
     display: block;
@@ -170,8 +171,9 @@ div {
     left: 0px;
     right: 0px;
     bottom: 0px;
-    border: 2px solid blue;  /* var(--background);*/  
-    border-radius: 5px; /* Needs to be smaller than falling tile's */ 
+    /* border: 2px solid blue;  var(--background);   */
+    border-radius: 5px;
+    /* Needs to be smaller than falling tile's */
 }
 
 #falling-tiles-container {
@@ -192,7 +194,9 @@ div {
 body {
     background: var(--background);
     margin: 0px;
-    overflow-y: hidden; 
+    overflow-y: hidden;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 #settings {
