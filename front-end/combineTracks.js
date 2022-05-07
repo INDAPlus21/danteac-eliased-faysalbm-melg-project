@@ -13,25 +13,52 @@ export function combineTracks(left_hand, right_hand) {
 
     // is there a performance cost to looking up an array's length? performance test this algorithm! 
     // it feels like the problem is that the deltaTime for the individual array shouldn't always work...
+    // yes. it definitely needs to be adjusted 
+    // and the reason it works fine (yes hypothesis confirmed if you look at the sheet music)
+    // for the first parts is that all the tones are played simultanously 
+    // so we want E5 to have a lower deltatime
+    // it originally is relative to [D4, 455] the bar before, wheras 
+    // you can continue tomorrow with the slicing... 
+    // ["D4", 13], ["B4", 0], ["D4", 455], ["B4", 0], ["E5", 745], ["G5", 0], 248
+    // left hand ["C3", 265], ["C3", 455], ["G3", 265], ["G3", 227]
+    // where is that information? relative to the previous note??? 
+    // it's somewhere in if the deltatime for the previous note in the two different arrays
+    // differ...? yes... you should adjust it in some way... 
+    // you see, relative to C3, 455, not B4. You KEPT it as B4, and then it obviously doesn't work...
+    // and this happens when there is a note of the other's in between (i.e all the time)
     // 
 
+    let right_lead = 0; 
+    let left_lead = 0; 
 
     // you use while loops surprisingly rarely... 
     while (true) {
         delta_time_elapsed_left += left_hand[index_left][1]
         delta_time_elapsed_right += right_hand[index_right][1]
 
+        // you shouldn't need to affect subtract relative here, it's basically only here you 
+        // were regardless. yeah reset 
+        // yeah right... you probably need to update what you subtract... or? 
         if (delta_time_elapsed_left == delta_time_elapsed_right) {
             let max_delta = Math.max(left_hand[index_left][1], right_hand[index_right][1])
             combined.push([left_hand[index_left][0], max_delta]);
             combined.push([right_hand[index_right][0], 0]) 
+            // no right!!! it's still possible for them to get away from each other here
+            left_lead = 0
+            right_lead = 0
             index_left++
             index_right++
         } else if (delta_time_elapsed_left < delta_time_elapsed_right) {
+            left_hand[index_left][1] = left_hand[index_left][1] - right_lead
+            right_lead = 0
+            left_lead += left_hand[index_left][1]
             combined.push(left_hand[index_left]);
             index_left++
             delta_time_elapsed_right -= right_hand[index_right][1]
         } else {
+            right_hand[index_right][1] = right_hand[index_right][1] - left_lead
+            left_lead = 0
+            right_lead += right_hand[index_right][1]
             combined.push(right_hand[index_right])
             index_right++
             delta_time_elapsed_left -= left_hand[index_left][1]
@@ -53,8 +80,12 @@ export function combineTracks(left_hand, right_hand) {
 
 // let right_hand = [["Gb4", 0], ["E5", 0], ["Gb4", 227], ["E5", 0], ["Gb4", 13], ["E5", 0], ["Gb4", 227], ["E5", 0], ["Gb4", 253], ["E5", 0], ["Gb4", 227], ["E5", 0], ["Gb4", 253], ["C5", 0], ["Gb4", 227], ["C5", 0], ["Gb4", 13], ["E5", 0], ["Gb4", 455], ["E5", 0], ["G4", 25], ["B4", 0], ["G5", 0], ["G4", 455], ["B4", 0], ["G5", 0], ["G4", 505], ["G4", 455], ["E4", 505], ["C5", 0], ["E4", 455], ["C5", 0], ["C4", 265], ["G4", 0], ["C4", 455], ["G4", 0], ["G3", 265], ["E4", 0], ["G3", 455], ["E4", 0], ["C4", 265], ["A4", 0], ["C4", 455], ["A4", 0], ["D4", 25], ["B4", 0], ["D4", 455], ["B4", 0], ["Db4", 25], ["Bb4", 0], ["Db4", 227], ["Bb4", 0], ["C4", 13], ["A4", 0], ["C4", 455], ["A4", 0], ["C4", 25], ["G4", 0], ["C4", 303], ["G4", 0], ["G4", 17], ["E5", 0], ["G4", 303], ["E5", 0]];
 
+
 let combined = combineTracks(songs["mario_left"], songs["mario"])
-console.log({ combined })
+
+
+// let combined = combineTracks(songs["mario_left"], songs["mario"])
+console.log(combined.slice(250))
 
 fs.writeFile("./notes_array.json", JSON.stringify(combined), 'utf8', function (err) {
     if (err) {
@@ -64,7 +95,7 @@ fs.writeFile("./notes_array.json", JSON.stringify(combined), 'utf8', function (e
     console.log("The file was saved!");
 });
 
-console.log([["D3", 0], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 13], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 253], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 253], ["Gb4", 0], ["C5", 0], ["D3", 227], ["Gb4", 0], ["C5", 0], ["D3", 13], ["Gb4", 0], ["E5", 0], ["D3", 455], ["Gb4", 0], ["E5", 0], ["G3", 25], ["G4", 0], ["B4", 0], ["G5", 0], ["G3", 455], ["G4", 0], ["B4", 0], ["G5", 0], ["G2", 505], ["G4", 0], ["G2", 455], ["G4", 0], ["G3", 505], ["E4", 0], ["C5", 0], ["G3", 455], ["E4", 0], ["C5", 0], ["E3", 265], ["C4", 0], ["G4", 0], ["E3", 455], ["C4", 0], ["G4", 0], ["C3", 265], ["G3", 0], ["E4", 0], ["C3", 455], ["G3", 0], ["E4", 0], ["F3", 265], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["G3", 25], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["Gb3", 25], ["Db4", 0], ["Bb4", 0], ["Gb3", 227], ["Db4", 0], ["Bb4", 0], ["F3", 13], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["E3", 25], ["C4", 0], ["G4", 0], ["E3", 303], ["C4", 0], ["G4", 0], ["C4", 17], ["G4", 0], ["E5", 0], ["C4", 303], ["G4", 0], ["E5", 0], ["E4", 17], ["B4", 0], ["G5", 0], ["E4", 303], ["B4", 0], ["G5", 0], ["F4", 17], ["C5", 0], ["A5", 0], ["F4", 455], ["C5", 0], ["A5", 0], ["D4", 25], ["A4", 0], ["F5", 0], ["D4", 227], ["A4", 0], ["F5", 0], ["E4", 13], ["B4", 0], ["G5", 0], ["E4", 227], ["B4", 0], ["G5", 0], ["C4", 253], ["A4", 0], ["E5", 0], ["C4", 455], ["A4", 0], ["E5", 0], ["A3", 25], ["E4", 0], ["C5", 0], ["A3", 227], ["E4", 0], ["C5", 0], ["B3", 13], ["F4", 0], ["D5", 0], ["B3", 227], ["F4", 0], ["D5", 0], ["G3", 13], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["G3", 265], ["E4", 0], ["C5", 0], ["G3", 455], ["E4", 0], ["C5", 0], ["E3", 265], ["C4", 0], ["G4", 0], ["E3", 455], ["C4", 0], ["G4", 0], ["C3", 265], ["G3", 0], ["E4", 0], ["C3", 455], ["G3", 0], ["E4", 0], ["F3", 265], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["G3", 25], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["Gb3", 25], ["Db4", 0], ["Bb4", 0], ["Gb3", 227], ["Db4", 0], ["Bb4", 0], ["F3", 13], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["E3", 25], ["C4", 0], ["G4", 0], ["E3", 303], ["C4", 0], ["G4", 0], ["C4", 17], ["G4", 0], ["E5", 0], ["C4", 303], ["G4", 0], ["E5", 0], ["E4", 17], ["B4", 0], ["G5", 0], ["E4", 303], ["B4", 0], ["G5", 0], ["F4", 17], ["C5", 0], ["A5", 0], ["F4", 455], ["C5", 0], ["A5", 0], ["D4", 25], ["A4", 0], ["F5", 0], ["D4", 227], ["A4", 0], ["F5", 0], ["E4", 13], ["B4", 0], ["G5", 0], ["E4", 227], ["B4", 0], ["G5", 0], ["C4", 253], ["A4", 0], ["E5", 0], ["C4", 455], ["A4", 0], ["E5", 0], ["A3", 25], ["E4", 0], ["C5", 0], ["A3", 227], ["E4", 0], ["C5", 0], ["B3", 13], ["F4", 0], ["D5", 0], ["B3", 227], ["F4", 0], ["D5", 0], ["G3", 13], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["C3", 265], ["C3", 455]].length)
+// console.log([["D3", 0], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 13], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 253], ["Gb4", 0], ["E5", 0], ["D3", 227], ["Gb4", 0], ["E5", 0], ["D3", 253], ["Gb4", 0], ["C5", 0], ["D3", 227], ["Gb4", 0], ["C5", 0], ["D3", 13], ["Gb4", 0], ["E5", 0], ["D3", 455], ["Gb4", 0], ["E5", 0], ["G3", 25], ["G4", 0], ["B4", 0], ["G5", 0], ["G3", 455], ["G4", 0], ["B4", 0], ["G5", 0], ["G2", 505], ["G4", 0], ["G2", 455], ["G4", 0], ["G3", 505], ["E4", 0], ["C5", 0], ["G3", 455], ["E4", 0], ["C5", 0], ["E3", 265], ["C4", 0], ["G4", 0], ["E3", 455], ["C4", 0], ["G4", 0], ["C3", 265], ["G3", 0], ["E4", 0], ["C3", 455], ["G3", 0], ["E4", 0], ["F3", 265], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["G3", 25], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["Gb3", 25], ["Db4", 0], ["Bb4", 0], ["Gb3", 227], ["Db4", 0], ["Bb4", 0], ["F3", 13], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["E3", 25], ["C4", 0], ["G4", 0], ["E3", 303], ["C4", 0], ["G4", 0], ["C4", 17], ["G4", 0], ["E5", 0], ["C4", 303], ["G4", 0], ["E5", 0], ["E4", 17], ["B4", 0], ["G5", 0], ["E4", 303], ["B4", 0], ["G5", 0], ["F4", 17], ["C5", 0], ["A5", 0], ["F4", 455], ["C5", 0], ["A5", 0], ["D4", 25], ["A4", 0], ["F5", 0], ["D4", 227], ["A4", 0], ["F5", 0], ["E4", 13], ["B4", 0], ["G5", 0], ["E4", 227], ["B4", 0], ["G5", 0], ["C4", 253], ["A4", 0], ["E5", 0], ["C4", 455], ["A4", 0], ["E5", 0], ["A3", 25], ["E4", 0], ["C5", 0], ["A3", 227], ["E4", 0], ["C5", 0], ["B3", 13], ["F4", 0], ["D5", 0], ["B3", 227], ["F4", 0], ["D5", 0], ["G3", 13], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["G3", 265], ["E4", 0], ["C5", 0], ["G3", 455], ["E4", 0], ["C5", 0], ["E3", 265], ["C4", 0], ["G4", 0], ["E3", 455], ["C4", 0], ["G4", 0], ["C3", 265], ["G3", 0], ["E4", 0], ["C3", 455], ["G3", 0], ["E4", 0], ["F3", 265], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["G3", 25], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["Gb3", 25], ["Db4", 0], ["Bb4", 0], ["Gb3", 227], ["Db4", 0], ["Bb4", 0], ["F3", 13], ["C4", 0], ["A4", 0], ["F3", 455], ["C4", 0], ["A4", 0], ["E3", 25], ["C4", 0], ["G4", 0], ["E3", 303], ["C4", 0], ["G4", 0], ["C4", 17], ["G4", 0], ["E5", 0], ["C4", 303], ["G4", 0], ["E5", 0], ["E4", 17], ["B4", 0], ["G5", 0], ["E4", 303], ["B4", 0], ["G5", 0], ["F4", 17], ["C5", 0], ["A5", 0], ["F4", 455], ["C5", 0], ["A5", 0], ["D4", 25], ["A4", 0], ["F5", 0], ["D4", 227], ["A4", 0], ["F5", 0], ["E4", 13], ["B4", 0], ["G5", 0], ["E4", 227], ["B4", 0], ["G5", 0], ["C4", 253], ["A4", 0], ["E5", 0], ["C4", 455], ["A4", 0], ["E5", 0], ["A3", 25], ["E4", 0], ["C5", 0], ["A3", 227], ["E4", 0], ["C5", 0], ["B3", 13], ["F4", 0], ["D5", 0], ["B3", 227], ["F4", 0], ["D5", 0], ["G3", 13], ["D4", 0], ["B4", 0], ["G3", 455], ["D4", 0], ["B4", 0], ["C3", 265], ["C3", 455]].length)
 
 /* Reasoning (you don't need to read through this) */
 // this is a method which has less complexity... async js and ui manipulation introduces so much that 
