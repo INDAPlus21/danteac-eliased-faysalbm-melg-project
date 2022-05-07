@@ -1,3 +1,7 @@
+let has_won = false
+let played_notes = []
+let false_notes = 0
+
 function arraysEqual(a, b) {
     if (a === b) return true
     if (a == null || b == null) return false
@@ -72,3 +76,66 @@ window.selectSong = selectSong
         }
     }
 } */
+
+function challengeFunc(key, octave) {
+    // console.log({ key }, { octave }, should_play[number_correct])
+    /* if (song_to_play[notes_played][0] == "Pause") {
+        played_notes.push("Pause")
+        if (!self_play) {
+            notes_played++ // ok. great. it's definitely not the pauses that are causing the flickering anymore 
+        }
+        // but this is in conflict with the other mode of playing 
+    } else {
+        played_notes.push(key + octave)
+    } */
+
+    console.log("in challengefunc: ", { key }, { octave })
+    played_notes.push(key + octave)
+    // if (key + octave != "Pause" && )
+    if (song_to_play[notes_played][0] == key + octave /*|| song_to_play[notes_played][0] == "Pause"*/) {
+        // console.log("one more correct")
+        // notes_played += 2
+        updateFallingTiles() // aha! I don't think this gets called 
+    } else {
+        false_notes++
+    }
+
+    // only at end of track 
+    if (notes_played == song_to_play.length && !has_won && !self_play /* arraysEqual(played_notes, should_play)*/) {
+        has_won = true
+        let stats = document.createElement("div")
+        stats.id = "accuracy"
+        let notes_container = document.getElementById("falling-tiles-container")
+        let white_tiles = document.getElementsByClassName("white")
+        console.log({ stats })
+        console.log(song_to_play.length / false_notes)
+        console.log(song_to_play.length, { number_incorrect: false_notes })
+        let accuracy = Math.round((notes_played / (notes_played + false_notes)) * 100)
+        if (accuracy == Infinity) accuracy = 100
+        console.log({ accuracy })
+        stats.innerHTML = "Accuracy: " + accuracy + "%"
+        notes_container.append(stats)
+
+        setTimeout(() => {
+            playNote("./piano-mp3/C5.mp3")
+            playNote("./piano-mp3/E5.mp3")
+            playNote("./piano-mp3/G5.mp3")
+            console.log(white_tiles.length)
+            for (let i = 0; i < white_tiles.length; i++) {
+                white_tiles[i].style.backgroundColor = "#51eb5e" // document.body.getComputedStyle("--green") // "#58cf62"
+            }
+        }, 400)
+        setTimeout(() => {
+            playNote("./piano-mp3/C5.mp3")
+            playNote("./piano-mp3/E5.mp3")
+            playNote("./piano-mp3/G5.mp3")
+        }, 500)
+        setTimeout(() => {
+            for (let i = 0; i < white_tiles.length; i++) {
+                white_tiles[i].style.backgroundColor = "white"
+            }
+        }, 1000)
+
+    }
+    // console.log({ played_notes }, { should_play })
+}
