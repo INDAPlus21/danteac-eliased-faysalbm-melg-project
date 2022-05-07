@@ -52,7 +52,7 @@
     /* I don't get it */
     overflow: scroll;
     overflow: hidden;
-    border-top: 5px solid rgb(177, 14, 14);
+    border-top: 5px solid rgb(85, 85, 85);
     /* z-index: 2;  */
     /* Fix this */
     /* background: white; */
@@ -147,7 +147,7 @@ div {
 }
 
 .falling-tile {
-    background-color: var(--green);
+    background: linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%); /* linear-gradient(180deg, rgba(208,15,200,1) 0%, rgba(20,38,173,1) 50%, rgba(0,249,255,1) 100%); */ /* var(--green); */ 
     height: 100px;
     width: 35px;
     border-radius: 8px;

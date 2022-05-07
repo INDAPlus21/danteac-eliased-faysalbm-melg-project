@@ -130,6 +130,7 @@ async function selfPlay(song_to_play, reset_tiles = true) {
             colorTile(key, octave)
         }
     }
+    updateFallingTiles(song_to_play, reset_tiles)
 }
 
 // IT'S THIS THAT IS BLOCKING (that makes it so it can't go faster)
@@ -291,7 +292,7 @@ function setUpKeyboard() {
     /* if (self_play) {
         selfPlay(left_hand)
     } */
-    let right_hand = songs["mario"] //.slice(0, 100)
+    let right_hand = songs["combined_mario"] //.slice(0, 100)
     let original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
     setTempo(2, right_hand, original_right)
     updateFallingTiles(right_hand, false)
