@@ -1,0 +1,31 @@
+{
+    "name": "my_package",
+    "description": "",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/monatheoctocat/my_package.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/monatheoctocat/my_package/issues"
+    },
+    "homepage": "https://github.com/monatheoctocat/my_package",
+    "dependencies": {
+        "eslint-plugin-promise": "^6.0.0",
+        "eslint-plugin-unicorn": "^42.0.0",
+        "midi-parser-js": "^4.0.4",
+        "nouislider": "^15.5.1",
+        "parse-midi": "^2.0.2",
+        "unicorn": "^0.0.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.15.0"
+    }
+}
