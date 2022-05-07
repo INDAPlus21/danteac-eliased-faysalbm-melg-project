@@ -1,10 +1,5 @@
 import { songs } from "../songs.js"
 
-let played_notes = []
-
-let has_won = false
-let notes_played = 0
-let false_notes = 0
 let self_play = true
 
 // #region MISCELLENOUS FUNCTIONS  
@@ -43,23 +38,36 @@ let notes_audios = {}
 // do not use audio elements!!! 
 // https://stackoverflow.com/questions/54509959/how-do-i-play-audio-files-synchronously-in-javascript
 
-function playNote(note) {
+function playNote(note, keyboard = false) {
     const url = (note.includes("piano-mp3")) ? note : "./piano-mp3/" + note + ".mp3"
     // console.log(url)
-    const audio = (notes_audios[note]) ? notes_audios[note] : new Audio(url) // controversial ternary operators 
+    const audio = new Audio(url) // (notes_audios[note]) ? notes_audios[note] : 
     audio.addEventListener("canplaythrough", (event) => {
         audio.play()
     })
+
+    if (keyboard) {
+        setTimeout(() => {
+            audio.pause()
+        }, 1000)
+    }
+
     notes_audios[note] = audio // is unneccessary for already assigned  
 }
 
+// it's only self-play which calls this 
 function pauseNote(note) {
+    // console.log(notes_audios)
+    // const audio = notes_audios[note]
     const url = (note.includes("piano-mp3")) ? note : "./piano-mp3/" + note + ".mp3"
-    const audio = (notes_audios[note]) ? notes_audios[note] : new Audio(url)
+    const audio = notes_audios[note]
+
     // without timeout it just sounds bad, wayyyy to short and robotic, not natural 
     setTimeout(() => {
+        console.log("removing")
         audio.pause()
     }, 1000)
+
     delete notes_audios[note]
 }
 
@@ -87,44 +95,23 @@ function unColorTile(key, octave) {
 
 async function selfPlay(song_to_play, reset_tiles = true) {
     // iterate through all the notes in the song 
+    /* let notes_container = document.getElementById("falling-tiles-container")
+    notes_container.animate([
+        { transform: 'translateY(' + 31500 + 'px)' }
+    ], {
+        duration: 92000,
+        iterations: 1
+    }); */
+
     for (let i = 0; i < song_to_play.length; i++) { // song_to_play.length
         const note = song_to_play[i][0]
         const delta_time = song_to_play[i][1] // wait yeah actually that's expected behaviour 
 
-        /* console.log(song_to_play)
+        console.log(song_to_play)
         console.log(delta_time)
-        var notes_container = document.getElementById("falling-tiles-container")
-        notes_container.animate([
-            { transform: 'translateY(0px)' },
-            { transform: 'translateY(' + (delta_time * 0.4) + 'px)' }
-        ], {
-            duration: delta_time,
-            iterations: 1
-        }); */
-
-        /* if (delta_time == 0) {
-            notes_to_update.push(note)
-        } else {
-            notes_played += notes_to_update*2
-            console.log({notes_played})
-            notes_to_update = 0 
-            updateFallingTiles()
-        } */
-
-        await sleep(delta_time)
-
         const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
 
-        // var next_delta_time = song_to_play[i+1][1] // this will cause bugs when nearing end of the track 
-
-        // console.log(JSON.parse(JSON.stringify(notes_audios)))
-
-        // animate tiles 
-        // no... playing now height isn't the real issue... 
-        // ok so it goes duration 476, then sleep(1) (bc current), then duration 1, 
-        // and messes everything up. should be solved by... 
-        // but seems like it should happen BEFORE the sleep... 
-        // but should it really be -2 
+        await sleep(delta_time)
 
         let [key, octave] = getKeyOctave(note)
 
@@ -152,7 +139,7 @@ function updateFallingTiles(song_to_play, reset_tiles = true) {
     if (reset_tiles) {
         notes_container.innerHTML = ""
     }
-    // yes so next step is to cache all the mp3s 
+
     let how_many_elem = Math.min(song_to_play.length, 40)
     let notes_elems = {}
     let previous_heights = 0
@@ -166,8 +153,6 @@ function updateFallingTiles(song_to_play, reset_tiles = true) {
         previous_heights += height
 
         let added_this_iteration = false
-
-        // console.log({ song_to_play }, { notes_played }, { i }, { height }, song_to_play[notes_played + i])
 
         if (!notes_elems[key]) {
             let falling_tile = document.createElement("div")
@@ -183,15 +168,7 @@ function updateFallingTiles(song_to_play, reset_tiles = true) {
         for (let individual_key in notes_elems) {
             if (!added_this_iteration) {
                 let current_height = parseFloat(notes_elems[individual_key].style.height) || 0
-                // console.log({ current_height }, { individual_key }, JSON.parse(JSON.stringify(notes_elems)), "adding: ", height)
                 notes_elems[individual_key].style.height = current_height + height + "px"
-
-                // var current_bottom = parseFloat(notes_elems[individual_key].style.bottom) || 0
-                // console.log({ current_bottom }, "adding to bottom: ", height)
-                // notes_elems[individual_key].style.bottom = current_bottom + height + "px"
-                // console.log("now: ", notes_elems[individual_key].style.bottom)
-                // you shouldn't need to change the bottom !!!
-                // previous_heights += parseInt(height) || 0 
             }
         }
 
@@ -204,93 +181,17 @@ function updateFallingTiles(song_to_play, reset_tiles = true) {
             // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
             let left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5
 
-            // console.log({ left_margin })
-
             if (song_to_play[index][0].includes("b")) {
                 left_margin -= 14
             }
-
-            // previous_heights += parseInt(height)
 
             notes_elems[key].style.left = left_margin + "px"
 
             notes_elems[key].style.display = "block"
 
-            // no, the case obviously is that they don't even go into this function 
-            /* if (left_margin == 0) {
-                notes_elems[key].style.display = "none"
-            } */
-            // notes_elems[key].style.bottom = previous_heights + "px"
-
-            // console.log("removing", { key })
             delete notes_elems[key]
         }
     }
-
-    // notes_played += 2
-}
-
-function challengeFunc(key, octave) {
-    // console.log({ key }, { octave }, should_play[number_correct])
-    /* if (song_to_play[notes_played][0] == "Pause") {
-        played_notes.push("Pause")
-        if (!self_play) {
-            notes_played++ // ok. great. it's definitely not the pauses that are causing the flickering anymore 
-        }
-        // but this is in conflict with the other mode of playing 
-    } else {
-        played_notes.push(key + octave)
-    } */
-
-    console.log("in challengefunc: ", { key }, { octave })
-    played_notes.push(key + octave)
-    // if (key + octave != "Pause" && )
-    if (song_to_play[notes_played][0] == key + octave /*|| song_to_play[notes_played][0] == "Pause"*/) {
-        // console.log("one more correct")
-        // notes_played += 2
-        updateFallingTiles() // aha! I don't think this gets called 
-    } else {
-        false_notes++
-    }
-
-    // only at end of track 
-    if (notes_played == song_to_play.length && !has_won && !self_play /* arraysEqual(played_notes, should_play)*/) {
-        has_won = true
-        let stats = document.createElement("div")
-        stats.id = "accuracy"
-        let notes_container = document.getElementById("falling-tiles-container")
-        let white_tiles = document.getElementsByClassName("white")
-        console.log({ stats })
-        console.log(song_to_play.length / false_notes)
-        console.log(song_to_play.length, { number_incorrect: false_notes })
-        let accuracy = Math.round((notes_played / (notes_played + false_notes)) * 100)
-        if (accuracy == Infinity) accuracy = 100
-        console.log({ accuracy })
-        stats.innerHTML = "Accuracy: " + accuracy + "%"
-        notes_container.append(stats)
-
-        setTimeout(() => {
-            playNote("./piano-mp3/C5.mp3")
-            playNote("./piano-mp3/E5.mp3")
-            playNote("./piano-mp3/G5.mp3")
-            console.log(white_tiles.length)
-            for (let i = 0; i < white_tiles.length; i++) {
-                white_tiles[i].style.backgroundColor = "#51eb5e" // document.body.getComputedStyle("--green") // "#58cf62"
-            }
-        }, 400)
-        setTimeout(() => {
-            playNote("./piano-mp3/C5.mp3")
-            playNote("./piano-mp3/E5.mp3")
-            playNote("./piano-mp3/G5.mp3")
-        }, 500)
-        setTimeout(() => {
-            for (let i = 0; i < white_tiles.length; i++) {
-                white_tiles[i].style.backgroundColor = "white"
-            }
-        }, 1000)
-
-    }
-    // console.log({ played_notes }, { should_play })
 }
 
 function setUpKeyboard() {
@@ -310,7 +211,7 @@ function setUpKeyboard() {
     let container = document.getElementById("keyboard-container")
     const template = document.getElementById("template")
 
-    for (var i = 1; i < 7; i++) {
+    for (let i = 1; i < 7; i++) {
         const clone = template.content.cloneNode(true)
         clone.className += " " + i
         container.appendChild(clone)
@@ -325,7 +226,7 @@ function setUpKeyboard() {
         ["n8", "n/", "n9"]
     ]
 
-    for (var i = 0; i < octaves.length; i++) {
+    for (let i = 0; i < octaves.length; i++) {
         octaves[i].className += " " + i
         let children = octaves[i].children
         console.log(children.length)
@@ -352,17 +253,16 @@ function setUpKeyboard() {
         let octave = parseInt(event.srcElement.parentNode.classList[1]) + 2
         let url = "./piano-mp3/" + id + octave + ".mp3"
         console.log({ url })
-        challengeFunc(id, octave)
-        playNote(url)
+        playNote(url, true)
     }
 
-    for (var i = 0; i < tiles.length; i++) {
+    for (let i = 0; i < tiles.length; i++) {
         tiles[i].addEventListener("click", (event) => {
             playTile(event)
         })
 
         // Make it possible to roll on keys with the mouse 
-        var should_press_key = false
+        var should_press_key = false // it's important to have var here 
 
         tiles[i].addEventListener("mousedown", (event) => {
             // console.log("mousedown", {event})
@@ -378,48 +278,36 @@ function setUpKeyboard() {
             }
         })
 
-        // console.log("mouseup", {event})
         tiles[i].addEventListener("mouseup", function (event) {
+            // console.log("mouseup", {event})
             should_press_key = false
         })
     }
 
-    setTimeout(async () => {
-        // preLoad()
-        // await sleep(3000)
-        let left_hand = songs["mario_left"] //.slice(4, 100)
-        let original_left = JSON.parse(JSON.stringify(left_hand)) // js references, man  
-        setTempo(2, left_hand, original_left)
-        updateFallingTiles(left_hand)
-        /* if (self_play) {
-            selfPlay(left_hand)
-        } */
-        let right_hand = songs["mario"] //.slice(21, 100)
-        let original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
-        setTempo(2, right_hand, original_right)
-        updateFallingTiles(right_hand, false)
-        if (self_play) {
-            // selfPlay(left_hand, true)
-            selfPlay(right_hand, true)
-        }
-    }, 0) //??? 0 second wait works, but no timeout doesn't??? 
+    /* let left_hand = songs["mario_left"] //.slice(4, 20)
+    let original_left = JSON.parse(JSON.stringify(left_hand)) // js references, man  
+    setTempo(2, left_hand, original_left)
+    updateFallingTiles(left_hand) */
+    /* if (self_play) {
+        selfPlay(left_hand)
+    } */
+    let right_hand = songs["mario"] //.slice(0, 100)
+    let original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
+    setTempo(2, right_hand, original_right)
+    updateFallingTiles(right_hand, false)
+    if (self_play) {
+        // selfPlay(left_hand, true)
+        selfPlay(right_hand, true)
+    }
 }
 
 setUpKeyboard()
 
-// YES!!! that's a great idea! be able to play two-handed... yes... may actually work 
-// implement something guitar-hero like (would be so much fun!)
+let played_notes_keyboard = []
 
 function computerKeyboardPress(event) {
-    let start_keyboard = performance.now()
-    /* var key_up = false 
-    document.addEventListener('keyup', () => {
-        console.log("key up")
-        key_up = true 
-    }); */
     let key = event.code.replace("Key", "").replace("Digit", "")
     console.log({ event })
-    // playSound("./piano-mp3/C2.mp3")
 
     if (["Numpad4", "Numpad6"].includes(event.code)) {
         event.preventDefault()
@@ -435,56 +323,31 @@ function computerKeyboardPress(event) {
     }
 
     function determinePlay(keys, octave) {
-        // console.log({ keys }, { octave })
         if (Object.keys(keys).includes(key)) {
+            console.log("playing")
             let elem_with_key = document.getElementsByClassName(keys[key])
             let key_elem = elem_with_key[octave - 2]
+            let url = "./piano-mp3/" + keys[key] + octave + ".mp3"
+            let key_octave = keys[key] + octave
+            console.log({ key_elem }, { url })
 
             console.log({ elem_with_key }, { key_elem })
             if (key_elem.className.includes("white")) {
                 key_elem.style.backgroundColor = "rgb(228, 228, 228)"
                 // don't you also need the actual key 
-                document.addEventListener("keyup", function (event) {
-                    let time_to_wait = performance.now() - start_keyboard
-                    let play_tiles = document.getElementsByClassName("falling-tile")
-                    // console.log({ play_tiles }, play_tiles.length, play_tiles[play_tiles.length - 1], play_tiles[0])
-                    // is this the cause of the other bug? 
-                    let iter_find_non_pause = 0
-                    let playing_now_height = parseInt(play_tiles[play_tiles.length - iter_find_non_pause - 1].style.height)
-                    while (song_to_play[notes_played - iter_find_non_pause][0] == "Pause" && iter_find_non_pause < 100) {
-                        // console.log(song_to_play[notes_played - iter_find_non_pause][0])
-                        playing_now_height = parseInt(play_tiles[play_tiles.length - iter_find_non_pause - 1].style.height)
-                        iter_find_non_pause++
-                    }
-                    // var playing_now_height = parseInt(play_tiles[play_tiles.length - 1].style.height)
-                    // console.log({ play_tiles }, { playing_now_height }, { time_to_wait })
-
+                document.addEventListener("keyup", function () {
                     key_elem.style.backgroundColor = "white"
-
-                    /* for (var j = 0; j < play_tiles.length; j++) {
-                        play_tiles[j].animate([
-                            // keyframes
-                            { transform: 'translateY(0px)' },
-                            { transform: 'translateY(' + playing_now_height + 'px)' }
-                        ], {
-                            // timing options
-                            duration: time_to_wait + 5,
-                            iterations: 1
-                        });
-                    } */
                 })
             } else {
                 key_elem.style.backgroundColor = "rgb(59, 58, 58)"
-                document.addEventListener("keyup", function (event) {
+                document.addEventListener("keyup", function () {
                     key_elem.style.backgroundColor = "black"
                 })
             }
 
-            let url = "./piano-mp3/" + keys[key] + octave + ".mp3"
-            console.log({ key_elem }, { url })
 
-            challengeFunc(keys[key], octave)
-            playNote(url)
+            playNote(key_octave, true)
+            played_notes_keyboard.push(key_octave)
         }
     }
 
@@ -494,8 +357,3 @@ function computerKeyboardPress(event) {
 }
 
 document.addEventListener("keydown", computerKeyboardPress)
-
-/* document.addEventListener('keyup', () => {
-    console.log("key up")
-    key_up = true 
-}); */
