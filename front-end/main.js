@@ -263,6 +263,7 @@ function setUpKeyboard() {
         })
 
         // Make it possible to roll on keys with the mouse 
+        // eslint-disable-next-line no-var
         var should_press_key = false // it's important to have var here 
 
         tiles[i].addEventListener("mousedown", (event) => {
@@ -292,7 +293,7 @@ function setUpKeyboard() {
     /* if (self_play) {
         selfPlay(left_hand)
     } */
-    let right_hand = songs["maybe_better_combined"] //.slice(246)
+    let right_hand = songs["after_debug"] //.slice(246)
     let original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
     setTempo(2, right_hand, original_right)
     updateFallingTiles(right_hand, false)
