@@ -94,10 +94,9 @@ function unColorTile(key, octave) {
 }
 
 async function selfPlay(song_to_play, reset_tiles = true) {
-    // iterate through all the notes in the song 
     let notes_container = document.getElementById("falling-tiles-container")
     notes_container.animate([
-        { transform: 'translateY(' + 31500 + 'px)' }
+        { transform: 'translateY(' + 33900 + 'px)' }
     ], {
         duration: 92000,
         iterations: 1
@@ -106,84 +105,30 @@ async function selfPlay(song_to_play, reset_tiles = true) {
     // jag tror att en stor anledning till att animate inte blir korrekt 
     // är för att settimeout blir helt disturbed av att man renderar 
 
-    let to_close = []
-
-    for (let i = 0; i < song_to_play.length; i++) { // song_to_play.length
+    // iterate through all the notes in the song 
+    for (let i = 0; i < song_to_play.length; i++) { 
         const note = song_to_play[i][0]
-        const delta_time = song_to_play[i][1] // wait yeah actually that's expected behaviour 
+        const delta_time = song_to_play[i][1] 
 
-        console.log(song_to_play)
-        console.log(delta_time)
-        const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
+        // console.log({delta_time})
+        // const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
 
         await sleep(delta_time)
 
         let [key, octave] = getKeyOctave(note)
 
         if (notes_audios[note]) {
-            // addEventToDisplay(song_to_play, i)
+            addEventToDisplay(song_to_play, i + 40)
 
             pauseNote(note)
-            // song_to_play.splice(i, 1)
-            // i--
 
             // new solution is that everything is happening too high up to see 
-            // the problem is that it should only update when it's "valid" midi, meaning no 
-            // "loose" notes that doesn't get closed 
-
-            // determine IF ANY OF THE CURRENT REMOVED are loose 
-            // deltatime is irrelevant 
-            // but you don't know if it's for closing that or not 
-            // and deltaTime 0 would only be a proxy... 
-            // you can check if the coming 10 notes all are closed in the coming 40 
-            // sure, sounds reasonable 
-            // you could improve this algorithm's time complexity 
-            // wait! if note_audios is EMPTY!!! (no... not exactly...)
-            /* let update_falling = true
-            for (let j = 0; j < 10; j++) { 
-                let closed = false
-                let inner_note = song_to_play[j][1]
-                for (let k = j; k < j + 5; k++) { 
-                    if (inner_note == song_to_play[k][1]) {
-                        closed = true
-                    }
-                }
-                if (!closed) {
-                    update_falling = false
-                }
-            } */
-            // to check that the notes are even is a good check ;P 
-            // song to play length is equally divisible by number in notes audios!!! 
-            // feels like there should be a hack, but why should there? 
-            // the whole problem is caused by you making it an invalid midi file 
-            // (Object.keys(notes_audios).length + 1) == 0
-
-            /* let number_keys_same = 0 
-            for (var j = 0; j < song_to_play.length; j++) { 
-                if song_to_play[j][1] == 
-                number_keys_same++
-            } */
-
-            // but this also needs to be integrated with the song_to_play splicing 
-            // problem is that all must be closed... 
-            // if (delta_time != 0)
-            // it solved the problem of no INVALID midi files being displayed, but introduces 
-            // the problem of too few valid ones 1
-
-            // I think the first step is to get a better updating function 
-            // only way you can solve both this problem and the animation problem 
 
             unColorTile(key, octave)
         } else {
-            /* if (delta_time == 0) {
-                to_close.push(note)
-            } */
-
-            // addEventToDisplay(song_to_play, i)
+            addEventToDisplay(song_to_play, i + 40)
 
             playNote(note)
-            // song_to_play.splice(i, 1)
-            // i--
             colorTile(key, octave)
         }
     }
