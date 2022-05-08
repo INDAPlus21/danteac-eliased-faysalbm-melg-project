@@ -1,4 +1,5 @@
 import { songs } from "../songs.js"
+import { song } from "../song.js"
 
 let self_play = true
 
@@ -25,7 +26,7 @@ function setTempo(tempo, song_to_play, original_song_to_play) {
     // console.log("new tempo: ", original_song_to_play[i - 1][1] / tempo)
 }
 
-function transposeUp() {
+function transposeUp(song_to_play) {
     for (let i = 0; i < song_to_play.length; i++) {
         song_to_play[i][0] = song_to_play[i][0].replace(/\d+$/, function (n) { return ++n })
     }
@@ -74,11 +75,12 @@ function pauseNote(note) {
 function colorTile(key, octave) {
     let elem_with_key = document.getElementsByClassName(key)
     let key_elem = elem_with_key[octave - 2]
+    key_elem.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
     if (key_elem.className.includes("white")) {
-        key_elem.style.backgroundColor = "rgb(228, 228, 228)"
         key_elem.style.boxShadow = "1px 1px 5px #555 inset";
     } else {
-        key_elem.style.backgroundColor = "rgb(59, 58, 58)"
+        key_elem.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
+        key_elem.style.filter = "brightness(50%)";
     }
 }
 
@@ -86,10 +88,11 @@ function unColorTile(key, octave) {
     let elem_with_key = document.getElementsByClassName(key)
     let key_elem = elem_with_key[octave - 2]
     if (key_elem.className.includes("white")) {
-        key_elem.style.backgroundColor = "white"
+        key_elem.style.background = "white"
         key_elem.style.boxShadow = "";
     } else {
-        key_elem.style.backgroundColor = "black"
+        key_elem.style.background = "black"
+        key_elem.style.filter = "brightness(100%)";
     }
 }
 
@@ -102,6 +105,8 @@ async function selfPlay(song_to_play, reset_tiles = true) {
         duration: 92000,
         iterations: 1
     }); */
+
+    let to_close = []
 
     for (let i = 0; i < song_to_play.length; i++) { // song_to_play.length
         const note = song_to_play[i][0]
@@ -119,11 +124,62 @@ async function selfPlay(song_to_play, reset_tiles = true) {
             pauseNote(note)
             song_to_play.splice(i, 1)
             i--
-            if (song_to_play.length % 2 == 0 && next_delta_time != 0) { // hack 
-                // updateFallingTiles(song_to_play, reset_tiles)
+            // the problem is that it should only update when it's "valid" midi, meaning no 
+            // "loose" notes that doesn't get closed 
+
+            // determine IF ANY OF THE CURRENT REMOVED are loose 
+            // deltatime is irrelevant 
+            // but you don't know if it's for closing that or not 
+            // and deltaTime 0 would only be a proxy... 
+            // you can check if the coming 10 notes all are closed in the coming 40 
+            // sure, sounds reasonable 
+            // you could improve this algorithm's time complexity 
+            // wait! if note_audios is EMPTY!!! (no... not exactly...)
+            /* let update_falling = true
+            for (let j = 0; j < 10; j++) { 
+                let closed = false
+                let inner_note = song_to_play[j][1]
+                for (let k = j; k < j + 5; k++) { 
+                    if (inner_note == song_to_play[k][1]) {
+                        closed = true
+                    }
+                }
+                if (!closed) {
+                    update_falling = false
+                }
+            } */
+            // to check that the notes are even is a good check ;P 
+            // song to play length is equally divisible by number in notes audios!!! 
+            // feels like there should be a hack, but why should there? 
+            // the whole problem is caused by you making it an invalid midi file 
+            // (Object.keys(notes_audios).length + 1) == 0
+
+            /* let number_keys_same = 0 
+            for (var j = 0; j < song_to_play.length; j++) { 
+                if song_to_play[j][1] == 
+                number_keys_same++
+            } */
+
+            // but this also needs to be integrated with the song_to_play splicing 
+            // problem is that all must be closed... 
+            // if (delta_time != 0)
+            // it solved the problem of no INVALID midi files being displayed, but introduces 
+            // the problem of too few valid ones 1
+
+            // I think the first step is to get a better updating function 
+            // only way you can solve both this problem and the animation problem 
+
+            if ( /* Object.keys(notes_audios).length == 0 */  song_to_play.length % 2 == 0 /*  && next_delta_time != 0 */ ) { // hack 
+                // to_close = []
+                // to_close.splice(to_close.indexOf(note), 1)
+                updateFallingTiles(song_to_play, reset_tiles)
             }
             unColorTile(key, octave)
         } else {
+            /* if (delta_time == 0) {
+                to_close.push(note)
+            } */
+
             playNote(note)
             song_to_play.splice(i, 1)
             i--
@@ -212,7 +268,7 @@ function setUpKeyboard() {
     let container = document.getElementById("keyboard-container")
     const template = document.getElementById("template")
 
-    for (let i = 1; i < 7; i++) {
+    for (let i = 1; i < 8; i++) {
         const clone = template.content.cloneNode(true)
         clone.className += " " + i
         container.appendChild(clone)
@@ -274,9 +330,24 @@ function setUpKeyboard() {
         })
 
         tiles[i].addEventListener("mouseover", function (event) {
-            // console.log("mouseover", {event})
+            console.log("mouseover", { event })
+            console.log(event.srcElement.parentNode.classList)
+            if (event.srcElement.classList[2] == "white") {
+                event.srcElement.style.backgroundColor = "rgb(228, 228, 228)"
+            } else {
+                event.srcElement.style.backgroundColor = "rgb(59, 58, 58)"
+            }
+
             if (should_press_key) {
                 playTile(event)
+            }
+        })
+
+        tiles[i].addEventListener("mouseout", function (event) {
+            if (event.srcElement.classList[2] == "white") {
+                event.srcElement.style.backgroundColor = "white"
+            } else {
+                event.srcElement.style.backgroundColor = "black"
             }
         })
 
@@ -286,20 +357,16 @@ function setUpKeyboard() {
         })
     }
 
-    /* let left_hand = songs["mario_left"] //.slice(4, 20)
-    let original_left = JSON.parse(JSON.stringify(left_hand)) // js references, man  
-    setTempo(2, left_hand, original_left)
-    updateFallingTiles(left_hand) */
-    /* if (self_play) {
-        selfPlay(left_hand)
-    } */
-    let right_hand = songs["after_debug"] //.slice(246)
-    let original_right = JSON.parse(JSON.stringify(right_hand)) // js references, man  
-    setTempo(2, right_hand, original_right)
-    updateFallingTiles(right_hand, false)
+    // I don't think it can handle when it turns to F claf? 
+
     if (self_play) {
-        // selfPlay(left_hand, true)
-        selfPlay(right_hand, true)
+        // let song_to_play = songs["combined_lone"] //.slice(22)
+        let song_to_play = song //.slice(22)
+        let original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
+        // setTempo(2, song_to_play, original_song)
+        transposeUp(song_to_play)
+        updateFallingTiles(song_to_play, false)
+        selfPlay(song_to_play, true)
     }
 }
 
