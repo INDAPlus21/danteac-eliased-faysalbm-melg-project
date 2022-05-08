@@ -78,9 +78,7 @@ function colorTile(key, octave) {
     key_elem.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
     if (key_elem.className.includes("white")) {
         key_elem.style.boxShadow = "1px 1px 5px #555 inset";
-    }/*  else {
-        key_elem.style.background = "linear-gradient(180deg, rgba(12,40,163,1) 0%, rgba(39,149,152,1) 100%)";
-    } */
+    }
 }
 
 function unColorTile(key, octave) {
@@ -104,6 +102,9 @@ async function selfPlay(song_to_play, reset_tiles = true) {
         duration: 92000,
         iterations: 1
     }); */
+
+    // jag tror att en stor anledning till att animate inte blir korrekt 
+    // är för att settimeout blir helt disturbed av att man renderar 
 
     let to_close = []
 
@@ -187,6 +188,66 @@ async function selfPlay(song_to_play, reset_tiles = true) {
     }
     updateFallingTiles(song_to_play, reset_tiles)
 }
+
+/* function updateFallingTiles(song_to_play) {
+    // reset all values 
+    // ok remember that you'll ANIMATE, you won't need to adjust any heights after the fact 
+    // just that they are aligned 
+    let notes_container = document.getElementById("falling-tiles-container")
+
+    let how_many_elem = Math.min(song_to_play.length, 40)
+    let notes_elems = {}
+    let previous_heights = 0
+
+    for (let i = 0; i < how_many_elem; i++) {
+
+        let index = i
+        let key = song_to_play[index][0]
+
+        let height = song_to_play[i][1] * 0.4
+        previous_heights += height
+
+        let added_this_iteration = false
+
+        if (!notes_elems[key]) {
+            let falling_tile = document.createElement("div")
+            falling_tile.id = "play-" + i
+            falling_tile.className = "falling-tile"
+            falling_tile.style.display = "none"
+            document.getElementById("falling-tiles-container").prepend(falling_tile)
+            notes_elems[key] = falling_tile
+            added_this_iteration = true
+            falling_tile.style.bottom = previous_heights + "px"
+        }
+
+        for (let individual_key in notes_elems) {
+            if (!added_this_iteration) {
+                let current_height = parseFloat(notes_elems[individual_key].style.height) || 0
+                notes_elems[individual_key].style.height = current_height + height + "px"
+            }
+        }
+
+        if (notes_elems[key] && !added_this_iteration) {
+            let [key_without_octave, octave] = getKeyOctave(key)
+
+            // position it directly above a piano keyboard key 
+            let key_elements = document.getElementsByClassName(key_without_octave)
+
+            // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
+            let left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5
+
+            if (song_to_play[index][0].includes("b")) {
+                left_margin -= 14
+            }
+
+            notes_elems[key].style.left = left_margin + "px"
+
+            notes_elems[key].style.display = "block"
+
+            delete notes_elems[key]
+        }
+    }
+}  */
 
 // IT'S THIS THAT IS BLOCKING (that makes it so it can't go faster)
 function updateFallingTiles(song_to_play, reset_tiles = true) {
