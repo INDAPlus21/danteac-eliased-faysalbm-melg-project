@@ -114,19 +114,26 @@ export function combineTracks(left_hand, right_hand) {
     while (true) {
         console.log(right_hand[index_right], { right_lead }, left_hand[index_left], { left_lead })
 
-        if (left_lead + left_hand[index_left][1] == right_lead + right_hand[index_right][1]) {
+        // or just ignore this third (first) one have have >= on right 
+        /* if (left_lead + left_hand[index_left][1] == right_lead + right_hand[index_right][1]) {
             // aha! det blir fel ordning här eftersom +38 blir lika med... 
             // fast det BORDE bli right hand direkt 
             // nej det ÄR att algoritmen har rätt för fan 
-            left_hand[index_left][1] = left_hand[index_left][1] - right_lead
+            left_hand[index_left][1] = left_hand[index_left][1] - (right_lead)
             combined.push(left_hand[index_left]);
             combined.push([right_hand[index_right][0], 0])
+
+            /* right_hand[index_right][1] = right_hand[index_right][1] - (left_lead)
+            combined.push(right_hand[index_right]);
+            combined.push([left_hand[index_left][0], 0]) 
+
+            // REMEMEBER THIS!!! THE HYPOTHESIS IS THAT LEFT_LEAD, RIGHT
 
             left_lead = 0
             right_lead = 0
             index_left++
             index_right++
-        } else if (left_lead + left_hand[index_left][1] < right_lead + right_hand[index_right][1]) {
+        } */ if (left_lead + left_hand[index_left][1] <= right_lead + right_hand[index_right][1]) {
             pushLeft()
         } else {
             pushRight()
@@ -135,12 +142,12 @@ export function combineTracks(left_hand, right_hand) {
         if (!right_hand[index_right]) {
             // du borde också ta hänsyn till lead här 
             console.log("concating left", left_hand.slice(index_left))
-            pushLeft()
+            if (left_hand[index_left]) pushLeft()
             combined = combined.concat(left_hand.slice(index_left))
             break;
         } else if (!left_hand[index_left]) {
             console.log("concating right", { index_right })
-            pushRight()
+            if (right_hand[index_right]) pushRight()
             combined = combined.concat(right_hand.slice(index_right))
             break;
         }
@@ -269,7 +276,7 @@ function testAnother() {
 // testLeftHandConcat()
 // testAnother()
 
-let combined = combineTracks(songs["mario_left"], songs["mario"])
+/* let combined = combineTracks(songs["lone_left"], songs["lone_right"])
 console.log(combined.slice())
 
 fs.writeFile("./notes_array.json", JSON.stringify(combined), 'utf8', function (err) {
@@ -278,7 +285,7 @@ fs.writeFile("./notes_array.json", JSON.stringify(combined), 'utf8', function (e
     }
 
     console.log("The file was saved!");
-}); 
+});  */
 
 /* [
     ['C3', 265], ['C3', 455],

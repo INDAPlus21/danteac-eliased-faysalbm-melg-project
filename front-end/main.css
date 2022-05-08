@@ -33,13 +33,13 @@
     z-index: 1;
 }
 
-.white:hover {
+/* .white:hover {
     background-color: rgb(228, 228, 228);
 }
 
 .black:hover {
     background-color: rgb(59, 58, 58);
-}
+} */
 
 #keyboard-container {
     margin-top: calc(var(--white-width)/10);
