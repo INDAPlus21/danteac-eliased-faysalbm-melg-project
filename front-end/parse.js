@@ -18,7 +18,7 @@ let notes = {
 
 
 // read a .mid binary (as base64)
-let midi_file = "./midis/Lone_Digger.mid"
+let midi_file = "./midis/musemario.mid"
 let tracks = []
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
