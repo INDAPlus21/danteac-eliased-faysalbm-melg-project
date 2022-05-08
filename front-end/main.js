@@ -78,10 +78,9 @@ function colorTile(key, octave) {
     key_elem.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
     if (key_elem.className.includes("white")) {
         key_elem.style.boxShadow = "1px 1px 5px #555 inset";
-    } else {
-        key_elem.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
-        key_elem.style.filter = "brightness(50%)";
-    }
+    }/*  else {
+        key_elem.style.background = "linear-gradient(180deg, rgba(12,40,163,1) 0%, rgba(39,149,152,1) 100%)";
+    } */
 }
 
 function unColorTile(key, octave) {
@@ -172,7 +171,7 @@ async function selfPlay(song_to_play, reset_tiles = true) {
             if ( /* Object.keys(notes_audios).length == 0 */  song_to_play.length % 2 == 0 /*  && next_delta_time != 0 */ ) { // hack 
                 // to_close = []
                 // to_close.splice(to_close.indexOf(note), 1)
-                updateFallingTiles(song_to_play, reset_tiles)
+                // updateFallingTiles(song_to_play, reset_tiles)
             }
             unColorTile(key, octave)
         } else {
