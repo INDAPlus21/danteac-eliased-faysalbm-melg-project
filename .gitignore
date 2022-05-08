@@ -21,3 +21,5 @@ MIDI.js/
 # Added by cargo
 
 /target
+
+front-end/node_modules
