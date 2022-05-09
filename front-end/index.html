@@ -8,26 +8,33 @@
         <link rel="icon" type="image/x-icon" href="./logo.png">
     </head>
     <body>
-        <!-- <br> -->
-        <!-- <div id="challenge">Play</div> -->
-        <!-- <br></br> -->
-        <!-- <link href="nouislider.css" rel="stylesheet"> -->
-        <!-- <script src="./nouislider.js"></script>1 -->
-        <!-- <div id="settings">
-        <label for="tempo">Tempo</label>
-        1<input
-            type="range"
-            oninput="setTempo(this.value)"
-            name="tempo"
-            min="0.1"
-            max="10"
-            step="0.1"
-            value="1"
-        ></input>
-        <label for="select-song">Song</label>
-        <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select>
-        <button id="self-play" onclick="stopSelfPlay()">Play yourself</button>
-    </div> -->
+        <div id="settings">
+            <!-- <label for="tempo">Tempo</label>
+            <input
+                type="range"
+                oninput="setTempo(this.value)"
+                name="tempo"
+                min="0.1"
+                max="10"
+                step="0.1"
+                value="1"
+            ></input> -->
+            <!-- <input type="file" id="import" name="Import MIDI file"></input> -->
+            <input
+                type="button"
+                id="pass_to_real_import"
+                value="Import MIDI file"
+                onclick="document.getElementById('import').click();"
+            >
+            <input
+                type="file"
+                style="display:none;"
+                id="import"
+                name="file"
+            >
+            <!-- <label for="select-song">Song</label>
+            <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select> -->
+        </div>
         <div id="piano-display">
             <template id="template">
                 <div class="octave-container">

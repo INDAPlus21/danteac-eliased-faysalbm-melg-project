@@ -1,11 +1,60 @@
-// These lines make "require" available
-import { createRequire } from "module";
 import { combineTracks } from "./combineTracks.js"
+
+import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
 
 const midiParser = require('midi-parser-js');
 const fs = require('fs')
+
+export function parseFile() {
+    const tracks = []
+    fs.readFile(midi_file, 'base64', function (err, raw_data) {
+        // Parse the obtainer base64 string ...
+        const midiArray = midiParser.parse(raw_data);
+
+        console.log(midiArray); // useful information 
+        console.log(midiArray.track[0]);
+
+        // maybe the 121 byte is there in every midi to estabish the upper range? 
+        function getNotesAndTimes(track) {
+            const notes_and_times = []
+            for (let i = 0; i < track.length; i++) {
+                const data = track[i].data
+                const type = track[i].type
+                const deltaTime = track[i].deltaTime
+                if (type == 9) {
+                    const note = notes[data[0]]
+                    notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
+                }
+            }
+            return notes_and_times
+        }
+
+
+        for (let i = 0; i < midiArray.track.length; i++) {
+            const track = midiArray.track[i].event
+            const notes_and_times = getNotesAndTimes(track)
+
+            if (notes_and_times.length) {
+                tracks.push(notes_and_times)
+            }
+        }
+
+        console.log(tracks.length)
+        const combined = combineTracks(tracks[0], tracks[1])
+
+        fs.writeFile("./song.js", "export const song = " + JSON.stringify(combined), 'utf8', function (err) {
+            if (err) {
+                return console.log(err);
+            }
+
+            console.log("The file was saved!");
+        });
+
+        return combined
+    });
+}
 
 
 const notes = {
@@ -19,48 +68,6 @@ const notes = {
 // "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/Nyan_Cat_-_As_played_by_Tom_Brier_a_the_Sutter_Creek_Ice-cream_Emporium.mid"
-const tracks = []
-fs.readFile(midi_file, 'base64', function (err, raw_data) {
-    // Parse the obtainer base64 string ...
-    const midiArray = midiParser.parse(raw_data);
+const midi_file = "./midis/Lone_Digger.mid"
 
-    console.log(midiArray); // useful information 
-    console.log(midiArray.track[0]);  
-
-    // maybe the 121 byte is there in every midi to estabish the upper range? 
-    function getNotesAndTimes(track) {
-        const notes_and_times = []
-        for (let i = 0; i < track.length; i++) {
-            const data = track[i].data
-            const type = track[i].type
-            const deltaTime = track[i].deltaTime
-            if (type == 9) {
-                const note = notes[data[0]]
-                notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
-            }
-        }
-        return notes_and_times
-    }
-
-
-    for (let i = 0; i < midiArray.track.length; i++) { 
-        const track = midiArray.track[i].event 
-        const notes_and_times = getNotesAndTimes(track)
-        
-        if (notes_and_times.length) {
-            tracks.push(notes_and_times)
-        }
-    }
-
-    console.log(tracks.length)
-    const combined = combineTracks(tracks[0], tracks[1])
-
-    fs.writeFile("./song.js", "export const song = " + JSON.stringify(combined), 'utf8', function (err) {
-        if (err) {
-            return console.log(err);
-        }
-
-        console.log("The file was saved!");
-    });
-});
+parseFile(midi_file)
