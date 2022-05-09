@@ -1,15 +1,18 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
-
-const self_play = false
-const notes_audios = {}
-let previous_heights = 0
-const notes_elems = {}
-let time_last_event = performance.now()
+// import { parseFile } from "./web_parse.js"
 
 const cached = {}
-const played_notes = []
-const current_notes = {}
+
+// s for state 
+const s = {
+    played_notes: [],
+    notes_audios: {}, 
+    notes_elems: {},
+    previous_heights: 0,
+    self_play: true,
+    time_last_event: performance.now() // should really be reinitialized the first note user 
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -52,25 +55,19 @@ function playNote(note, keyboard = false) {
         }, 1000)
     }
 
-    if (!self_play) {
-        current_notes[note] = 0
-    }
-
-    console.log(played_notes)
-
-    notes_audios[note] = audio // is unneccessary for already assigned  
+    s.notes_audios[note] = audio // is unneccessary for already assigned  
 }
 
 // it's only self-play which calls this 
 function pauseNote(note) {
-    const audio = notes_audios[note]
+    const audio = s.notes_audios[note]
 
     // without timeout it just sounds bad, wayyyy to short and robotic, not natural 
     setTimeout(() => {
         audio.pause()
     }, 1000)
 
-    delete notes_audios[note]
+    delete s.notes_audios[note]
 }
 
 function colorTile(key, octave, hand) {
@@ -104,7 +101,7 @@ function unColorTile(key, octave) {
 async function selfPlay(song_to_play) {
     const notes_container = document.getElementById("falling-tiles-container")
 
-    const num_tiles_start = Math.min(song_to_play.length, 80)
+    const num_tiles_start = Math.min(song_to_play.length, 90)
 
     for (let i = 0; i < num_tiles_start; i++) {
         addEventToDisplay(song_to_play, i)
@@ -135,14 +132,14 @@ async function selfPlay(song_to_play) {
         if (delta_time) {
             await sleep(delta_time)
         }
-        console.log("sleep took %fms, should have taken %sms", ((performance.now() - sleep_time)).toString().slice(0, 4), delta_time)
+        // console.log("sleep took %fms, should have taken %sms", ((performance.now() - sleep_time)).toString().slice(0, 4), delta_time)
 
 
         const time = performance.now()
 
         const [key, octave] = getKeyOctave(note)
 
-        if (notes_audios[note]) {
+        if (s.notes_audios[note]) {
             addEventToDisplay(song_to_play, i + num_tiles_start) // you need to start adding immediately 
 
             pauseNote(note)
@@ -158,7 +155,7 @@ async function selfPlay(song_to_play) {
         }
 
         // string substitution patterns !
-        console.log("midi event took %fms", ((performance.now() - time)).toString().slice(0, 4))
+        // console.log("midi event took %fms", ((performance.now() - time)).toString().slice(0, 4))
     }
 
     notes_container.innerHTML = ""
@@ -170,9 +167,9 @@ async function addEventToDisplay(song_to_play, i) {
         const key = song_to_play[i][0]
 
         const height = song_to_play[i][1] * 0.4
-        previous_heights += height
+        s.previous_heights += height
 
-        if (!notes_elems[key]) {
+        if (!s.notes_elems[key]) {
             const falling_tile = document.createElement("div")
 
             falling_tile.className = "falling-tile"
@@ -181,20 +178,20 @@ async function addEventToDisplay(song_to_play, i) {
             }
 
             falling_tile.style.display = "none"
-            falling_tile.style.bottom = previous_heights + "px"
+            falling_tile.style.bottom = s.previous_heights + "px"
             document.getElementById("falling-tiles-container").prepend(falling_tile)
 
             if (song_to_play[i][2] == 1) {
                 falling_tile.style.background = "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)";
             }
 
-            notes_elems[key] = falling_tile
+            s.notes_elems[key] = falling_tile
             return
         }
 
-        for (const individual_key in notes_elems) {
-            const current_height = parseFloat(notes_elems[individual_key].style.height) || 0
-            notes_elems[individual_key].style.height = current_height + height + "px"
+        for (const individual_key in s.notes_elems) {
+            const current_height = parseFloat(s.notes_elems[individual_key].style.height) || 0
+            s.notes_elems[individual_key].style.height = current_height + height + "px"
         }
 
         const [key_without_octave, octave] = getKeyOctave(key)
@@ -212,11 +209,11 @@ async function addEventToDisplay(song_to_play, i) {
             left_margin = key_elements[octave - 1].getBoundingClientRect().left
         }
 
-        notes_elems[key].style.left = left_margin + "px"
+        s.notes_elems[key].style.left = left_margin + "px"
 
-        notes_elems[key].style.display = "block"
+        s.notes_elems[key].style.display = "block"
 
-        delete notes_elems[key]
+        delete s.notes_elems[key]
 
         // you only need to check the bottom element here... 
         // and the number here is dependent on the height above the piano line 
@@ -227,7 +224,7 @@ async function addEventToDisplay(song_to_play, i) {
         const top = tile_top - cached.piano_top;
 
         if (top > 200) {
-            console.log("removing")
+            // console.log("removing")
             child.remove()
         }
     }
@@ -304,7 +301,7 @@ function setUpKeyboard() {
         var should_press_key = false // it's important to have var here 
 
         // I think there's some bug when rolling and end note, but I don't care 
-        
+
         tiles[i].addEventListener("mousedown", (event) => {
             addToTime(getNote(event))
             playTile(event)
@@ -348,7 +345,7 @@ function setUpKeyboard() {
 
     // I don't think it can handle when it turns to F claf? 
 
-    if (self_play) {
+    if (s.self_play) {
         // let song_to_play = songs["combined_lone"] //.slice(22)
         const song_to_play = song //.slice(22)
         const original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
@@ -365,11 +362,11 @@ function addToTime(note) {
 
     const time = performance.now()
 
-    if (!self_play) {
-        played_notes.push([note, time - time_last_event])
+    if (!s.self_play) {
+        s.played_notes.push([note, time - s.time_last_event])
     }
 
-    time_last_event = time
+    s.time_last_event = time
 }
 
 function computerKeyboardPress(event) {
@@ -426,3 +423,11 @@ function computerKeyboardPress(event) {
 }
 
 document.addEventListener("keydown", computerKeyboardPress)
+
+document.getElementById("import").addEventListener("change", () => {
+    console.log("hi")
+    const reader = new FileReader()
+    const midi_file = reader.readAsText(event.target.files[0]).result
+    const combined = parseFile(midi_file)
+    console.log({combined})
+})
