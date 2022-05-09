@@ -15,6 +15,7 @@ Cargo.lock
 *.pdb
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,rust
+<<<<<<< HEAD
 
 MIDI.js
 
@@ -23,3 +24,21 @@ MIDI.js
 /target
 
 front-end/node_modules
+=======
+aiproject/src/main.exe
+
+
+# Added by cargo
+#
+# already existing elements were commented out
+
+/target
+#Cargo.lock
+
+# Nodejs
+aiproject/node_modules/
+.idea
+
+# MacOS
+.DS_Store
+>>>>>>> origin/develop
