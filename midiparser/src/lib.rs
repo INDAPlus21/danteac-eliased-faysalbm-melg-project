@@ -53,11 +53,17 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
 
                 // Read track events (doesn't account for SysEx messages)
                 while i - start_i < byte_count as usize {
+
                     let delta = variable_length_bytes_to_int(&data, &mut i);
 
                     // Status byte (type and channel)
                     let event_type = data[i] >> 4; // Top part of byte
                                                    //let channel = (data[i] << 4) >> 4; // Bottom part of byte
+                    
+                    if i < 100 {
+                        println!("{:?} event {:?}", i, event_type); 
+                    }
+                    
                     i += 1;
 
                     match event_type {
@@ -68,8 +74,10 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
 
                             // Note off should always have volume 0
                             if event_type == 8 {
+                                println!("eight!"); 
                                 volumes.push(0f32);
                             } else {
+                                println!("nine!"); 
                                 volumes.push(data[i + 1] as f32);
                             }
 
@@ -139,9 +147,9 @@ pub fn convert_to_front_end_format(song: Song) -> Vec<Vec<Thing>> {
         note_offsets.push(vec![note); 
     } */
 
-    let track = &song.tracks[0];
+    let track = &song.tracks[1];
     for i in 0..track.notes.len() {
-        println!("{}", i);
+        // println!("{}", i);
         let note = hash_notes[&(track.notes[i] as i32)];
         let to_push = vec![Thing::String(note.to_string()), Thing::Number(track.offsets[i])];
         note_offsets.push(to_push);
