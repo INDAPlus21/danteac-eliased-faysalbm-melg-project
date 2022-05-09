@@ -287,7 +287,7 @@ function setUpKeyboard() {
     tiles[tiles.length - 1].style.borderRightWidth = "2px"
 
     function getNote(event) {
-        const key = event.srcElement.classList[1] 
+        const key = event.srcElement.classList[1]
         const octave = parseInt(event.srcElement.parentNode.classList[1]) + 2
         return key + octave
     }
@@ -300,23 +300,25 @@ function setUpKeyboard() {
     }
 
     for (let i = 0; i < tiles.length; i++) {
-        // Make it possible to roll on keys with the mouse 
         // eslint-disable-next-line no-var
         var should_press_key = false // it's important to have var here 
 
+        // I think there's some bug when rolling and end note, but I don't care 
+        
         tiles[i].addEventListener("mousedown", (event) => {
-            // console.log("mousedown", {event})
             addToTime(getNote(event))
             playTile(event)
             should_press_key = true
-            // you could have some complicated solution to this 
-            // playTile(event)
+            // you could have some complicated solution to this (to what?)
         })
 
-        tiles[i].addEventListener("mouseover", function (event) {
-            // console.log("mouseover", { event })
+        tiles[i].addEventListener("mouseup", function (event) {
             addToTime(getNote(event))
+            should_press_key = false
+        })
 
+        // Makes it possible to roll on keys with the mouse 
+        tiles[i].addEventListener("mouseover", function (event) {
             if (event.srcElement.classList[2] == "white") {
                 event.srcElement.style.backgroundColor = "rgb(228, 228, 228)"
             } else {
@@ -324,24 +326,21 @@ function setUpKeyboard() {
             }
 
             if (should_press_key) {
+                addToTime(getNote(event))
                 playTile(event)
             }
         })
 
         tiles[i].addEventListener("mouseout", function (event) {
-            addToTime(getNote(event))
+            if (should_press_key) {
+                addToTime(getNote(event))
+            }
 
             if (event.srcElement.classList[2] == "white") {
                 event.srcElement.style.backgroundColor = "white"
             } else {
                 event.srcElement.style.backgroundColor = "black"
             }
-        })
-
-        tiles[i].addEventListener("mouseup", function (event) {
-            // console.log("mouseup", {event})
-            addToTime(getNote(event))
-            should_press_key = false
         })
     }
 
