@@ -6,6 +6,8 @@ const notes_audios = {}
 let previous_heights = 0
 const notes_elems = {}
 
+const cached = {}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -194,25 +196,33 @@ async function addEventToDisplay(song_to_play, i) {
         notes_elems[key].style.left = left_margin + "px"
 
         notes_elems[key].style.display = "block"
-        
+
         delete notes_elems[key]
 
-
-        // could be made more efficient 
-        const piano_top = document.getElementsByClassName("tile")[0].getBoundingClientRect().top;
+        // you in reality only need to check the bottom element here... 
 
         // and the number here is dependent on the height above the piano line 
         // negative top values means over piano_top, we want to remove high values 
-        for (const child of document.getElementById("falling-tiles-container").children) {
-            const tile_top = child.getBoundingClientRect().top;
-            const top = tile_top - piano_top;
-            console.log(top) 
 
-            if (top > 100 /* parseInt(child.style.bottom) < previous_heights - 1300 */) {
+        const child = document.getElementById("falling-tiles-container").lastChild
+        const tile_top = child.getBoundingClientRect().top;
+        const top = tile_top - cached.piano_top;
+
+        if (top > 100) {
+            console.log("removing")
+            child.remove()
+        }
+
+        /* for (const child of document.getElementById("falling-tiles-container").children) {
+            const tile_top = child.getBoundingClientRect().top;
+            const top = tile_top - cached.piano_top;
+            console.log(top) 
+    
+            if (top > 100 /* parseInt(child.style.bottom) < previous_heights - 1300 *) {
                 console.log("removing")
                 child.remove()
             }
-        }
+        } */
     }
 }
 
@@ -320,6 +330,8 @@ function setUpKeyboard() {
             should_press_key = false
         })
     }
+
+    cached.piano_top = document.getElementsByClassName("tile")[0].getBoundingClientRect().top
 
     // I don't think it can handle when it turns to F claf? 
 
