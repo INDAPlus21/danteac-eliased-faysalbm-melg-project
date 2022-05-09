@@ -119,7 +119,7 @@ pub fn convert_to_front_end_format(song: Song) -> Vec<Vec<f32>> {
         29, "F1"),( 28, "E1"),( 27, "Eb1"),( 26, "D1"),( 25, "Db1"),( 24, "C1"),( 23, "B0"),( 22, "Bb0"),( 21, "A0"),( 20, "Ab"),( 19, "G"),( 18, "Gb"),( 17, "F"),( 16, "E"),( 15, "Eb"),( 14, "D"),( 13, "C#"),( 12, "C0"),( 11, "B"),( 10, "Bb"),( 9, "A"),( 8, "Ab"),( 7, "G"),( 6, "Gb"),( 5, "F"),( 4, "E"),( 3, "Eb"),( 2, "D"),( 1, "C#"),( 0, "C-1") 
     ]);
 
-        let mut note_offsets = vec![]; 
+    let mut note_offsets = vec![]; 
     /* for (i, note) in song.tracks[0].notes.iter().enumerate() {
         println!("{}", i);
         note_offsets.push(vec![note); 
