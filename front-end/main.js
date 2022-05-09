@@ -220,7 +220,9 @@ async function addEventToDisplay(song_to_play, i) {
         } else if (key_without_octave == "G") {
             left_margin += 5; 
         } else if (key_without_octave == "F") {
-            left_margin += 5; 
+            left_margin += 2; 
+        } else if (key_without_octave == "C") {
+            left_margin += 1; 
         }
         /* if (["D", "E", "F", "G", "A", "B"].includes(key_without_octave)) {
             left_margin += 5; 
