@@ -1,16 +1,16 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
-// import { parseFile } from "./web_parse.js"
+import { parseFile } from "../web_parse.js"
 
 const cached = {}
 
 // s for state 
 const s = {
     played_notes: [],
-    notes_audios: {}, 
+    notes_audios: {},
     notes_elems: {},
     previous_heights: 0,
-    self_play: true,
+    self_play: false,
     time_last_event: performance.now() // should really be reinitialized the first note user 
 }
 
@@ -98,7 +98,7 @@ function unColorTile(key, octave) {
     }
 }
 
-async function selfPlay(song_to_play) {
+export async function selfPlay(song_to_play) {
     const notes_container = document.getElementById("falling-tiles-container")
 
     const num_tiles_start = Math.min(song_to_play.length, 90)
@@ -424,10 +424,69 @@ function computerKeyboardPress(event) {
 
 document.addEventListener("keydown", computerKeyboardPress)
 
-document.getElementById("import").addEventListener("change", () => {
+const input = document.querySelector('input[type=file]');
+
+
+/* function base64toBlob(base64Data, contentType) {
+    contentType = contentType || '';
+    const sliceSize = 1024;
+    const byteCharacters = atob(base64Data);
+    const bytesLength = byteCharacters.length;
+    const slicesCount = Math.ceil(bytesLength / sliceSize);
+    const byteArrays = new Array(slicesCount);
+
+    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+        const begin = sliceIndex * sliceSize;
+        const end = Math.min(begin + sliceSize, bytesLength);
+
+        const bytes = new Array(end - begin);
+        for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
+            bytes[i] = byteCharacters[offset].charCodeAt(0);
+        }
+        byteArrays[sliceIndex] = new Uint8Array(bytes);
+    }
+    return new Blob(byteArrays, { type: contentType });
+} */
+
+function b64EncodeUnicode(str) {
+    // first we use encodeURIComponent to get percent-encoded UTF-8,
+    // then we convert the percent encodings into raw bytes which
+    // can be fed into btoa.
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }));
+}
+
+window.onload = function () {
+    // configure MIDIReader
+    const source = document.getElementById('import');
+    parseFile(source) /* (combined) => {
+        console.log(combined)
+    }); */
+
+    /* MidiParser.parse( source, function(obj){
+        // Your callback function
+        console.log(obj);
+        document.getElementById("output").innerHTML = JSON.stringify(obj, undefined, 2);
+    }); */
+};
+
+
+/* input.addEventListener("change", (/* event /) => {
     console.log("hi")
+    // const file = event.target.files[0]; 
+    const file = input.files[0]
     const reader = new FileReader()
-    const midi_file = reader.readAsText(event.target.files[0]).result
-    const combined = parseFile(midi_file)
-    console.log({combined})
-})
+    reader.addEventListener("load", (e) => {
+        console.log("in reader")
+        console.log(typeof e.target.result)
+        // const midi_file = reader.readAsText(event.target.files[0].result)
+        // const base64 = Buffer.from(e.target.result, 'base64')
+        // parseFile(base64)
+
+        const combined = parseFile(b64EncodeUnicode(e.target.result)) // document.getElementById("import")
+        console.log({ combined })
+    })
+    reader.readAsText(file);
+}) */

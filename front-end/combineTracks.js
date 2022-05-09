@@ -1,5 +1,4 @@
 import { songs } from "./songs.js"
-import * as fs from 'fs';
 
 // looking up an array's length is O(1) 
 
@@ -31,7 +30,7 @@ export function combineTracks(left_hand, right_hand) {
     }
 
     while (true) {
-        console.log(right_hand[index_right], { right_lead }, left_hand[index_left], { left_lead })
+        // console.log(right_hand[index_right], { right_lead }, left_hand[index_left], { left_lead })
 
         if (left_lead + left_hand[index_left][1] <= right_lead + right_hand[index_right][1]) {
             pushLeft()
