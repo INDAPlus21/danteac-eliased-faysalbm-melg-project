@@ -18,7 +18,7 @@ const notes = {
 
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/Lone_Digger.mid"
+const midi_file = "./midis/the_entertainer.mid"
 const tracks = []
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
