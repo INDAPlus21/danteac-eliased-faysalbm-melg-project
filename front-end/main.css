@@ -1,6 +1,5 @@
 :root {
     --white-width: 50px;
-    --green: #51eb5e;
     --background: rgb(22, 22, 22);
 }
 
@@ -19,7 +18,6 @@
     margin-right: -35px;
     z-index: 0;
     background-color: white;
-    /* box-shadow: 1px 1px 5px #555 inset; */
 }
 
 .black {
@@ -33,29 +31,16 @@
     z-index: 1;
 }
 
-/* .white:hover {
-    background-color: rgb(228, 228, 228);
-}
-
-.black:hover {
-    background-color: rgb(59, 58, 58);
-} */
-
 #keyboard-container {
     margin-top: calc(var(--white-width)/10);
     height: 303.8px;
     /* calc(var(--white-width)*4) */
     /* height: fit-content;  */
-    /* Actually important */
+    /* Actually important, don't know why */
     width: 300%;
-    /* Is 200% enough??? */
-    /* I don't get it */
     overflow: scroll;
     overflow: hidden;
     border-top: 5px solid rgb(85, 85, 85);
-    /* z-index: 2;  */
-    /* Fix this */
-    /* background: white; */
 }
 
 #accuracy {
@@ -76,23 +61,6 @@
 .end-white {
     border-right-width: 0px;
 }
-
-/* .note-to-play {
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    width: fit-content;
-    display: inline-block;
-    margin: 1px;
-    margin-right: 5px;
-    border-radius: 5px;
-    padding: 5px;
-    font-size: 20px;
-} */
-
-/* .pause {
-    background-color: transparent !important;
-} */
 
 .octave-container {
     display: inline-block;
