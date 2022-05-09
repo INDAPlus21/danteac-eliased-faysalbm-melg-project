@@ -62,10 +62,14 @@ function pauseNote(note) {
     delete notes_audios[note]
 }
 
-function colorTile(key, octave) {
+function colorTile(key, octave, hand) {
     const key_tiles = document.getElementsByClassName(key)
     const key_tile = key_tiles[octave - 2]
-    key_tile.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
+    if (hand == 0) /* left */ {
+        key_tile.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
+    } else {
+        key_tile.style.background = "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)"; // "linear-gradient(180deg, rgba(255,7,7,1) 0%, rgba(240,181,108,1) 100%)";
+    }
     if (key_tile.className.includes("white")) {
         key_tile.style.boxShadow = "1px 1px 5px #555 inset";
     }
@@ -79,14 +83,13 @@ function unColorTile(key, octave) {
         key_tile.style.boxShadow = "";
     } else {
         key_tile.style.background = "black"
-        key_tile.style.filter = "brightness(100%)";
     }
 }
 
 async function selfPlay(song_to_play) {
     const notes_container = document.getElementById("falling-tiles-container")
 
-    const num_tiles_start = Math.min(song_to_play.length, 40)
+    const num_tiles_start = Math.min(song_to_play.length, 60)
 
     for (let i = 0; i < num_tiles_start; i++) {
         addEventToDisplay(song_to_play, i)
@@ -159,9 +162,11 @@ async function selfPlay(song_to_play) {
             addEventToDisplay(song_to_play, i + num_tiles_start)
 
             playNote(note)
-            colorTile(key, octave)
+            colorTile(key, octave, song_to_play[i][2])
         } 
     }
+
+    notes_container.innerHTML = ""
 }
 
 async function addEventToDisplay(song_to_play, i) {
@@ -178,6 +183,10 @@ async function addEventToDisplay(song_to_play, i) {
             falling_tile.style.display = "none"
             falling_tile.style.bottom = previous_heights + "px"
             document.getElementById("falling-tiles-container").prepend(falling_tile)
+
+            if (song_to_play[i][2] == 1) {
+                falling_tile.style.background =  "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)";
+            }
 
             notes_elems[key] = falling_tile
             return
@@ -207,7 +216,7 @@ async function addEventToDisplay(song_to_play, i) {
         delete notes_elems[key]
 
         for (const child of document.getElementById("falling-tiles-container").children) { 
-            if (parseInt(child.style.bottom) < previous_heights - 1000) {
+            if (parseInt(child.style.bottom) < previous_heights - 1500) {
                 child.remove()
             }
         }

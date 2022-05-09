@@ -99,7 +99,7 @@ export function combineTracks(left_hand, right_hand) {
         right_hand[index_right][1] = right_hand[index_right][1] - left_lead
         left_lead = 0
         right_lead += right_hand[index_right][1]
-        combined.push(right_hand[index_right])
+        combined.push([right_hand[index_right][0], right_hand[index_right][1], 1])
         index_right++
     }
 
@@ -107,7 +107,7 @@ export function combineTracks(left_hand, right_hand) {
         left_hand[index_left][1] = left_hand[index_left][1] - right_lead
         right_lead = 0
         left_lead += left_hand[index_left][1]
-        combined.push(left_hand[index_left]);
+        combined.push([left_hand[index_left][0], left_hand[index_left][1], 0]);
         index_left++
     }
 
