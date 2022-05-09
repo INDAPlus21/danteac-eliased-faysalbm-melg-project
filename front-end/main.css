@@ -179,7 +179,7 @@ div {
 #falling-tiles-container {
     /* height: 420px; */
     position: relative;
-    margin-top: none;
+    margin-top: 0;
     height: 1000%;
 }
 
