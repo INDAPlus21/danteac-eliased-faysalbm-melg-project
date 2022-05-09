@@ -18,6 +18,10 @@ function arraysEqual(a, b) {
     return true
 }
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0
+}
+
 function resetVars() {
     song_to_play = [] // to make running function end 
     notes_played = 0
