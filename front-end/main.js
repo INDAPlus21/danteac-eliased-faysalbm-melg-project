@@ -66,7 +66,7 @@ function pauseNote(note) {
 
 function colorTile(key, octave, hand) {
     const key_tiles = document.getElementsByClassName(key)
-    const key_tile = key_tiles[octave - 2]
+    const key_tile = key_tiles[octave - 1]
     if (key_tile) { /* (if it's outside the display, should be fixed) */
         if (hand == 0) /* left */ {
             key_tile.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
@@ -81,7 +81,7 @@ function colorTile(key, octave, hand) {
 
 function unColorTile(key, octave) {
     const key_tiles = document.getElementsByClassName(key)
-    const key_tile = key_tiles[octave - 2]
+    const key_tile = key_tiles[octave - 1]
     if (key_tile) { /* (if it's outside the display, should be fixed) */
         if (key_tile.className.includes("white")) {
             key_tile.style.background = "white"
@@ -167,6 +167,10 @@ async function addEventToDisplay(song_to_play, i) {
             const falling_tile = document.createElement("div")
 
             falling_tile.className = "falling-tile"
+            if (song_to_play[i][0].includes("b")) {
+                falling_tile.className += " black-falling-tile"
+            }
+
             falling_tile.style.display = "none"
             falling_tile.style.bottom = previous_heights + "px"
             document.getElementById("falling-tiles-container").prepend(falling_tile)
@@ -192,17 +196,17 @@ async function addEventToDisplay(song_to_play, i) {
         // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
         // should be fixed 
 
-        const key_octave_tile = key_elements[octave - 2]
+        const key_octave_tile = key_elements[octave - 1]
 
         let left_margin
         if (key_octave_tile) {
-            left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5
+            left_margin = key_elements[octave - 1].getBoundingClientRect().left
         }
 
 
-        if (song_to_play[i][0].includes("b")) {
-            left_margin -= 14
-        }
+        /* if (song_to_play[i][0].includes("b")) {
+            left_margin -= 10
+        } */
 
         notes_elems[key].style.left = left_margin + "px"
 
@@ -218,7 +222,7 @@ async function addEventToDisplay(song_to_play, i) {
         const tile_top = child.getBoundingClientRect().top;
         const top = tile_top - cached.piano_top;
 
-        if (top > 100) {
+        if (top > 200) {
             console.log("removing")
             child.remove()
         }
@@ -244,7 +248,7 @@ function setUpKeyboard() {
     const container = document.getElementById("keyboard-container")
     const template = document.getElementById("template")
 
-    for (let i = 1; i < 8; i++) {
+    for (let i = 0; i < 8; i++) {
         const clone = template.content.cloneNode(true)
         clone.className += " " + i
         container.appendChild(clone)
@@ -268,8 +272,8 @@ function setUpKeyboard() {
             if (children[j].className.includes("black")) {
                 letter.className += " new-letter-black"
             }
-            if (i < 5 && !(i == 4 && j > 2)) { // so you don't painting undefined
-                letter.innerHTML = letter_mapping[i][j]
+            if (i > 0 && i < 6 && !(i == 5 && j > 2)) { // so you don't painting undefined
+                letter.innerHTML = letter_mapping[i-1][j]  
             }
             children[j].append(letter)
         }
@@ -366,7 +370,7 @@ function computerKeyboardPress(event) {
     function determinePlay(keys, octave) {
         if (Object.keys(keys).includes(key)) {
             const elem_with_key = document.getElementsByClassName(keys[key])
-            const key_elem = elem_with_key[octave - 2]
+            const key_elem = elem_with_key[octave - 1]
             const key_octave = keys[key] + octave
 
             if (key_elem.className.includes("white")) {
