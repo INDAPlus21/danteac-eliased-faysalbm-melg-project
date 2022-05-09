@@ -19,7 +19,7 @@ const notes = {
 // "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/Mario_Party_Faster_Than_All__Performed_by_Tom_Brier_READ_DESC..mid"
+const midi_file = "./midis/Nyan_Cat_-_As_played_by_Tom_Brier_a_the_Sutter_Creek_Ice-cream_Emporium.mid"
 const tracks = []
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...

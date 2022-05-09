@@ -1,5 +1,7 @@
 :root {
-    --white-width: 50px;
+    --white-width: 45px;
+    --white-height: calc(var(--white-width)*6);
+    --black-width: calc(var(--white-width)/2); 
     --background: rgb(22, 22, 22);
 }
 
@@ -14,7 +16,7 @@
     border-style: solid;
     border-color: black;
     width: var(--white-width);
-    height: calc(var(--white-width)*6);
+    height: var(--white-height);
     margin-right: -35px;
     z-index: 0;
     background-color: white;
@@ -23,7 +25,7 @@
 .black {
     background-color: black;
     height: calc(var(--white-width)*4);
-    width: calc(var(--white-width)/2);
+    width: var(--black-width);
     vertical-align: top;
     right: -18px;
     border-top-right-radius: 0px;
@@ -32,21 +34,23 @@
 }
 
 #keyboard-container {
-    margin-top: calc(var(--white-width)/10);
-    height: 303.8px;
-    /* calc(var(--white-width)*4) */
-    /* height: fit-content;  */
-    /* Actually important, don't know why */
+    height: var(--white-height); 
+    /* Actually important that it's large, don't know why */
     width: 300%;
     overflow: scroll;
     overflow: hidden;
-    border-top: 5px solid rgb(85, 85, 85);
+    /* border-top: 5px solid rgb(85, 85, 85); */
 }
 
-#accuracy {
-    display: inline-block;
+#keyboard-container-devider {
+    position: absolute; 
+    height: 5px; 
+    width: 100%;
+    background: linear-gradient(180deg, rgba(6,198,108,1) 0%, rgba(164,255,0,1) 100%); 
+    z-index: 4; 
 }
 
+/* I think the slight misalignment definitely has something to do with this */ 
 .next-white {
     margin-right: -5px;
     border-right-width: 0px;
@@ -84,50 +88,33 @@ div {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
-#challenge {
-    font-size: 20px;
-}
-
 .new-letter {
     position: absolute;
     bottom: 0;
     text-align: center;
     width: 100%;
-    /* Specifying a value centers it. Ehm, no. It was bc 50px==100%*/
     font-weight: bold;
-    /* margin-left: 16px;  */
-    /* margin-left: auto; */
-    /* display: flex;  */
-    /* margin-right: auto; */
     margin-bottom: 3px;
     font-size: 20px;
-    /* important */
     z-index: -2;
     pointer-events: none;
-    /* display: flex; */
-    /* height: 150px; */
-    /* horizontal-align: center; */
 }
 
 .new-letter-black {
     color: white;
-    /* margin-left: 5px;  */
 }
 
 .falling-tile {
     background: linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%); /* linear-gradient(180deg, rgba(208,15,200,1) 0%, rgba(20,38,173,1) 50%, rgba(0,249,255,1) 100%); */ /* var(--green); */ 
     height: 100px;
-    width: 35px;
+    width: calc(var(--white-width)/1.2);
     border-radius: 8px;
-    /* position: absolute; */
-    /* margin-top: 5px; */
     vertical-align: bottom;
     position: absolute;
+}
 
-    /* border-style: solid;  */
-    /* border-color: grey;  */
-    /* border-width: 5px;  */
-    /* transition: all .5s ease-in-out; */
+.black-falling-tile {
+    width: calc(var(--black-width));
 }
 
 /* To create spacing between the tiles, everything here is essential */
@@ -145,13 +132,11 @@ div {
 }
 
 #falling-tiles-container {
-    /* height: 420px; */
     position: relative;
     margin-top: 0;
     height: 200%;
 }
 
-/* ok actually still exists */
 #piano-display {
     position: absolute;
     bottom: 0;
