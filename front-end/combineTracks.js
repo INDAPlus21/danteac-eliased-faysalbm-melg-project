@@ -91,6 +91,7 @@ export function combineTracks(left_hand, right_hand) {
 
     // is there a performance cost to looking up an array's length? performance test this algorithm! 
     // just have the leads instead of delta times! 
+    // the bug makes perfect sense! the right hand is intrepreted as LEFT HAND (?), or something of the like 
 
     let right_lead = 0;
     let left_lead = 0;

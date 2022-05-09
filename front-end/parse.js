@@ -18,7 +18,7 @@ const notes = {
 
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/the_entertainer.mid"
+const midi_file = "./midis/Cool_Cool_Mountain_Theme_as_played_by_Tom_Brier.mid"
 const tracks = []
 fs.readFile(midi_file, 'base64', function (err, raw_data) {
     // Parse the obtainer base64 string ...
@@ -34,6 +34,7 @@ fs.readFile(midi_file, 'base64', function (err, raw_data) {
     }); */
 
     console.log(midiArray); // useful information 
+    console.log(midiArray.track[0]); // useful information 
 
     // var notes_array = []
     // var delta_times = []
@@ -151,9 +152,12 @@ fs.readFile(midi_file, 'base64', function (err, raw_data) {
         // console.log({ delta_times })
         // console.log({ notes_array })
         // console.log({ notes_and_times })
-        tracks.push(notes_and_times)
+        if (notes_and_times.length) {
+            tracks.push(notes_and_times)
+        }
     }
 
+    console.log(tracks.length)
     const combined = combineTracks(tracks[0], tracks[1])
 
     fs.writeFile("./song.js", "export const song = " + JSON.stringify(combined), 'utf8', function (err) {

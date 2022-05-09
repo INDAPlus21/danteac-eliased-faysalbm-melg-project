@@ -196,16 +196,20 @@ async function addEventToDisplay(song_to_play, i) {
         notes_elems[key].style.display = "block"
         
         delete notes_elems[key]
-        
-        // const piano_top = document.getElementsByClassName("tile")[0].getBoundingClientRect().top;
+
+
+        // could be made more efficient 
+        const piano_top = document.getElementsByClassName("tile")[0].getBoundingClientRect().top;
 
         // and the number here is dependent on the height above the piano line 
+        // negative top values means over piano_top, we want to remove high values 
         for (const child of document.getElementById("falling-tiles-container").children) {
-            /* const tile_top = child.getBoundingClientRect().top;
+            const tile_top = child.getBoundingClientRect().top;
             const top = tile_top - piano_top;
-            console.log(top) */
+            console.log(top) 
 
-            if (/* top > 500 */  parseInt(child.style.bottom) < previous_heights - 2000) {
+            if (top > 100 /* parseInt(child.style.bottom) < previous_heights - 1300 */) {
+                console.log("removing")
                 child.remove()
             }
         }

@@ -7,14 +7,15 @@
         <title>Piano Skynet</title>
         <link rel="icon" type="image/x-icon" href="./logo.png">
     </head>
-    <!-- <br> -->
-    <!-- <div id="challenge">Play</div> -->
-    <!-- <br></br> -->
-    <!-- <link href="nouislider.css" rel="stylesheet"> -->
-    <!-- <script src="./nouislider.js"></script>1 -->
-    <!-- <div id="settings">
+    <body>
+        <!-- <br> -->
+        <!-- <div id="challenge">Play</div> -->
+        <!-- <br></br> -->
+        <!-- <link href="nouislider.css" rel="stylesheet"> -->
+        <!-- <script src="./nouislider.js"></script>1 -->
+        <!-- <div id="settings">
         <label for="tempo">Tempo</label>
-        <input
+        1<input
             type="range"
             oninput="setTempo(this.value)"
             name="tempo"
@@ -27,30 +28,30 @@
         <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select>
         <button id="self-play" onclick="stopSelfPlay()">Play yourself</button>
     </div> -->
-    <div id="piano-display">
-        <template id="template">
-            <div class="octave-container">
-                <div class="tile C white start-white"></div>
-                <div class="tile Db black"></div>
-                <div class="tile D white"></div>
-                <div class="tile Eb black"></div>
-                <div class="tile E white next-white"></div>
-                <div class="tile F white"></div>
-                <div class="tile Gb black"></div>
-                <div class="tile G white"></div>
-                <div class="tile Ab black"></div>
-                <div class="tile A white"></div>
-                <div class="tile Bb black"></div>
-                <div class="tile B white end-white"></div>
-            </div>
-        </template>
-        <div id="falling-tiles-container"></div>
-        <div id="keyboard-container"></div>
-        <!-- <div id="lower-container"></div> -->
-    </div>
-    <!-- <script type="module" src="testbed.js"></script> -->
-    <!-- <script type="module" src="misc.js"></script> -->
-    <script type="module" src="main.js"></script>
-    <link rel="stylesheet" href="main.css">
-</body>
+        <div id="piano-display">
+            <template id="template">
+                <div class="octave-container">
+                    <div class="tile C white start-white"></div>
+                    <div class="tile Db black"></div>
+                    <div class="tile D white"></div>
+                    <div class="tile Eb black"></div>
+                    <div class="tile E white next-white"></div>
+                    <div class="tile F white"></div>
+                    <div class="tile Gb black"></div>
+                    <div class="tile G white"></div>
+                    <div class="tile Ab black"></div>
+                    <div class="tile A white"></div>
+                    <div class="tile Bb black"></div>
+                    <div class="tile B white end-white"></div>
+                </div>
+            </template>
+            <div id="falling-tiles-container"></div>
+            <div id="keyboard-container"></div>
+            <!-- <div id="lower-container"></div> -->
+        </div>
+        <!-- <script type="module" src="testbed.js"></script> -->
+        <!-- <script type="module" src="misc.js"></script> -->
+        <script type="module" src="main.js"></script>
+        <link rel="stylesheet" href="main.css">
+    </body>
 </html>
