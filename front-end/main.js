@@ -65,31 +65,35 @@ function pauseNote(note) {
 function colorTile(key, octave, hand) {
     const key_tiles = document.getElementsByClassName(key)
     const key_tile = key_tiles[octave - 2]
-    if (hand == 0) /* left */ {
-        key_tile.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
-    } else {
-        key_tile.style.background = "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)"; // "linear-gradient(180deg, rgba(255,7,7,1) 0%, rgba(240,181,108,1) 100%)";
-    }
-    if (key_tile.className.includes("white")) {
-        key_tile.style.boxShadow = "1px 1px 5px #555 inset";
+    if (key_tile) { /* (if it's outside the display, should be fixed) */
+        if (hand == 0) /* left */ {
+            key_tile.style.background = "linear-gradient(180deg, rgba(15,51,208,1) 0%, rgba(0,249,255,1) 100%)";
+        } else {
+            key_tile.style.background = "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)"; // "linear-gradient(180deg, rgba(255,7,7,1) 0%, rgba(240,181,108,1) 100%)";
+        }
+        if (key_tile.className.includes("white")) {
+            key_tile.style.boxShadow = "1px 1px 5px #555 inset";
+        }
     }
 }
 
 function unColorTile(key, octave) {
     const key_tiles = document.getElementsByClassName(key)
     const key_tile = key_tiles[octave - 2]
-    if (key_tile.className.includes("white")) {
-        key_tile.style.background = "white"
-        key_tile.style.boxShadow = "";
-    } else {
-        key_tile.style.background = "black"
+    if (key_tile) { /* (if it's outside the display, should be fixed) */
+        if (key_tile.className.includes("white")) {
+            key_tile.style.background = "white"
+            key_tile.style.boxShadow = "";
+        } else {
+            key_tile.style.background = "black"
+        }
     }
 }
 
 async function selfPlay(song_to_play) {
     const notes_container = document.getElementById("falling-tiles-container")
 
-    const num_tiles_start = Math.min(song_to_play.length, 60)
+    const num_tiles_start = Math.min(song_to_play.length, 80)
 
     for (let i = 0; i < num_tiles_start; i++) {
         addEventToDisplay(song_to_play, i)
@@ -116,11 +120,11 @@ async function selfPlay(song_to_play) {
         // jag tror att en stor anledning till att animate inte blir korrekt 
         // är för att settimeout blir helt disturbed av att man renderar 
         await sleep(delta_time)
-        
+
         const [key, octave] = getKeyOctave(note)
 
         if (notes_audios[note]) {
-            addEventToDisplay(song_to_play, i + num_tiles_start)
+            addEventToDisplay(song_to_play, i + num_tiles_start) // you need to start adding immediately 
 
             pauseNote(note)
 
@@ -132,12 +136,13 @@ async function selfPlay(song_to_play) {
 
             playNote(note)
             colorTile(key, octave, song_to_play[i][2])
-        } 
+        }
     }
 
     notes_container.innerHTML = ""
 }
 
+// one idea is to replace this with a canvas 
 async function addEventToDisplay(song_to_play, i) {
     if (song_to_play[i]) {
         const key = song_to_play[i][0]
@@ -154,7 +159,7 @@ async function addEventToDisplay(song_to_play, i) {
             document.getElementById("falling-tiles-container").prepend(falling_tile)
 
             if (song_to_play[i][2] == 1) {
-                falling_tile.style.background =  "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)";
+                falling_tile.style.background = "linear-gradient(180deg, rgba(201,0,0,1) 0%, rgba(252,203,0,1) 100%)";
             }
 
             notes_elems[key] = falling_tile
@@ -172,7 +177,15 @@ async function addEventToDisplay(song_to_play, i) {
         const key_elements = document.getElementsByClassName(key_without_octave)
 
         // returns rectangel with rect.top, rect.right, rect.bottom, rect.left
-        let left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5
+        // should be fixed 
+
+        const key_octave_tile = key_elements[octave - 2]
+
+        let left_margin
+        if (key_octave_tile) {
+            left_margin = key_elements[octave - 2].getBoundingClientRect().left + 5
+        }
+
 
         if (song_to_play[i][0].includes("b")) {
             left_margin -= 14
@@ -181,11 +194,18 @@ async function addEventToDisplay(song_to_play, i) {
         notes_elems[key].style.left = left_margin + "px"
 
         notes_elems[key].style.display = "block"
-
+        
         delete notes_elems[key]
+        
+        // const piano_top = document.getElementsByClassName("tile")[0].getBoundingClientRect().top;
 
-        for (const child of document.getElementById("falling-tiles-container").children) { 
-            if (parseInt(child.style.bottom) < previous_heights - 1500) {
+        // and the number here is dependent on the height above the piano line 
+        for (const child of document.getElementById("falling-tiles-container").children) {
+            /* const tile_top = child.getBoundingClientRect().top;
+            const top = tile_top - piano_top;
+            console.log(top) */
+
+            if (/* top > 500 */  parseInt(child.style.bottom) < previous_heights - 2000) {
                 child.remove()
             }
         }
@@ -303,7 +323,7 @@ function setUpKeyboard() {
         // let song_to_play = songs["combined_lone"] //.slice(22)
         const song_to_play = song //.slice(22)
         const original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
-        setTempo(2, song_to_play, original_song)
+        // setTempo(2, song_to_play, original_song)
         // transposeUp(song_to_play)
         selfPlay(song_to_play)
     }
