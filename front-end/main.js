@@ -121,7 +121,15 @@ async function selfPlay(song_to_play) {
         // use date milliseconds instead 
         // jag tror att en stor anledning till att animate inte blir korrekt 
         // är för att settimeout blir helt disturbed av att man renderar 
-        await sleep(delta_time)
+        const sleep_time = performance.now()
+
+        if (delta_time) {
+            await sleep(delta_time)
+        }
+        console.log("sleep took %fms, should have taken %sms", ((performance.now() - sleep_time)).toString().slice(0, 4), delta_time)
+
+
+        const time = performance.now()
 
         const [key, octave] = getKeyOctave(note)
 
@@ -139,6 +147,9 @@ async function selfPlay(song_to_play) {
             playNote(note)
             colorTile(key, octave, song_to_play[i][2])
         }
+
+        // string substitution patterns !
+        console.log("midi event took %fms", ((performance.now() - time)).toString().slice(0, 4))
     }
 
     notes_container.innerHTML = ""
@@ -199,8 +210,7 @@ async function addEventToDisplay(song_to_play, i) {
 
         delete notes_elems[key]
 
-        // you in reality only need to check the bottom element here... 
-
+        // you only need to check the bottom element here... 
         // and the number here is dependent on the height above the piano line 
         // negative top values means over piano_top, we want to remove high values 
 
@@ -212,17 +222,6 @@ async function addEventToDisplay(song_to_play, i) {
             console.log("removing")
             child.remove()
         }
-
-        /* for (const child of document.getElementById("falling-tiles-container").children) {
-            const tile_top = child.getBoundingClientRect().top;
-            const top = tile_top - cached.piano_top;
-            console.log(top) 
-    
-            if (top > 100 /* parseInt(child.style.bottom) < previous_heights - 1300 *) {
-                console.log("removing")
-                child.remove()
-            }
-        } */
     }
 }
 
