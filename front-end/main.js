@@ -1,12 +1,15 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 
-const self_play = true
+const self_play = false
 const notes_audios = {}
 let previous_heights = 0
 const notes_elems = {}
+let time_last_event = performance.now()
 
 const cached = {}
+const played_notes = []
+const current_notes = {}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
@@ -48,6 +51,12 @@ function playNote(note, keyboard = false) {
             audio.pause()
         }, 1000)
     }
+
+    if (!self_play) {
+        current_notes[note] = 0
+    }
+
+    console.log(played_notes)
 
     notes_audios[note] = audio // is unneccessary for already assigned  
 }
@@ -203,11 +212,6 @@ async function addEventToDisplay(song_to_play, i) {
             left_margin = key_elements[octave - 1].getBoundingClientRect().left
         }
 
-
-        /* if (song_to_play[i][0].includes("b")) {
-            left_margin -= 10
-        } */
-
         notes_elems[key].style.left = left_margin + "px"
 
         notes_elems[key].style.display = "block"
@@ -230,7 +234,6 @@ async function addEventToDisplay(song_to_play, i) {
 }
 
 
-1
 function setUpKeyboard() {
     // set up song selection 
     /* for (let elem in songs) {
@@ -273,7 +276,7 @@ function setUpKeyboard() {
                 letter.className += " new-letter-black"
             }
             if (i > 0 && i < 6 && !(i == 5 && j > 2)) { // so you don't painting undefined
-                letter.innerHTML = letter_mapping[i-1][j]  
+                letter.innerHTML = letter_mapping[i - 1][j]
             }
             children[j].append(letter)
         }
@@ -283,18 +286,23 @@ function setUpKeyboard() {
     tiles[tiles.length - 1].style.borderTopRightRadius = "5px"
     tiles[tiles.length - 1].style.borderRightWidth = "2px"
 
-    function playTile(event) {
-        const id = event.srcElement.classList[1] // depracated?? 
+    function getNote(event) {
+        const key = event.srcElement.classList[1] 
         const octave = parseInt(event.srcElement.parentNode.classList[1]) + 2
-        const url = "./piano-mp3/" + id + octave + ".mp3"
+        return key + octave
+    }
+
+    function playTile(event) {
+        const note = getNote(event)
+        const url = "./piano-mp3/" + note + ".mp3"
         console.log({ url })
         playNote(url, true)
     }
 
     for (let i = 0; i < tiles.length; i++) {
-        tiles[i].addEventListener("click", (event) => {
+        /* tiles[i].addEventListener("click", (event) => {
             playTile(event)
-        })
+        }) */
 
         // Make it possible to roll on keys with the mouse 
         // eslint-disable-next-line no-var
@@ -302,6 +310,8 @@ function setUpKeyboard() {
 
         tiles[i].addEventListener("mousedown", (event) => {
             // console.log("mousedown", {event})
+            addToTime()
+            playTile(event)
             should_press_key = true
             // you could have some complicated solution to this 
             // playTile(event)
@@ -350,6 +360,18 @@ function setUpKeyboard() {
 
 setUpKeyboard()
 
+function addToTime(note) {
+    console.log("key up")
+
+    const time = performance.now()
+
+    if (!self_play) {
+        played_notes.push([note, time - time_last_event])
+    }
+
+    time_last_event = time
+}
+
 function computerKeyboardPress(event) {
     const key = event.code.replace("Key", "").replace("Digit", "")
     console.log({ event })
@@ -373,20 +395,28 @@ function computerKeyboardPress(event) {
             const key_elem = elem_with_key[octave - 1]
             const key_octave = keys[key] + octave
 
+            addToTime(key_octave)
+
             if (key_elem.className.includes("white")) {
                 key_elem.style.backgroundColor = "rgb(228, 228, 228)"
                 // don't you also need the actual key 
-                document.addEventListener("keyup", function () {
+                document.addEventListener("keyup", function non_anon(e) {
+                    addToTime(key_octave)
                     key_elem.style.backgroundColor = "white"
+                    e.currentTarget.removeEventListener(e.type, non_anon);
                 })
             } else {
                 key_elem.style.backgroundColor = "rgb(59, 58, 58)"
-                document.addEventListener("keyup", function () {
+                document.addEventListener("keyup", function non_anon(e) {
+                    addToTime(key_octave)
                     key_elem.style.backgroundColor = "black"
+                    e.currentTarget.removeEventListener(e.type, non_anon);
                 })
             }
 
             playNote(key_octave, true)
+
+            return
         }
     }
 
