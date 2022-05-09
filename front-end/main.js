@@ -10,7 +10,7 @@ const s = {
     notes_audios: {},
     notes_elems: {},
     previous_heights: 0,
-    self_play: false,
+    self_play: true,
     time_last_event: performance.now() // should really be reinitialized the first note user 
 }
 
@@ -204,10 +204,27 @@ async function addEventToDisplay(song_to_play, i) {
 
         const key_octave_tile = key_elements[octave - 1]
 
-        let left_margin
-        if (key_octave_tile) {
-            left_margin = key_elements[octave - 1].getBoundingClientRect().left
+        // if key octave tile 
+        // by default getBoudningClientRect returns width+padding+border
+        let left_margin = key_elements[octave - 1].getBoundingClientRect().left
+        // left_margin += parseInt(key_elements[octave - 1].style.marginLeft)
+
+        if (key_without_octave == "E") {
+            left_margin += 10; 
+        } else if (key_without_octave == "D") {
+            left_margin += 5; 
+        } else if (key_without_octave == "B") {
+            left_margin += 10; 
+        } else if (key_without_octave == "A") {
+            left_margin += 5; 
+        } else if (key_without_octave == "G") {
+            left_margin += 5; 
+        } else if (key_without_octave == "F") {
+            left_margin += 5; 
         }
+        /* if (["D", "E", "F", "G", "A", "B"].includes(key_without_octave)) {
+            left_margin += 5; 
+        } */
 
         s.notes_elems[key].style.left = left_margin + "px"
 

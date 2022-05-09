@@ -38,6 +38,8 @@ export function combineTracks(left_hand, right_hand) {
             pushRight()
         }
 
+        // eller kan det ha att göra med eventtyp 8 !?!??! 
+
         if (!right_hand[index_right]) {
             // du borde också ta hänsyn till lead här 
             console.log("concating left", left_hand.slice(index_left))

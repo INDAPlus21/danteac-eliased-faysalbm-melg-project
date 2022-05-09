@@ -26,6 +26,8 @@ export function parseFile() {
                 if (type == 9) {
                     const note = notes[data[0]]
                     notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
+                } else if (type == 8) {
+                    console.log("eight!")
                 }
             }
             return notes_and_times
@@ -68,6 +70,6 @@ const notes = {
 // "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/Lone_Digger.mid"
+const midi_file = "./midis/Nyan_Cat_-_As_played_by_Tom_Brier_a_the_Sutter_Creek_Ice-cream_Emporium.mid"
 
 parseFile(midi_file)
