@@ -95,32 +95,6 @@ async function selfPlay(song_to_play) {
         addEventToDisplay(song_to_play, i)
     }
 
-    /* let total_delta_time = 0 
-
-    for (let i = 0; i < song_to_play.length; i++) { 
-        total_delta_time += song_to_play[i][1]
-    } */
-
-    /* notes_container.animate([
-        { transform: 'translateY(' + 33900 + 'px)' }
-    ], {
-        duration: 92000,
-        iterations: 1
-    }); */
-
-    /*  notes_container.animate([
-         { transform: 'translateY(' + (total_delta_time * 0.4) + 'px)' }
-     ], {
-         duration: total_delta_time,
-         iterations: 1
-     }); */
-
-    // problemet är att du inte vet låtlängden i förväg... 
-    // du kan räkna ut det... men synkroniseringsproblemet kvarstår... 
-
-    // jag tror att en stor anledning till att animate inte blir korrekt 
-    // är för att settimeout blir helt disturbed av att man renderar 
-
     let total_delta_height = 0
 
     // iterate through all the notes in the song 
@@ -138,16 +112,11 @@ async function selfPlay(song_to_play) {
 
         total_delta_height += delta_time * 0.4
 
-
-        // console.log({delta_time})
-        // const next_delta_time = (song_to_play[i + 1]) ? song_to_play[i + 1][1] : 0 // should it be 0? 
-
         // use date milliseconds instead 
+        // jag tror att en stor anledning till att animate inte blir korrekt 
+        // är för att settimeout blir helt disturbed av att man renderar 
         await sleep(delta_time)
-
-        // no that's a lost cause 
-        // notes_container.style.marginTop = parseInt(notes_container.style.marginTop) + delta_time * 0.4
-
+        
         const [key, octave] = getKeyOctave(note)
 
         if (notes_audios[note]) {
