@@ -160,7 +160,7 @@ async function selfPlay(song_to_play) {
 
             playNote(note)
             colorTile(key, octave)
-        }
+        } 
     }
 }
 
