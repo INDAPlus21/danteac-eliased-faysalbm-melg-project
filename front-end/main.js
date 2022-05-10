@@ -1,6 +1,7 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
+import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_example_from_js, process_file } from './integrated_rust/pkg/hello_world.js';
 
 const cached = {}
 
@@ -210,19 +211,19 @@ async function addEventToDisplay(song_to_play, i) {
         // left_margin += parseInt(key_elements[octave - 1].style.marginLeft)
 
         if (key_without_octave == "E") {
-            left_margin += 10; 
+            left_margin += 10;
         } else if (key_without_octave == "D") {
-            left_margin += 5; 
+            left_margin += 5;
         } else if (key_without_octave == "B") {
-            left_margin += 7; 
+            left_margin += 7;
         } else if (key_without_octave == "A") {
-            left_margin += 5; 
+            left_margin += 5;
         } else if (key_without_octave == "G") {
-            left_margin += 5; 
+            left_margin += 5;
         } else if (key_without_octave == "F") {
-            left_margin += 2; 
+            left_margin += 2;
         } else if (key_without_octave == "C") {
-            left_margin += 1; 
+            left_margin += 1;
         }
         /* if (["D", "E", "F", "G", "A", "B"].includes(key_without_octave)) {
             left_margin += 5; 
@@ -477,35 +478,82 @@ function b64EncodeUnicode(str) {
         }));
 }
 
-window.onload = function () {
+/* window.onload = function () {
     // configure MIDIReader
     const source = document.getElementById('import');
+
+    
     parseFile(source) /* (combined) => {
         console.log(combined)
     }); */
 
-    /* MidiParser.parse( source, function(obj){
-        // Your callback function
-        console.log(obj);
-        document.getElementById("output").innerHTML = JSON.stringify(obj, undefined, 2);
+/* MidiParser.parse( source, function(obj){
+    // Your callback function
+    console.log(obj);
+    document.getElementById("output").innerHTML = JSON.stringify(obj, undefined, 2);
+}); 
+}; */
+
+async function run() {
+    await init();
+    console.log(say("Elias"))
+    console.log(add(1, 2))
+    console.log(return_song_vectors())
+    console.log(send_example_to_js())
+    // console.log(send_complex_vec())
+    console.log(send_vec_just_numbers())
+    receive_example_from_js([[1, 2]])
+
+    const fileData = new Uint8Array(23);
+    process_file(fileData)
+
+    /* file.arrayBuffer().then(buff => {
+        let x = new Uint8Array(buff); // x is your uInt8Array
+        // perform all required operations with x here.
     }); */
-};
 
 
-/* input.addEventListener("change", (/* event /) => {
+    // receive_midi([1, 2, 3])
+    /* var buttonOne = document.getElementById('buttonOne');
+    buttonOne.addEventListener('click', function () {
+      var input = $("#nameInput").val();
+      alert(say(input));
+    }, false); */
+}
+
+run();
+
+// const input = document.getElementById("import")
+
+input.addEventListener("change", () => {
     console.log("hi")
     // const file = event.target.files[0]; 
     const file = input.files[0]
-    const reader = new FileReader()
-    reader.addEventListener("load", (e) => {
-        console.log("in reader")
-        console.log(typeof e.target.result)
-        // const midi_file = reader.readAsText(event.target.files[0].result)
-        // const base64 = Buffer.from(e.target.result, 'base64')
-        // parseFile(base64)
 
-        const combined = parseFile(b64EncodeUnicode(e.target.result)) // document.getElementById("import")
-        console.log({ combined })
-    })
-    reader.readAsText(file);
-}) */
+    console.log({file})
+
+    file.arrayBuffer().then(buff => {
+        const x = new Uint8Array(buff); // x is your uInt8Array
+        console.log({x})
+        process_file(x)
+    });
+})
+
+
+// // input.addEventListener("change", (/* event /) => {
+//     console.log("hi")
+//     // const file = event.target.files[0]; 
+//     const file = input.files[0]
+//     const reader = new FileReader()
+//     reader.addEventListener("load", (e) => {
+//         console.log("in reader")
+//         console.log(typeof e.target.result)
+//         // const midi_file = reader.readAsText(event.target.files[0].result)
+//         // const base64 = Buffer.from(e.target.result, 'base64')
+//         // parseFile(base64)
+
+//         const combined = parseFile(b64EncodeUnicode(e.target.result)) // document.getElementById("import")
+//         console.log({ combined })
+//     })
+//     reader.readAsText(file);
+// })
