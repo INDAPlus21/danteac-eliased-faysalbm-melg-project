@@ -9,6 +9,8 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
         let mut tracks = vec![];
 
         let mut i = 0;
+        let mut current_event_type = 0; // Support running status
+
         while i < data.len() {
             if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
                 // Parse header
@@ -47,36 +49,14 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                 while i - start_i < byte_count as usize {
                     let delta = variable_length_bytes_to_int(&data, &mut i);
 
-                    // Status byte (type and channel)
-                    let event_type = data[i] >> 4; // Top part of byte
-                                                   //let channel = (data[i] << 4) >> 4; // Bottom part of byte
-                    i += 1;
-
-                    match event_type {
-                        8 | 9 => {
-                            // Note on/off event
-                            offsets.push(delta as f32);
-                            notes.push(data[i] as f32);
-
-                            // Note off should always have volume 0
-                            if event_type == 8 {
-                                volumes.push(0f32);
-                            } else {
-                                volumes.push(data[i + 1] as f32);
-                            }
-
-                            i += 2;
-                        }
-                        10 | 11 | 14 => {
-                            // Skip event
-                            i += 2;
-                        }
-                        12 | 13 => {
-                            // Skip event
-                            i += 1;
-                        }
-                        _ => {}
+                    // It is only a status byte if more or equal than 128
+                    if data[i] >= 128 {
+                        // Status byte (type and channel)
+                        current_event_type = data[i] >> 4; // Top part of byte
+                                                           //let channel = (data[i] << 4) >> 4; // Bottom part of byte
+                        i += 1;
                     }
+
                     if data[i - 1] == 255 {
                         // Meta events
                         let message_type = data[i];
@@ -88,6 +68,34 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                         // End of track, ignore other messages
                         if message_type == 47 {
                             break;
+                        }
+                    } else {
+                        match current_event_type {
+                            8 | 9 => {
+                                // Note on/off event
+                                offsets.push(delta as f32);
+                                notes.push(data[i] as f32);
+
+                                // Note off should always have volume 0
+                                if current_event_type == 8 {
+                                    volumes.push(0f32);
+                                } else {
+                                    volumes.push(data[i + 1] as f32);
+                                }
+
+                                i += 2;
+                            }
+                            10 | 11 | 14 => {
+                                // Skip event
+                                i += 2;
+                            }
+                            12 | 13 => {
+                                // Skip event
+                                i += 1;
+                            }
+                            _ => {
+                                i += 1;
+                            }
                         }
                     }
                 }
@@ -130,8 +138,6 @@ fn variable_length_bytes_to_int(data: &[u8], index: &mut usize) -> u32 {
             return ret as u32;
         }
     }
-
-    0
 }
 
 fn bytes_to_int(bytes: &[u8]) -> u32 {
