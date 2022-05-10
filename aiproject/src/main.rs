@@ -25,6 +25,7 @@ fn main() {
             label = song.notes[i + window_width];
         }
     }
+<<<<<<< HEAD
 
     // Create MIDI
     /*let header = Header::new(Format::Parallel, Timing::Metrical(u15::new(10))); // Set timing (ticks per beat)
@@ -84,3 +85,6 @@ fn append_note(track: &mut Track, offset: u32, message: MidiMessage) {
     });
 }
 */
+=======
+}
+>>>>>>> 10a25e6ea103d73a08908b1ae7c17bd6491c87f5
