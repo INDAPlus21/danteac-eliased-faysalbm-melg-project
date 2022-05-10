@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 use crate::matrix::Matrix;
+=======
+#[cfg(test)]
+use crate::matrix::Matrix;
+#[cfg(test)]
+>>>>>>> 10a25e6ea103d73a08908b1ae7c17bd6491c87f5
 use crate::vector::Vector;
 
 #[cfg(test)]
