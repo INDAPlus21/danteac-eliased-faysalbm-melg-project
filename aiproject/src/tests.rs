@@ -1,4 +1,6 @@
+#[cfg(test)]
 use crate::matrix::Matrix;
+#[cfg(test)]
 use crate::vector::Vector;
 
 #[cfg(test)]
