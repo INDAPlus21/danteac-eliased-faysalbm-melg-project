@@ -1,6 +1,15 @@
 import { songs } from "./songs.js"
 
-// looking up an array's length is O(1) 
+// looking up an array's length is O(1) nej inte orsaken 
+// here somewhere 
+/* 'E4', 6, 0 ],    [ 'E4', 113, 0 ],  [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
+[ 'Eb5', 7, 0 ],   [ 'Eb5', 113, 0 ], [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
+[ 'Eb5', 7, 0 ],   [ 'Eb5', 113, 0 ], [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
+[ 'A2', 0, 1 ] */
+// here's an explanation for type 11: https://users.cs.cf.ac.uk/dave/Multimedia/node158.html¨
+// and the 11s HAVE A DELTATIME !!!!) 
+// yes it's still definitely the delta time that's fucking it up 
+// no note is changed, but the right_lead and left_lead are affected 
 
 export function combineTracks(left_hand, right_hand) {
     let combined = []
@@ -14,19 +23,29 @@ export function combineTracks(left_hand, right_hand) {
     let left_lead = 0;
 
     function pushRight() {
-        right_hand[index_right][1] = right_hand[index_right][1] - left_lead
-        left_lead = 0
-        right_lead += right_hand[index_right][1]
-        combined.push([right_hand[index_right][0], right_hand[index_right][1], 1])
-        index_right++
+        if (right_hand[index_right][0] == "no_note") {
+            left_lead -= right_hand[index_right][1]
+            index_right++
+        } else {
+            right_hand[index_right][1] = right_hand[index_right][1] - left_lead
+            left_lead = 0
+            right_lead += right_hand[index_right][1]
+            combined.push([right_hand[index_right][0], right_hand[index_right][1], 1])
+            index_right++
+        }
     }
 
     function pushLeft() {
-        left_hand[index_left][1] = left_hand[index_left][1] - right_lead
-        right_lead = 0
-        left_lead += left_hand[index_left][1]
-        combined.push([left_hand[index_left][0], left_hand[index_left][1], 0]);
-        index_left++
+        if (left_hand[index_left][0] == "no_note") {
+            right_lead -= left_hand[index_left][1]
+            index_left++
+        } else {
+            left_hand[index_left][1] = left_hand[index_left][1] - right_lead
+            right_lead = 0
+            left_lead += left_hand[index_left][1]
+            combined.push([left_hand[index_left][0], left_hand[index_left][1], 0]);
+            index_left++
+        }
     }
 
     while (true) {
@@ -42,12 +61,12 @@ export function combineTracks(left_hand, right_hand) {
 
         if (!right_hand[index_right]) {
             // du borde också ta hänsyn till lead här 
-            console.log("concating left", left_hand.slice(index_left))
+            // console.log("concating left", left_hand.slice(index_left))
             if (left_hand[index_left]) pushLeft()
             combined = combined.concat(left_hand.slice(index_left))
             break;
         } else if (!left_hand[index_left]) {
-            console.log("concating right", { index_right })
+            // console.log("concating right", { index_right })
             if (right_hand[index_right]) pushRight()
             combined = combined.concat(right_hand.slice(index_right))
             break;
@@ -103,16 +122,16 @@ function testWrapper(left_hand, right_hand, should_be, alternative) {
     // get name of caller 
     let caller;
     try { throw new Error(); }
-    catch (e) { 
+    catch (e) {
         let re = /(\w+)@|at (\w+) \(/g, st = e.stack, m;
         re.exec(st), m = re.exec(st);
         caller = m[1] || m[2];
     }
-    console.log({callerName: caller});
+    console.log({ callerName: caller });
 
     const combined = combineTracks(left_hand, right_hand)
 
-    console.log({ combined }, { should_be }, {alternative})
+    console.log({ combined }, { should_be }, { alternative })
     console.log(arraysEqual(combined, should_be) || arraysEqual(combined, alternative))
 }
 

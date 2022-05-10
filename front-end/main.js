@@ -214,7 +214,7 @@ async function addEventToDisplay(song_to_play, i) {
         } else if (key_without_octave == "D") {
             left_margin += 5; 
         } else if (key_without_octave == "B") {
-            left_margin += 10; 
+            left_margin += 7; 
         } else if (key_without_octave == "A") {
             left_margin += 5; 
         } else if (key_without_octave == "G") {
