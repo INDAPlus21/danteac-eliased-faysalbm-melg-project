@@ -2,7 +2,6 @@ import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
 import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_example_from_js, process_file, process_file_2 } from './integrated_rust/pkg/hello_world.js';
-import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
 
@@ -540,7 +539,6 @@ input.addEventListener("change", () => {
         console.log({number_song})
 
         const alphanumeric = [] 
-        const alphanumeric_two = []
 
         const notes = {
             127: "G9", 126: "Gb9", 125: "F9", 124: "E9", 123: "Eb9", 122: "D9", 121: "Db9", 120: "C9", 119: "B8", 118: "Bb8", 117: "A8	 ", 116: "Ab8", 115: "G8", 114: "Gb8", 113: "F8", 112: "E8", 111: "Eb8", 110: "D8", 109: "Db8", 108: "C8", 107: "B7", 106: "Bb7", 105: "A7", 104: "Ab7", 103: "G7", 102: "Gb7", 101: "F7", 100: "E7", 99: "Eb7", 98: "D7", 97: "Db7", 96: "C7", 95: "B6", 94: "Bb6", 93: "A6", 92: "Ab6", 91: "G6", 90: "Gb6", 89: "F6", 88: "E6", 87: "Eb6", 86: "D6", 85: "Db6", 84: "C6", 83: "B5", 82: "Bb5", 81: "A5", 80: "Ab5", 79: "G5", 78: "Gb5", 77: "F5", 76: "E5", 75: "Eb5", 74: "D5", 73: "Db5", 72: "C5", 71: "B4", 70: "Bb4", 69: "A4", 68: "Ab4", 67: "G4", 66: "Gb4", 65: "F4", 64: "E4", 63: "Eb4", 62: "D4", 61: "Db4", 60: "C4", 59: "B3", 58: "Bb3", 57: "A3", 56: "Ab3", 55: "G3", 54: "Gb3", 53: "F3", 52: "E3", 51: "Eb3", 50: "D3", 49: "Db3", 48: "C3", 47: "B2", 46: "Bb2", 45: "A2", 44: "Ab2", 43: "G2", 42: "Gb2", 41: "F2", 40: "E2", 39: "Eb2", 38: "D2", 37: "Db2", 36: "C2", 35: "B1", 34: "Bb1", 33: "A1", 32: "Ab1", 31: "G1", 30: "Gb1",
@@ -552,19 +550,9 @@ input.addEventListener("change", () => {
             alphanumeric.push([notes[event[0]], event[1]])
         }
 
-        // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
-        // och SPECIELLT inte sätter någonting alls till no_note (!!!)
-        /* in iterates over indexes, of iterates over actual values */ 
-        for (const event of number_song_two) {
-            alphanumeric_two.push([notes[event[0]], event[1]])
-        }
-
-        const combined = combineTracks(alphanumeric_two, alphanumeric)
-
         console.log({alphanumeric})
 
-        // selfPlay(alphanumeric); 
-        selfPlay(combined); 
+        selfPlay(alphanumeric); 
     });
 })
 
