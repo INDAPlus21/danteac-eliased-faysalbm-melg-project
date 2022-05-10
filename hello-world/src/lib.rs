@@ -4,6 +4,8 @@ use web_sys::console;
 // use neon::prelude::*;
 use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
+use midiparser::parse_midi;
+use midiparser::convert_to_front_end_format;
 
 #[wasm_bindgen]
 pub fn say(s: String) -> String {
@@ -94,6 +96,8 @@ pub fn receive_example_from_js(val: &JsValue) {
 #[wasm_bindgen]
 pub fn process_file(fileData: &[u8]) {
     let real_midi_file = fileData.to_vec(); 
+
+    parse_midi("musemario");
 }
 
 /* #[derive(Debug)]

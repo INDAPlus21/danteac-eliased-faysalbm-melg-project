@@ -4,129 +4,133 @@ use song::{Song, Track};
 use std::fs;
 use std::collections::HashMap;
 
-// Filename without extension suffix
-pub fn parse_midi(filename: &str) -> Option<Song> {
-    if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
-        let mut tracks = vec![];
+pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
+    let mut tracks = vec![];
 
-        let mut i = 0;
-        let mut current_event_type = 0; // Support running status
+    let mut i = 0;
+    let mut current_event_type = 0; // Support running status
 
-        while i < data.len() {
-            if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
-                // Parse header
-                i += 4;
+    while i < data.len() {
+        if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
+            // Parse header
+            i += 4;
 
-                // Header length
-                //let length = bytes_to_int(&data[i..i + 4]);
-                i += 4;
+            // Header length
+            //let length = bytes_to_int(&data[i..i + 4]);
+            i += 4;
 
-                // Format
-                let format = data[i]; // 0: Single track 1: Parallel tracks 2: Sequental tracks
-                match format {
-                    0 => println!("Single tracks"),
-                    1 => println!("Parallel tracks"),
-                    2 => println!("Sequential tracks"),
-                    _ => println!("Unknown format")
-                }
-
-                i += 1;
-
-                // Chunk count (will always be 6)
-                //let chunk_count = data[i];
-                i += 1;
-
-                // Tempo (tick division)
-                // TODO
-                i += 4;
-            } else if i < data.len() - 4 && data[i..i + 4] == b"MTrk".to_owned() {
-                // Parse track (only note on and off events)
-                // Expects songs with format 1 (parallel)
-                i += 4;
-
-                let mut notes = vec![];
-                let mut volumes = vec![];
-                let mut offsets = vec![];
-
-                // Byte count
-                let byte_count = bytes_to_int(&data[i..i + 4]);
-                i += 4;
-                let start_i = i;
-
-                // Read track events (doesn't account for SysEx messages)
-                while i - start_i < byte_count as usize {
-
-                    if (i < 100) {
-                        println!("{:?}", data[i]);
-                    }
-
-                    let delta = variable_length_bytes_to_int(&data, &mut i);
-
-                    // It is only a status byte if more or equal than 128
-                    if data[i] >= 128 {
-                        // Status byte (type and channel)
-                        current_event_type = data[i] >> 4; // Top part of byte
-                                                           //let channel = (data[i] << 4) >> 4; // Bottom part of byte
-                        i += 1;
-                    }
-
-                    if data[i - 1] == 255 {
-                        // Meta events
-                        let message_type = data[i];
-                        i += 1;
-
-                        let length = data[i];
-                        i += (1 + length) as usize;
-
-                        // End of track, ignore other messages
-                        if message_type == 47 {
-                            break;
-                        }
-                    } else {
-                        match current_event_type {
-                            8 | 9 => {
-                                // Note on/off event
-                                offsets.push(delta as f32);
-                                notes.push(data[i] as f32);
-
-                                // Note off should always have volume 0
-                                if current_event_type == 8 {
-                                    volumes.push(0f32);
-                                } else {
-                                    volumes.push(data[i + 1] as f32);
-                                }
-
-                                i += 2;
-                            }
-                            10 | 11 | 14 => {
-                                // Skip event
-                                i += 2;
-                            }
-                            12 | 13 => {
-                                // Skip event
-                                i += 1;
-                            }
-                            _ => {
-                                i += 1;
-                            }
-                        }
-                    }
-                }
-
-                // Only add tracks with note data
-                if notes.len() > 0 {
-                    tracks.push(Track {
-                        notes,
-                        volumes,
-                        offsets,
-                    });
-                }
-            } else {
-                i += 1;
+            // Format
+            let format = data[i]; // 0: Single track 1: Parallel tracks 2: Sequental tracks
+            match format {
+                0 => println!("Single tracks"),
+                1 => println!("Parallel tracks"),
+                2 => println!("Sequential tracks"),
+                _ => println!("Unknown format")
             }
-        }
 
-        Some(Song { tracks })
+            i += 1;
+
+            // Chunk count (will always be 6)
+            //let chunk_count = data[i];
+            i += 1;
+
+            // Tempo (tick division)
+            // TODO
+            i += 4;
+        } else if i < data.len() - 4 && data[i..i + 4] == b"MTrk".to_owned() {
+            // Parse track (only note on and off events)
+            // Expects songs with format 1 (parallel)
+            i += 4;
+
+            let mut notes = vec![];
+            let mut volumes = vec![];
+            let mut offsets = vec![];
+
+            // Byte count
+            let byte_count = bytes_to_int(&data[i..i + 4]);
+            i += 4;
+            let start_i = i;
+
+            // Read track events (doesn't account for SysEx messages)
+            while i - start_i < byte_count as usize {
+
+                /* if (i < 100) {
+                    println!("{:?}", data[i]);
+                } */
+
+                let delta = variable_length_bytes_to_int(&data, &mut i);
+
+                // It is only a status byte if more or equal than 128
+                if data[i] >= 128 {
+                    // Status byte (type and channel)
+                    current_event_type = data[i] >> 4; // Top part of byte
+                                                       //let channel = (data[i] << 4) >> 4; // Bottom part of byte
+                    i += 1;
+                }
+
+                if data[i - 1] == 255 {
+                    // Meta events
+                    let message_type = data[i];
+                    i += 1;
+
+                    let length = data[i];
+                    i += (1 + length) as usize;
+
+                    // End of track, ignore other messages
+                    if message_type == 47 {
+                        break;
+                    }
+                } else {
+                    match current_event_type {
+                        8 | 9 => {
+                            // Note on/off event
+                            offsets.push(delta as f32);
+                            notes.push(data[i] as f32);
+
+                            // Note off should always have volume 0
+                            if current_event_type == 8 {
+                                volumes.push(0f32);
+                            } else {
+                                volumes.push(data[i + 1] as f32);
+                            }
+
+                            i += 2;
+                        }
+                        10 | 11 | 14 => {
+                            // Skip event
+                            i += 2;
+                        }
+                        12 | 13 => {
+                            // Skip event
+                            i += 1;
+                        }
+                        _ => {
+                            i += 1;
+                        }
+                    }
+                }
+            }
+
+            // Only add tracks with note data
+            if notes.len() > 0 {
+                tracks.push(Track {
+                    notes,
+                    volumes,
+                    offsets,
+                });
+            }
+        } else {
+            i += 1;
+        }
+    }
+
+    Some(Song { tracks })
+}
+
+// Filename without extension suffix
+pub fn parse_midi_file(filename: &str) -> Option<Song> {
+    if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
+        actually_parse(data)
     } else {
         println!("Error: File {}.mid not found!", filename);
         None
