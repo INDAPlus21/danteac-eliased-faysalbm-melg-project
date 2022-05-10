@@ -108,7 +108,6 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                         offsets,
                     });
                 }
-                println!("NEW TRACK");
             } else {
                 i += 1;
             }
