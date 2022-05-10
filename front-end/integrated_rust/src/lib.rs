@@ -113,16 +113,26 @@ pub fn process_file(fileData: &[u8]) -> JsValue {
 
     // console::log_1(&"hello front end format".into());
 
-    let mut note_offsets: Vec<Vec<f32>> = vec![];
+    let mut two_tracks Vec<Vec<Vec<f32>>> = vec![]; 
+    
+    for track in song.tracks {
+        let mut note_offsets: Vec<Vec<f32>> = vec![];
+        for i in 0..track.notes.len() {
+            // let note = hash_notes[&(track.notes[i] as i32)];
+            let to_push = vec![track.notes[i], track.offsets[i]];
+            note_offsets.push(to_push);
+        } 
+        two_tracks.push(note_offsets)
+    }
 
-    let track = &song.tracks[1];
+    /* let track = &song.tracks[1];
     for i in 0..track.notes.len() {
         // let note = hash_notes[&(track.notes[i] as i32)];
         let to_push = vec![track.notes[i], track.offsets[i]];
         note_offsets.push(to_push);
-    } 
+    }  */
 
-    return JsValue::from_serde(&note_offsets).unwrap()
+    return JsValue::from_serde(&two_tracks).unwrap()
     // console::log_1(&song.tracks[0].volumes[0].into());
 }
 
