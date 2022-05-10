@@ -10,7 +10,7 @@ const s = {
     notes_audios: {},
     notes_elems: {},
     previous_heights: 0,
-    self_play: true,
+    self_play: false,
     time_last_event: performance.now() // should really be reinitialized the first note user 
 }
 
@@ -65,7 +65,7 @@ function pauseNote(note) {
     // without timeout it just sounds bad, wayyyy to short and robotic, not natural 
     setTimeout(() => {
         audio.pause()
-    }, 1000)
+    }, 800)
 
     delete s.notes_audios[note]
 }
