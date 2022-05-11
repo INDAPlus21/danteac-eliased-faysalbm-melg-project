@@ -122,8 +122,41 @@ pub fn process_file(fileData: &[u8]) -> JsValue {
         note_offsets.push(to_push);
     } 
 
+    /* let mut note_offsets_two: Vec<Vec<f32>> = vec![];
+    let track_two = &song.tracks[0];
+    for i in 0..track_two.notes.len() {
+        // let note = hash_notes[&(track.notes[i] as i32)];
+        let to_push = vec![track.notes[i], track.offsets[i]];
+        note_offsets.push(to_push);
+    }  */
+
+    /* let mut combined = vec![]; 
+
+    combined.push(note_offsets); 
+    combined.push(note_offsets_two); */
+
     return JsValue::from_serde(&note_offsets).unwrap()
     // console::log_1(&song.tracks[0].volumes[0].into());
+}
+
+#[wasm_bindgen]
+pub fn process_file_2(fileData: &[u8]) -> JsValue {
+    console::log_1(&"hello 2".into());
+
+    let real_midi_file: Vec<u8> = fileData.to_vec(); 
+
+    let song : midiparser::song::Song = actually_parse(real_midi_file).unwrap();
+
+    let mut note_offsets: Vec<Vec<f32>> = vec![];
+
+    let track = &song.tracks[0];
+    for i in 0..track.notes.len() {
+        let to_push = vec![track.notes[i], track.offsets[i]];
+        note_offsets.push(to_push);
+    } 
+
+
+    return JsValue::from_serde(&note_offsets).unwrap()
 }
 
 /*  let hash_notes = HashMap::from([
