@@ -8,7 +8,8 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
     let mut tracks = vec![];
 
     let mut i = 0;
-    let mut current_event_type = 0; // Support running status
+    let mut current_event_type = 0; // Support running 
+    let mut current_delta_time = 0; // Support delta time for non-note events
 
     while i < data.len() {
         if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
@@ -59,6 +60,8 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                 } */
 
                 let delta = variable_length_bytes_to_int(&data, &mut i);
+                // println("{:?}", delta); 
+                current_delta_time += delta;
 
                 // It is only a status byte if more or equal than 128
                 if data[i] >= 128 {
@@ -84,8 +87,11 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                     match current_event_type {
                         8 | 9 => {
                             // Note on/off event
-                            offsets.push(delta as f32);
+                            // offsets.push(delta as f32);
+                            offsets.push(current_delta_time as f32);
                             notes.push(data[i] as f32);
+
+                            current_delta_time = 0;
 
                             // Note off should always have volume 0
                             if current_event_type == 8 {

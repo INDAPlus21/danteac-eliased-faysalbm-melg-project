@@ -563,12 +563,12 @@ input.addEventListener("change", () => {
             alphanumeric_two.push([notes[event[0]], event[1]])
         }
 
-        const combined = combineTracks(alphanumeric_two, alphanumeric)
+        // const combined = combineTracks(alphanumeric_two, alphanumeric)
 
         console.log({alphanumeric})
 
-        // selfPlay(alphanumeric); 
-        selfPlay(combined); 
+        selfPlay(alphanumeric); 
+        // selfPlay(combined); 
     });
 })
 
