@@ -10,6 +10,7 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
 
         let mut i = 0;
         let mut current_event_type = 0; // Support running status
+        let mut current_delta_time = 0; // Support delta time for non-note events
 
         while i < data.len() {
             if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
@@ -48,6 +49,7 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                 // Read track events (doesn't account for SysEx messages)
                 while i - start_i < byte_count as usize {
                     let delta = variable_length_bytes_to_int(&data, &mut i);
+                    current_delta_time += delta;
 
                     // It is only a status byte if more or equal than 128
                     if data[i] >= 128 {
@@ -73,8 +75,9 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                         match current_event_type {
                             8 | 9 => {
                                 // Note on/off event
-                                offsets.push(delta as f32);
+                                offsets.push(current_delta_time as f32);
                                 notes.push(data[i] as f32);
+                                current_delta_time = 0;
 
                                 // Note off should always have volume 0
                                 if current_event_type == 8 {
