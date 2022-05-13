@@ -77,6 +77,6 @@ const notes = {
 // "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/tee.mid"
+const midi_file = "./midis/Rush_E.mid"
 
 parseFile(midi_file)

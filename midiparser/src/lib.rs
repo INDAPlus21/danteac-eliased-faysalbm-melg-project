@@ -9,7 +9,7 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
     let mut i = 0;
     let mut current_event_type = 0; // Support running
-    let mut current_delta_time = 0; // Support delta time for non-note events
+    let mut current_delta_time: u32 = 0; // Support delta time for non-note events
 
     while i < data.len() {
         if i < data.len() - 4 && data[i..i + 4] == b"MThd".to_owned() {
@@ -51,7 +51,6 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
             let byte_count = bytes_to_int(&data[i..i + 4]);
             i += 4;
             let start_i = i;
-            let mut eight_nine = false;
 
             // Read track events (doesn't account for SysEx messages)
             while i - start_i < byte_count as usize {
@@ -61,7 +60,7 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
                 let delta = variable_length_bytes_to_int(&data, &mut i);
                 // println("{:?}", delta);
-                // current_delta_time += delta;
+                current_delta_time += delta;
 
                 // It is only a status byte if more or equal than 128
                 if data[i] >= 128 {
@@ -81,19 +80,23 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
                     // End of track, ignore other messages
                     if message_type == 47 {
+                        current_delta_time = 0; 
+                        current_event_type = 0;
                         break;
                     }
 
-                    offsets.push(delta as f32);
-                    notes.push(255 as f32);
+                    // offsets.push(current_delta_time as f32);
+                    // notes.push(255 as f32);
                 } else {
                     match current_event_type {
                         8 | 9 => {
-                            eight_nine = true;
+                            // eight_nine = true;
                             // Note on/off event
                             // offsets.push(delta as f32);
-                            offsets.push(delta as f32);
+                            offsets.push(current_delta_time as f32);
                             notes.push(data[i] as f32);
+
+                            current_delta_time = 0; 
 
                             // Note off should always have volume 0
                             if current_event_type == 8 {
@@ -117,11 +120,12 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                         }
                     }
                 }
+                
 
-                if !eight_nine {
+                /* if !eight_nine {
                     offsets.push(delta as f32);
                     notes.push(255 as f32);
-                }
+                } */
             }
 
             // Only add tracks with note data
@@ -132,7 +136,11 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                     offsets,
                 });
             }
+
+            current_delta_time = 0; 
+            current_event_type = 0;
         } else {
+            
             i += 1;
         }
     }
@@ -296,7 +304,7 @@ pub fn convert_to_front_end_format(song: Song) -> Vec<Vec<Thing>> {
     } */
 
     let track = &song.tracks[1];
-    for i in 0..track.notes.len() {
+    for i in 0..100 /*track.notes.len()*/ {
         // println!("{}", i);
         let note = hash_notes[&(track.notes[i] as i32)];
         let to_push = vec![
@@ -312,18 +320,19 @@ pub fn convert_to_front_end_format(song: Song) -> Vec<Vec<Thing>> {
 // Source: https://stackoverflow.com/questions/24711585/decode-midi-variable-length-field
 // Returns bytes as integer
 fn variable_length_bytes_to_int(data: &[u8], index: &mut usize) -> u32 {
-    let mut ret = 0;
+    let mut ret: u32 = 0;
 
     loop {
-        let byte_in = data[*index];
+        let byte_in = data[*index] as u32;
         *index += 1;
-        if byte_in == 0 {
+        // 7680.0 as zero 0b1111000000000
+        /* if byte_in == 0 {
             return 0;
-        }
+        } */
 
         // Continue if top bit is one
-        ret = (ret << 7) | (byte_in & 0x7f);
-        if (byte_in & 0x80) == 0 {
+        ret = (ret << 7) | (byte_in & 127);
+        if (byte_in & 128) == 0 {
             return ret as u32;
         }
     }

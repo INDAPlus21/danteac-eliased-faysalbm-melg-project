@@ -186,7 +186,7 @@ function testAnother() {
 // testMultipleNotesOtherHandInRow()
 // testConcat()
 // testSimple()
-// testLeftHandConcat()
+testLeftHandConcat()
 // testAnother()
 
 /* Reasoning (you don't need to read through this) */

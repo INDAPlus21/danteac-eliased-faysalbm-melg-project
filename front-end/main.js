@@ -370,7 +370,7 @@ function setUpKeyboard() {
         // let song_to_play = songs["combined_lone"] //.slice(22)
         const song_to_play = song //.slice(22)
         const original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
-        // setTempo(2, song_to_play, original_song)
+        setTempo(1, song_to_play, original_song)
         // transposeUp(song_to_play)
         selfPlay(song_to_play)
     }
@@ -564,6 +564,9 @@ input.addEventListener("change", () => {
         }
 
         const combined = combineTracks(alphanumeric_two, alphanumeric)
+
+        const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
+        setTempo(1, combined, original_song)
 
         // console.log({alphanumeric})
 
