@@ -130,8 +130,8 @@ fn variable_length_bytes_to_int(data: &[u8], index: &mut usize) -> u32 {
     let mut ret = 0u32;
 
     loop {
-        let byte_in = data[index] as u32;
-        index += 1;
+        let byte_in = data[*index] as u32;
+        *index += 1;
         if byte_in == 0 {
             return 0;
         }
