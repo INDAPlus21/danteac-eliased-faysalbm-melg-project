@@ -1,7 +1,5 @@
 A project that uses AI for generating a song based on inputted tunes. Written in JS and Rust.
 
-A project that uses AI for generating a song based on inputted tunes. Written in JS and Rust.
-
 TODO when adding a feature/fixing a bug:
 - Create an issue
 - Assign a person, set a milestone and labels as well as the project board
