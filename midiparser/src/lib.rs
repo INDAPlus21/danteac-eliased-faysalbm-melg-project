@@ -5,7 +5,7 @@ use std::fs;
 
 // Filename without extension suffix
 pub fn parse_midi(filename: &str) -> Option<Song> {
-    if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
+    if let Ok(data) = fs::read(filename.to_owned()) {
         let mut tracks = vec![];
 
         let mut i = 0;
