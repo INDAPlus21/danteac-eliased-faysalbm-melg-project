@@ -22,8 +22,10 @@ export function combineTracks(left_hand, right_hand) {
     let right_lead = 0;
     let left_lead = 0;
 
+    // fix the side effects! 
+
     function pushRight() {
-        if (right_hand[index_right][0] == "no_note") {
+        if (right_hand[index_right][0] ==  "no_note") {
             left_lead -= right_hand[index_right][1]
             index_right++
         } else {
