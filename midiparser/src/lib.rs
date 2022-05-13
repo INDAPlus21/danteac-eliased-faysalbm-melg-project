@@ -137,8 +137,8 @@ fn variable_length_bytes_to_int(data: &[u8], index: &mut usize) -> u32 {
         }
 
         // Continue if top bit is one
-        ret = (ret << 7) | (byte_in & 0x7f);
-        if (byte_in & 0x80) == 0 {
+        ret = (ret << 7) | (byte_in & 127);
+        if (byte_in & 128) == 0 {
             return ret as u32;
         }
     }
