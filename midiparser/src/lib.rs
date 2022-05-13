@@ -1,7 +1,7 @@
 pub mod song;
 use core::convert::TryInto;
-use std::ffi::OsString;
 use song::{Song, Track};
+use std::ffi::OsString;
 use std::fs;
 use std::fs::ReadDir;
 
@@ -126,7 +126,6 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
     }
 }
 
-
 pub fn parse_midi2(filename: &str) -> Option<Song> {
     if let Ok(data) = fs::read(filename.to_owned()) {
         let mut tracks = vec![];
@@ -178,7 +177,7 @@ pub fn parse_midi2(filename: &str) -> Option<Song> {
                     if data[i] >= 128 {
                         // Status byte (type and channel)
                         current_event_type = data[i] >> 4; // Top part of byte
-                        //let channel = (data[i] << 4) >> 4; // Bottom part of byte
+                                                           //let channel = (data[i] << 4) >> 4; // Bottom part of byte
                         i += 1;
                     }
 
@@ -254,9 +253,6 @@ fn variable_length_bytes_to_int(data: &[u8], index: &mut usize) -> u32 {
     loop {
         let byte_in = data[*index] as u32;
         *index += 1;
-        if byte_in == 0 {
-            return 0;
-        }
 
         // Continue if top bit is one
         ret = (ret << 7) | (byte_in & 127);
