@@ -111,6 +111,7 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
                         offsets,
                     });
                 }
+                current_delta_time = 0;
             } else {
                 i += 1;
             }
