@@ -7,6 +7,8 @@ use crate::vector::Vector;
 mod tests {
     use super::*;
 
+    //region Test vectors
+
     //region Outputting functions
     #[test]
     fn test_vector_sum() {
@@ -30,7 +32,6 @@ mod tests {
     //endregion
 
     //region Producing functions
-
     #[test]
     fn test_vector_exp() {
         assert_eq!(
@@ -284,6 +285,18 @@ mod tests {
                 vec![12.0, 1.0, 11.0],
                 vec![6.0, 3.0, 9.0],
             ])
+        );
+    }
+
+    #[test]
+    fn test_matrix_flatten() {
+        assert_eq!(
+            Matrix::from_vecs(vec![
+                vec![4.0, 12.0, 3.0, 4.0],
+                vec![8.0, 1.0, 5.0, -6.0],
+                vec![-2.0, 9.0, 7.0, 11.0],
+            ]).flatten_2d(),
+            Vector::from_vec(vec![4.0, 12.0, 3.0, 4.0, 8.0, 1.0, 5.0, -6.0, -2.0, 9.0, 7.0, 11.0])
         );
     }
     //endregion
