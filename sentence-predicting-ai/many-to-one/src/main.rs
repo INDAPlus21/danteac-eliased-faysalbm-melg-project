@@ -127,3 +127,4 @@ fn load_matrices(rnn: &mut RNN, path: &str){
 
     // repeat for other memory components
 }
+
