@@ -248,6 +248,21 @@ mod tests {
 
     //region Test matrices
 
+    //region Getters
+    #[test]
+    fn test_matrix_get_column() {
+        assert_eq!(
+            Matrix::from_vecs(vec![
+                vec![9.0, 3.0, 12.0, -5.0],
+                vec![-4.0, 7.0, 1.0, 8.0],
+                vec![2.0, 6.0, 10.0, -3.0],
+            ])
+            .get_column_vector(2),
+            Vector::from_vec(vec![12.0, 1.0, 10.0])
+        );
+    }
+    //endregion Getters
+
     //region Outputting functions
     #[test]
     fn test_matrix_sum() {

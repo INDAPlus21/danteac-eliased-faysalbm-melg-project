@@ -3,6 +3,7 @@ use rand_distr::{Distribution, Normal};
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
 
+// Represents a row vector
 #[derive(Clone, PartialEq)]
 pub struct Vector {
     vector: Vec<f32>,

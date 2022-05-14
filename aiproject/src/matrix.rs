@@ -20,6 +20,16 @@ impl Matrix {
     pub fn get_size(&self) -> (usize, usize) {
         (self.get_height(), self.get_width())
     }
+
+    pub fn get_column_vector(&self, column: usize) -> Vector {
+        let mut vec = vec![];
+
+        for i in 0..self.get_height() {
+            vec.push(self.vectors[i][column]);
+        }
+
+        Vector::from_vec(vec)
+    }
     //endregion
 
     //region Creation functions
