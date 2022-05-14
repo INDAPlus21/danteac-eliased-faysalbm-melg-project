@@ -115,6 +115,20 @@ impl Matrix {
         }
         output
     }
+
+    // Concatenates all row vectors into one column vector.
+    pub fn flatten(&self) -> Vector {
+        let self_height: usize = self.get_height();
+        let self_width: usize = self.get_width();
+        let output_len: usize = self_height * self_width;
+        let mut output: Vector = Vector::with_length(output_len);
+        for row in 0..self_height {
+            for col in 0..self_width {
+                output[row * self_width + col] = self[row][col];
+            }
+        }
+        output
+    }
     //endregion
 }
 
