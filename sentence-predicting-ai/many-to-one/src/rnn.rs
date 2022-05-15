@@ -108,7 +108,7 @@ impl RNN {
 
     // loads memory from memory file
     pub fn load_memory(rnn: &mut RNN, path: &str) {
-        // get memoery string
+        // get memory string
         let mut file = File::open(path).expect("file error or something");
         let mut content = String::new();
         file.read_to_string(&mut content)
