@@ -3,11 +3,11 @@ use crate::linalg::{Vector, Matrix};
 
 #[derive(Clone, PartialEq)]
 pub struct RNN {
-    wxh: Matrix,
-    whh: Matrix,
-    why: Matrix,
-    bh: Vector,
-    by: Vector,
+    pub wxh: Matrix,
+    pub whh: Matrix,
+    pub why: Matrix,
+    pub bh: Vector,
+    pub by: Vector,
 }
 
 impl RNN {
