@@ -15,6 +15,14 @@ Cargo.lock
 *.pdb
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,rust
+
+MIDI.js
+
+# Added by cargo
+
+/target
+
+front-end/node_modules
 aiproject/src/main.exe
 
 
@@ -27,7 +35,13 @@ aiproject/src/main.exe
 
 # Nodejs
 aiproject/node_modules/
+
+
+# JetBrains
 .idea
 
 # MacOS
 .DS_Store
+
+# Train data
+aiproject/train-data/

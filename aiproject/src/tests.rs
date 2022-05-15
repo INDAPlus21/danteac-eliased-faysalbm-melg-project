@@ -1,9 +1,13 @@
+#[cfg(test)]
 use crate::matrix::Matrix;
+#[cfg(test)]
 use crate::vector::Vector;
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    //region Test vectors
 
     //region Outputting functions
     #[test]
@@ -28,7 +32,6 @@ mod tests {
     //endregion
 
     //region Producing functions
-
     #[test]
     fn test_vector_exp() {
         assert_eq!(
@@ -245,6 +248,21 @@ mod tests {
 
     //region Test matrices
 
+    //region Getters
+    #[test]
+    fn test_matrix_get_column() {
+        assert_eq!(
+            Matrix::from_vecs(vec![
+                vec![9.0, 3.0, 12.0, -5.0],
+                vec![-4.0, 7.0, 1.0, 8.0],
+                vec![2.0, 6.0, 10.0, -3.0],
+            ])
+            .get_column_vector(2),
+            Vector::from_vec(vec![12.0, 1.0, 10.0])
+        );
+    }
+    //endregion Getters
+
     //region Outputting functions
     #[test]
     fn test_matrix_sum() {
@@ -282,6 +300,18 @@ mod tests {
                 vec![12.0, 1.0, 11.0],
                 vec![6.0, 3.0, 9.0],
             ])
+        );
+    }
+
+    #[test]
+    fn test_matrix_flatten() {
+        assert_eq!(
+            Matrix::from_vecs(vec![
+                vec![4.0, 12.0, 3.0, 4.0],
+                vec![8.0, 1.0, 5.0, -6.0],
+                vec![-2.0, 9.0, 7.0, 11.0],
+            ]).flatten_2d(),
+            Vector::from_vec(vec![4.0, 12.0, 3.0, 4.0, 8.0, 1.0, 5.0, -6.0, -2.0, 9.0, 7.0, 11.0])
         );
     }
     //endregion

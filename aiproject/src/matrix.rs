@@ -20,6 +20,16 @@ impl Matrix {
     pub fn get_size(&self) -> (usize, usize) {
         (self.get_height(), self.get_width())
     }
+
+    pub fn get_column_vector(&self, column: usize) -> Vector {
+        let mut vec = vec![];
+
+        for i in 0..self.get_height() {
+            vec.push(self.vectors[i][column]);
+        }
+
+        Vector::from_vec(vec)
+    }
     //endregion
 
     //region Creation functions
@@ -116,6 +126,20 @@ impl Matrix {
         for row in 0..self_height {
             for col in 0..self_width {
                 output[col][row] = self[row][col];
+            }
+        }
+        output
+    }
+
+    // Concatenates all row vectors into one column vector.
+    pub fn flatten(&self) -> Vector {
+        let self_height: usize = self.get_height();
+        let self_width: usize = self.get_width();
+        let output_len: usize = self_height * self_width;
+        let mut output: Vector = Vector::with_length(output_len);
+        for row in 0..self_height {
+            for col in 0..self_width {
+                output[row * self_width + col] = self[row][col];
             }
         }
         output
