@@ -1,10 +1,16 @@
 mod rnn;
 mod data;
 mod linalg;
+mod memory_reader;
 
 use crate::linalg::{Vector, Matrix};
-use std::collections::{HashMap, HashSet};
 use crate::rnn::RNN;
+use crate::memory_reader::MemoryReader;
+use std::collections::{HashMap, HashSet};
+use std::io::{Read, Write};
+use std::fs::File;
+use std::fs;
+
 
 fn main() {
     let train_data: HashMap<&str, bool> = data::gen_train_data();
@@ -53,7 +59,9 @@ fn process_data(data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashM
 }
 
 fn run_epochs(train_data: HashMap<&str, bool>, test_data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashMap<&str, usize>, mut rnn: &mut RNN) {
+    RNN::load_memory(rnn, "rnnMemory2.txt");
     for epoch in 1..1000 {
+    
         let (train_loss, train_acc) = process_data(train_data.to_owned(), vocab_size, words_to_id.to_owned(), true, &mut rnn);
 
         if epoch % 10 == 9 {
@@ -61,6 +69,8 @@ fn run_epochs(train_data: HashMap<&str, bool>, test_data: HashMap<&str, bool>, v
             println!("Train:\tLoss {:.20} | Accuracy: {:.20}", train_loss, train_acc);
             let (test_loss, test_acc) = process_data(test_data.to_owned(), vocab_size, words_to_id.to_owned(), false, &mut rnn);
             println!("Test:\tLoss {:.20} | Accuracy: {:.20}", test_loss, test_acc);
+            RNN::save_matrices(rnn);
         }
     }
 }
+
