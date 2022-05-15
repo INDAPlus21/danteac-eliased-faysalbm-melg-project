@@ -1,25 +1,30 @@
-mod rnn;
 mod data;
 mod linalg;
 mod memory_reader;
+mod rnn;
 
-use crate::linalg::{Vector, Matrix};
+use crate::linalg::{Matrix, Vector};
 use crate::rnn::RNN;
-use crate::memory_reader::MemoryReader;
 use std::collections::{HashMap, HashSet};
-use std::io::{Read, Write};
-use std::fs::File;
 use std::fs;
-
+use std::fs::File;
+use std::io::{Read, Write};
 
 fn main() {
     let train_data: HashMap<&str, bool> = data::gen_train_data();
     let test_data: HashMap<&str, bool> = data::gen_test_data();
-    let (words_to_id, vocab_size): (HashMap<&str, usize>, usize) = data::gen_words_to_id(train_data.to_owned());
+    let (words_to_id, vocab_size): (HashMap<&str, usize>, usize) =
+        data::gen_words_to_id(train_data.to_owned());
 
     let mut rnn: RNN = RNN::new(vocab_size, 64, 2);
 
-    run_epochs(train_data.to_owned(), test_data, vocab_size, words_to_id, &mut rnn);
+    run_epochs(
+        train_data.to_owned(),
+        test_data,
+        vocab_size,
+        words_to_id,
+        &mut rnn,
+    );
 }
 
 fn create_inputs(text: &str, vocab_size: usize, words_to_id: HashMap<&str, usize>) -> Matrix {
@@ -33,14 +38,20 @@ fn create_inputs(text: &str, vocab_size: usize, words_to_id: HashMap<&str, usize
     Matrix::from_vecs(inputs_vec)
 }
 
-fn process_data(data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashMap<&str, usize>, backward: bool, mut rnn: &mut RNN) -> (f32, f32) {
+fn process_data(
+    data: HashMap<&str, bool>,
+    vocab_size: usize,
+    words_to_id: HashMap<&str, usize>,
+    backward: bool,
+    mut rnn: &mut RNN,
+) -> (f32, f32) {
     let mut loss: f32 = 0.0;
     let mut num_correct: f32 = 0.0;
     for (str, boolean) in data.to_owned() {
         let inputs: Matrix = create_inputs(str, vocab_size, words_to_id.to_owned());
         let target: usize = boolean.into();
 
-        let (out, last_hs) : (Vector, Matrix) = rnn.forward(inputs.to_owned());
+        let (out, last_hs): (Vector, Matrix) = rnn.forward(inputs.to_owned());
 
         let probs: Vector = out.softmax();
         if backward {
@@ -53,24 +64,43 @@ fn process_data(data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashM
         loss -= probs[target].ln();
         num_correct += ((probs.argmax() == target) as i32) as f32;
     }
-    let total_loss = loss/(data.len() as f32);
-    let accuracy = num_correct/(data.len() as f32);
+    let total_loss = loss / (data.len() as f32);
+    let accuracy = num_correct / (data.len() as f32);
     (total_loss, accuracy)
 }
 
-fn run_epochs(train_data: HashMap<&str, bool>, test_data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashMap<&str, usize>, mut rnn: &mut RNN) {
+fn run_epochs(
+    train_data: HashMap<&str, bool>,
+    test_data: HashMap<&str, bool>,
+    vocab_size: usize,
+    words_to_id: HashMap<&str, usize>,
+    mut rnn: &mut RNN,
+) {
     RNN::load_memory(rnn, "rnnMemory2.txt");
     for epoch in 1..1000 {
-    
-        let (train_loss, train_acc) = process_data(train_data.to_owned(), vocab_size, words_to_id.to_owned(), true, &mut rnn);
+        let (train_loss, train_acc) = process_data(
+            train_data.to_owned(),
+            vocab_size,
+            words_to_id.to_owned(),
+            true,
+            &mut rnn,
+        );
 
         if epoch % 10 == 9 {
             println!("--- Epoch {}", (epoch + 1));
-            println!("Train:\tLoss {:.20} | Accuracy: {:.20}", train_loss, train_acc);
-            let (test_loss, test_acc) = process_data(test_data.to_owned(), vocab_size, words_to_id.to_owned(), false, &mut rnn);
+            println!(
+                "Train:\tLoss {:.20} | Accuracy: {:.20}",
+                train_loss, train_acc
+            );
+            let (test_loss, test_acc) = process_data(
+                test_data.to_owned(),
+                vocab_size,
+                words_to_id.to_owned(),
+                false,
+                &mut rnn,
+            );
             println!("Test:\tLoss {:.20} | Accuracy: {:.20}", test_loss, test_acc);
             RNN::save_matrices(rnn);
         }
     }
 }
-

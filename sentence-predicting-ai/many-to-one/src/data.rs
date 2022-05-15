@@ -64,7 +64,6 @@ pub fn gen_train_data() -> HashMap<&'static str, bool> {
     train_data
 }
 
-
 pub fn gen_test_data() -> HashMap<&'static str, bool> {
     let test_data: HashMap<&str, bool> = HashMap::from([
         ("this is happy", true),

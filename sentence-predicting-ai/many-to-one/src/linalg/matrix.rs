@@ -29,7 +29,7 @@ impl Matrix {
             vec_of_vecs.push(Vector::from_vec(vec));
         }
         Matrix {
-            vectors: vec_of_vecs
+            vectors: vec_of_vecs,
         }
     }
 
@@ -39,7 +39,7 @@ impl Matrix {
             vec_of_vecs.push(Vector::with_length(width));
         }
         Matrix {
-            vectors: vec_of_vecs
+            vectors: vec_of_vecs,
         }
     }
 
@@ -53,7 +53,7 @@ impl Matrix {
             vec_of_vectors.push(Vector::with_random(width));
         }
         Matrix {
-            vectors: vec_of_vectors
+            vectors: vec_of_vectors,
         }
     }
 
@@ -63,7 +63,7 @@ impl Matrix {
             vec_of_vectors.push(Vector::with_random_normal(width, mean, std_dev));
         }
         Matrix {
-            vectors: vec_of_vectors
+            vectors: vec_of_vectors,
         }
     }
     //endregion
@@ -130,13 +130,14 @@ impl Matrix {
         output
     }
 
-    pub fn get_content_as_string(&self) -> String{
+    pub fn convert_to_string(&self) -> String {
         let mut string: String = Matrix::get_height(&self).to_string();
         string.push_str(" ");
         string.push_str(&Matrix::get_width(&self).to_string());
         string.push_str(" ");
-        for i in 0..self.get_height() { // nestlad forloop för att plocka ut alla värden från matrisen en i taget
-            for j in 0..self.get_width(){
+
+        for i in 0..self.get_height() {
+            for j in 0..self.get_width() {
                 string.push_str(&self.vectors[i][j].to_string());
                 string.push_str(" ");
             }
@@ -319,7 +320,9 @@ impl Mul<Matrix> for Matrix {
             for self_out_row in 0..self_height {
                 for operand_out_col in 0..operand_width {
                     for self_col_operand_row in 0..self_width {
-                        output[self_out_row][operand_out_col] += self[self_out_row][self_col_operand_row] * rhs[self_col_operand_row][operand_out_col];
+                        output[self_out_row][operand_out_col] += self[self_out_row]
+                            [self_col_operand_row]
+                            * rhs[self_col_operand_row][operand_out_col];
                     }
                 }
             }
@@ -373,7 +376,5 @@ impl Mul<Vector> for Matrix {
     }
 }
 //endregion
-
-
 
 //endregion
