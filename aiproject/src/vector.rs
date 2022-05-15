@@ -164,6 +164,19 @@ impl Vector {
     pub fn t(&self) -> Matrix {
         Matrix::from_vecs(vec![self.vector.clone()])
     }
+
+    pub fn convert_to_string(&self) -> String {
+        let mut string: String = "1".to_string();
+        string.push_str(" ");
+        string.push_str(&Vector::get_length(&self).to_string());
+        string.push_str(" ");
+
+        for i in 0..self.get_length() {
+            string.push_str(&self.vector[i].to_string());
+            string.push_str(" ");
+        }
+        string
+    }
     //endregion
 }
 

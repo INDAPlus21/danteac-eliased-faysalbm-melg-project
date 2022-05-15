@@ -144,6 +144,21 @@ impl Matrix {
         }
         output
     }
+
+    pub fn convert_to_string(&self) -> String {
+        let mut string: String = Matrix::get_height(&self).to_string();
+        string.push_str(" ");
+        string.push_str(&Matrix::get_width(&self).to_string());
+        string.push_str(" ");
+
+        for i in 0..self.get_height() {
+            for j in 0..self.get_width() {
+                string.push_str(&self.vectors[i][j].to_string());
+                string.push_str(" ");
+            }
+        }
+        string
+    }
     //endregion
 }
 
