@@ -61,6 +61,7 @@ fn process_data(data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashM
 fn run_epochs(train_data: HashMap<&str, bool>, test_data: HashMap<&str, bool>, vocab_size: usize, words_to_id: HashMap<&str, usize>, mut rnn: &mut RNN) {
     RNN::load_memory(rnn, "rnnMemory2.txt");
     for epoch in 1..1000 {
+    
         let (train_loss, train_acc) = process_data(train_data.to_owned(), vocab_size, words_to_id.to_owned(), true, &mut rnn);
 
         if epoch % 10 == 9 {
