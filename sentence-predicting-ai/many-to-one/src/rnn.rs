@@ -147,8 +147,8 @@ impl RNN {
         }
 
         let mut num: f32;
-        for n in 0..(height) {
-            for m in 0..(width) {
+        for n in 0..height {
+            for m in 0..width {
                 (num, next_index) = memory_reader::read_number(&content, &next_index);
                 vec_of_vecs[n][m] = num;
             }
