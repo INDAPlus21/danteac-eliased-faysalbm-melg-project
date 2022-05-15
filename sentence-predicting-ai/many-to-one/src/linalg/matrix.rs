@@ -129,6 +129,20 @@ impl Matrix {
         }
         output
     }
+
+    pub fn get_content_as_string(&self) -> String{
+        let mut string: String = Matrix::get_height(&self).to_string();
+        string.push_str(" ");
+        string.push_str(&Matrix::get_width(&self).to_string());
+        string.push_str(" ");
+        for i in 0..self.get_height() { // nestlad forloop för att plocka ut alla värden från matrisen en i taget
+            for j in 0..self.get_width(){
+                string.push_str(&self.vectors[i][j].to_string());
+                string.push_str(" ");
+            }
+        }
+        string
+    }
     //endregion
 }
 
@@ -359,5 +373,7 @@ impl Mul<Vector> for Matrix {
     }
 }
 //endregion
+
+
 
 //endregion

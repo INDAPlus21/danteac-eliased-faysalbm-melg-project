@@ -1,13 +1,18 @@
 
 use crate::linalg::{Vector, Matrix};
+use crate::memory_reader::MemoryReader;
+use std::fs::OpenOptions;
+use std::fs;
+use std::fs::File;
+use std::io::{Read, Write};
 
 #[derive(Clone, PartialEq)]
 pub struct RNN {
-    wxh: Matrix,
-    whh: Matrix,
-    why: Matrix,
-    bh: Vector,
-    by: Vector,
+    pub wxh: Matrix,
+    pub whh: Matrix,
+    pub why: Matrix,
+    pub bh: Vector,
+    pub by: Vector,
 }
 
 impl RNN {
@@ -70,4 +75,100 @@ impl RNN {
         self.by -= learn_rate * d_by.clamp(-1.0, 1.0);
         self.bh -= learn_rate * d_bh.clamp(-1.0, 1.0);
     }
+
+    // saves memory to a memory file
+    pub fn save_matrices(rnn: &mut RNN) {
+        if let Ok(mut file) = File::create("rnnMemory2.txt") {
+            let wxh: &Matrix = &rnn.wxh;
+            let whh: &Matrix = &rnn.whh;
+            let why: &Matrix = &rnn.why;
+            let bh: &Vector = &rnn.bh;
+            let by: &Vector = &rnn.by;
+            /*if let Ok(mut file) = file.write_all(b"Hello\n") {
+
+            }*/
+            let mut file = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open("rnnMemory2.txt")
+            .unwrap();
+
+
+            if let Err(e) = writeln!(file, "{}", &Matrix::get_content_as_string(&wxh)) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
+            if let Err(e) = writeln!(file, "{}", &Matrix::get_content_as_string(&whh)) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
+            if let Err(e) = writeln!(file, "{}", &Matrix::get_content_as_string(&why)) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
+            if let Err(e) = writeln!(file, "{}", &Vector::get_content_as_string(&bh)) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
+            if let Err(e) = writeln!(file, "{}", &Vector::get_content_as_string(&by)) {
+                eprintln!("Couldn't write to file: {}", e);
+            }
+
+            
+        
+        } 
+        else {
+                println!("file error or smth");
+        }
+    }
+
+    // loads memory from memory file
+    pub fn load_memory(rnn: &mut RNN, path: &str) {
+        // get memoery string
+        let mut file = File::open(path).expect("file error or something");
+        let mut content = String::new();
+        file.read_to_string(&mut content).expect("file read error or something");
+        let mut b_matrix: Matrix;
+        // read dimensions
+        let mut next_index: usize = 0;
+        (rnn.wxh, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("wxh {}", next_index);
+        (rnn.whh, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("whh {}", next_index);
+        (rnn.why, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("why {}", next_index);
+        (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("bh {}", next_index);
+        rnn.bh = b_matrix.flatten();
+        (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("by {}", next_index);
+        rnn.by = b_matrix.flatten();
+
+    }
+
+    fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize){
+        let (height, mut next_index): (f32, usize) = MemoryReader::read_number(&content, next_index);
+        let (width, mut next_index): (f32, usize)= MemoryReader::read_number(&content, &next_index);
+
+        let width = width as usize;
+        let height = height as usize;
+        //println!("width {}, height{}", width, height);
+        // read contents and create matrix
+        let mut vec_of_vecs: Vec<Vec<f32>> = vec![];
+        for i in 0..height{
+            let mut row = vec![0.0; width];
+            vec_of_vecs.push(row);
+        }
+        
+        
+        let mut num: f32;
+        for n in 0..(height){
+            for m in 0..(width){
+                //println!("({},{})", n,m);
+                (num, next_index) = MemoryReader::read_number(&content, &next_index);
+                if(n == height - 1 && m == width - 2){
+                    //println!("Last number {}", num);
+                }
+                vec_of_vecs[n][m] = num;
+            }
+        }
+        (Matrix::from_vecs(vec_of_vecs), next_index)
+    }
+
 }
