@@ -131,9 +131,9 @@ impl Matrix {
     }
     
     pub fn get_content_as_string(&self) -> String{
-        let mut string: String = Matrix::get_width(&self).to_string();
+        let mut string: String = Matrix::get_height(&self).to_string();
         string.push_str(" ");
-        string.push_str(&Matrix::get_height(&self).to_string());
+        string.push_str(&Matrix::get_width(&self).to_string());
         string.push_str(" ");
         for i in 0..self.get_height() { // nestlad forloop för att plocka ut alla värden från matrisen en i taget
             for j in 0..self.get_width(){
@@ -143,6 +143,20 @@ impl Matrix {
         }
         string
     }
+
+     // Concatenates all row vectors into one column vector.
+    pub fn flatten(&self) -> Vector {
+    let self_height: usize = self.get_height();
+        let self_width: usize = self.get_width();
+        let output_len: usize = self_height * self_width;
+        let mut output: Vector = Vector::with_length(output_len);
+        for row in 0..self_height {
+            for col in 0..self_width {
+                output[row * self_width + col] = self[row][col];
+            }
+        }            
+        output
+        }
     //endregion
 }
 

@@ -166,16 +166,18 @@ impl Vector {
         Matrix::from_vecs(vec![self.vector.clone()])
     }
 
-    /*pub fn get_content_as_string(&self){
-        let mut string: String = Matrix::get_width(&self).to_string();
-        string.push_str(&Matrix::get_height(&self).to_string());
-        for i in 0..self.get_height() { // nestlad forloop för att plocka ut alla värden från matrisen en i taget
-            for j in 0..self.get_width(){
-                string.push_str(&self.vectors[i][j].to_string())
-
-            }
+    pub fn get_content_as_string(&self) -> String{
+        let mut string: String = "1".to_string();
+        string.push_str(" ");
+        string.push_str(&Vector::get_length(&self).to_string());
+        string.push_str(" ");
+        for i in 0..self.get_length() { // nestlad forloop för att plocka ut alla värden från matrisen en i taget
+            string.push_str(&self.vector[i].to_string());
+            string.push_str(" ");
+            
         }
-    }*/
+        string
+    }
     //endregion
 }
 

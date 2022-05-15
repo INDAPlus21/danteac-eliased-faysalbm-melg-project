@@ -6,20 +6,20 @@ impl Memorymanager{
 
     // read a number starting from a speciefied index from a larger string
     // the number must end with a white space " "
-    pub fn read_number(string: &str, start_index: usize) -> (f32, usize){
+    pub fn read_number(string: &str, start_index: &usize) -> (f32, usize){
         let mut number: String = "".to_string();
         let mut index_counter: usize = 0;
         for (i, c) in string.chars().enumerate() {
             index_counter = i;
-            if (i >= start_index && c != ' '){
+            if (i >= *start_index && c != ' '){
                 number.push(c);
             }
-            else if (i >= start_index && c == ' '){
+            else if (i >= *start_index && c == ' '){
                 break
             }
         }
         number.retain(|c| !c.is_whitespace()); // unsure if this line realy is necceccary
         let num = number.parse::<f32>().unwrap();
-        (num, index_counter + 1)
+        (num, (index_counter + 1))
     }
 }
