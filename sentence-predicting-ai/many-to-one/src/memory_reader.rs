@@ -18,5 +18,5 @@ pub fn read_number(string: &str, start_index: &usize) -> (f32, usize) {
 
     number.retain(|c| !c.is_whitespace()); // unsure if this line realy is necceccary
     let num = number.parse::<f32>().unwrap();
-    (num, (index_counter + 1))
+    (num, index_counter + 1)
 }
