@@ -1,4 +1,4 @@
-// read a number starting from a speciefied index from a larger string
+// read a number starting from a specified index from a larger string
 // the number must end with a white space " "
 pub fn read_number(string: &str, start_index: &usize) -> (f32, usize) {
     let mut number: String = "".to_string();
