@@ -22,7 +22,13 @@ impl RNN {
             whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
             bh: Vector::with_length(hidden_size),
-            by: Vector::with_length(output_size),
+            by: Vector::with_length(output_size)
+
+           /*  wxh: Matrix::from_vecs(vec![]),
+            whh:  Matrix::from_vecs(vec![]),
+            why:  Matrix::from_vecs(vec![]),
+            bh: Vector::with_length(0),
+            by: Vector::with_length(0) */
         }
     }
 
@@ -75,8 +81,8 @@ impl RNN {
     }
 
     // saves memory to a memory file
-    pub fn save_matrices(rnn: &mut RNN) {
-        if let Ok(file) = File::create("rnnMemory2.txt") {
+    pub fn save_matrices(rnn: &mut RNN, path: &str) {
+        if let Ok(file) = File::create(path) {
             let wxh: &Matrix = &rnn.wxh;
             let whh: &Matrix = &rnn.whh;
             let why: &Matrix = &rnn.why;
@@ -86,7 +92,7 @@ impl RNN {
             let mut file = OpenOptions::new()
                 .write(true)
                 .append(true)
-                .open("rnnMemory2.txt")
+                .open(path)
                 .unwrap();
 
             for matrix in vec![&wxh, &whh, &why].iter() {
@@ -108,7 +114,11 @@ impl RNN {
     // loads memory from memory file
     pub fn load_memory(rnn: &mut RNN, path: &str) {
         // get memory string
-        let mut file = File::open(path).expect("file error or something");
+        // använder samma openoptions objet att den inte readar/writer! 
+        let mut file = OpenOptions::new().seek(SeekFrom::Current(0))
+        .read(true).
+        .open(path)
+        .unwrap(); // File::open(path).expect("file error or something");
         let mut content = String::new();
         file.read_to_string(&mut content)
             .expect("file read error or something");

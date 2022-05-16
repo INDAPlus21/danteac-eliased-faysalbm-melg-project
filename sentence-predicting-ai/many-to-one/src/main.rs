@@ -86,7 +86,7 @@ fn run_epochs(
             &mut rnn,
         );
 
-        if epoch % 10 == 9 {
+        if epoch % 10 == 9 /* epoch % 10 == 9 */  {
             println!("--- Epoch {}", (epoch + 1));
             println!(
                 "Train:\tLoss {:.20} | Accuracy: {:.20}",
@@ -99,8 +99,19 @@ fn run_epochs(
                 false,
                 &mut rnn,
             );
+            let not = "error";
             println!("Test:\tLoss {:.20} | Accuracy: {:.20}", test_loss, test_acc);
-            RNN::save_matrices(rnn);
+            // println!("before load save {:?}", rnn.wxh);
+            // RNN::save_matrices(rnn, "rnnMemory2.txt");
+            // RNN::load_memory(rnn, "rnnMemory2.txt");
+           //  println!("after load {:?}", rnn.wxh);
+            // RNN::save_matrices(rnn, "compare.txt");
+            // println!("saved compare");
+        }
+
+        if epoch % 100 == 0 {
+            RNN::save_matrices(rnn, "rnnMemory2.txt");
+            RNN::load_memory(rnn, "rnnMemory2.txt");
         }
     }
 }
