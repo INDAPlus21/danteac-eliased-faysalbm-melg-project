@@ -4,16 +4,14 @@ pub fn read_number(string: &str, start_index: &usize) -> (f32, usize) {
     let mut number: String = "".to_string();
     let mut index_counter: usize = 0;
 
-    for (i, c) in string.chars().enumerate() {
+    for (i, c) in string.chars().enumerate().skip(*start_index) {
         index_counter = i;
 
-        if i >= *start_index {
-            if c == ' ' {
-                break;
-            }
-
-            number.push(c);
+        if c == ' ' {
+            break;
         }
+        
+        number.push(c);
     }
 
     number.retain(|c| !c.is_whitespace()); // unsure if this line realy is necceccary
