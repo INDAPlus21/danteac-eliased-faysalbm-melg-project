@@ -1,6 +1,5 @@
 use crate::linalg::{Matrix, Vector};
 use crate::memory_reader;
-use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::{Read, Write};
@@ -52,8 +51,8 @@ impl RNN {
         let mut d_bh: Vector = Vector::with_length(self.bh.get_length());
         let input_len: usize = inputs.get_height();
 
-        let mut d_why: Matrix = d_y.clone() * last_hs[input_len].clone().t();
-        let mut d_by: Vector = d_y.clone();
+        let d_why: Matrix = d_y.clone() * last_hs[input_len].clone().t();
+        let d_by: Vector = d_y.clone();
 
         let mut d_h: Vector = self.why.t() * d_y.clone();
 
@@ -77,7 +76,7 @@ impl RNN {
 
     // saves memory to a memory file
     pub fn save_matrices(rnn: &mut RNN) {
-        if let Ok(mut file) = File::create("rnnMemory2.txt") {
+        if let Ok(file) = File::create("rnnMemory2.txt") {
             let wxh: &Matrix = &rnn.wxh;
             let whh: &Matrix = &rnn.whh;
             let why: &Matrix = &rnn.why;
@@ -131,7 +130,7 @@ impl RNN {
     }
 
     fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize) {
-        let (height, mut next_index): (f32, usize) =
+        let (height, next_index): (f32, usize) =
             memory_reader::read_number(&content, next_index);
         let (width, mut next_index): (f32, usize) =
             memory_reader::read_number(&content, &next_index);
@@ -141,8 +140,8 @@ impl RNN {
 
         // read contents and create matrix
         let mut vec_of_vecs: Vec<Vec<f32>> = vec![];
-        for i in 0..height {
-            let mut row = vec![0.0; width];
+        for _ in 0..height {
+            let row = vec![0.0; width];
             vec_of_vecs.push(row);
         }
 
