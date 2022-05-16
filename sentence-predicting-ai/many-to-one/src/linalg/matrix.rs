@@ -1,7 +1,9 @@
 use crate::Vector;
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 #[derive(Clone, PartialEq)]
 pub struct Matrix {
     vectors: Vec<Vector>,
@@ -151,10 +153,10 @@ impl Debug for Matrix {
     // Print matrix as grid
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         formatter.write_str("[")?;
-        for y in 0..self.get_height()-1 {
-            for x in 0..self.get_width()-1 {
+        for y in 0..self.get_height() {
+            for x in 0..self.get_width() {
                 formatter.write_fmt(format_args!("{}", self[y][x]))?;
-                if x < self.get_width() - 1 {
+                if x < self.get_width()-1 {
                     formatter.write_str(", ")?;
                 }
             }

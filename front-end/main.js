@@ -387,6 +387,13 @@ function addToTime(note) {
         s.played_notes.push([note, time - s.time_last_event])
     }
 
+    console.log("played notes: ", s.played_notes)
+
+    if (s.played_notes.length > 20) {
+        const generated_events = receive_example_from_js(s.played_notes)
+        selfPlay(generated_events)
+    }
+
     s.time_last_event = time
 }
 

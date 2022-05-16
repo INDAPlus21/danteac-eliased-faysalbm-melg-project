@@ -73,7 +73,7 @@ pub struct Track {
 // parser and the AI, and we of course still need the notes and volume arrays 
 // you create here 
 #[wasm_bindgen]
-pub fn receive_example_from_js(val: &JsValue) {
+pub fn receive_example_from_js(val: &JsValue) /* -> JsValue */ {
     let example: Vec<Vec<f32>> = val.into_serde().unwrap();
     // console::log_1(&example.into());
     console::log_1(&example[0][0].into());
@@ -84,16 +84,24 @@ pub fn receive_example_from_js(val: &JsValue) {
 
     for event in example {
         notes.push(event[0]);
-        volumes.push(event[0]);
+        offsets.push(event[1]);
     }
 
-    let track = Track {
+   /*  let track = Track {
         notes: notes,
         volumes: volumes, 
         offsets: offsets
     }; 
 
-    let song = Song { tracks: vec![track] };
+    let song = Song { tracks: vec![track] }; */
+
+    let notes_rnn = Dante::NotesRNN::from_file("faysal-viktmatris.*")
+    let generated_notes = notes_rnn.generate_notes(notes)
+
+    let offset = Dante::OffsetRNN::from_file("faysal-viktmatris.*")
+    let generated_offsets = offset.generate_offsets(offsets)
+
+    // return Vec<Vec<f32>> 
 
     console::log_1(&song.tracks[0].volumes[0].into());
 }
@@ -121,6 +129,17 @@ pub fn process_file(fileData: &[u8]) -> JsValue {
         let to_push = vec![track.notes[i], track.offsets[i]];
         note_offsets.push(to_push);
     } 
+
+    /* let mut notes: Vec<f32> = vec![]; 
+    let mut volumes: Vec<f32> = vec![]; 
+    let offsets: Vec<f32> = vec![]; 
+
+    for event in example {
+        notes.push(event[0]);
+        offsets.push(event[1]);
+    }
+
+    send_to_ai(notes, offsets) */
 
     /* let mut note_offsets_two: Vec<Vec<f32>> = vec![];
     let track_two = &song.tracks[0];
