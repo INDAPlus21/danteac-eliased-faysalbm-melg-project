@@ -2,7 +2,9 @@ use crate::Matrix;
 use rand_distr::{Distribution, Normal};
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use serde::{Serialize, Deserialize};
 
+#[derive(Serialize, Deserialize)]
 #[derive(Clone, PartialEq)]
 pub struct Vector {
     vector: Vec<f32>,

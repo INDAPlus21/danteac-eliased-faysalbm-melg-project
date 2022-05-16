@@ -2,7 +2,6 @@ import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
 import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_example_from_js, process_file, process_file_2 } from './integrated_rust/pkg/hello_world.js';
-import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
 
@@ -370,7 +369,7 @@ function setUpKeyboard() {
         // let song_to_play = songs["combined_lone"] //.slice(22)
         const song_to_play = song //.slice(22)
         const original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
-        setTempo(1, song_to_play, original_song)
+        // setTempo(2, song_to_play, original_song)
         // transposeUp(song_to_play)
         selfPlay(song_to_play)
     }
@@ -385,13 +384,6 @@ function addToTime(note) {
 
     if (!s.self_play) {
         s.played_notes.push([note, time - s.time_last_event])
-    }
-
-    console.log("played notes: ", s.played_notes)
-
-    if (s.played_notes.length > 20) {
-        const generated_events = receive_example_from_js(s.played_notes)
-        selfPlay(generated_events)
     }
 
     s.time_last_event = time
@@ -502,7 +494,7 @@ function b64EncodeUnicode(str) {
 }); 
 }; */
 
-/* async function run() {
+async function run() {
     await init();
     console.log(say("Elias"))
     console.log(add(1, 2))
@@ -527,12 +519,9 @@ function b64EncodeUnicode(str) {
       var input = $("#nameInput").val();
       alert(say(input));
     }, false); */
-// }
+}
 
-// run(); */
-
-// you need to fetch wasm not to get TypeError: Cannot read property '__wbindgen_malloc'
-await init(await fetch('../integrated_rust/pkg/hello_world_bg.wasm'));
+run();
 
 input.addEventListener("change", () => {
     const file = input.files[0]
@@ -540,7 +529,6 @@ input.addEventListener("change", () => {
     console.log({file})
 
     file.arrayBuffer().then(buff => {
-
         const array = new Uint8Array(buff);
 
         console.log({array})
@@ -551,10 +539,9 @@ input.addEventListener("change", () => {
         console.log({number_song})
 
         const alphanumeric = [] 
-        const alphanumeric_two = []
 
         const notes = {
-            255: "no_note", 127: "G9", 126: "Gb9", 125: "F9", 124: "E9", 123: "Eb9", 122: "D9", 121: "Db9", 120: "C9", 119: "B8", 118: "Bb8", 117: "A8	 ", 116: "Ab8", 115: "G8", 114: "Gb8", 113: "F8", 112: "E8", 111: "Eb8", 110: "D8", 109: "Db8", 108: "C8", 107: "B7", 106: "Bb7", 105: "A7", 104: "Ab7", 103: "G7", 102: "Gb7", 101: "F7", 100: "E7", 99: "Eb7", 98: "D7", 97: "Db7", 96: "C7", 95: "B6", 94: "Bb6", 93: "A6", 92: "Ab6", 91: "G6", 90: "Gb6", 89: "F6", 88: "E6", 87: "Eb6", 86: "D6", 85: "Db6", 84: "C6", 83: "B5", 82: "Bb5", 81: "A5", 80: "Ab5", 79: "G5", 78: "Gb5", 77: "F5", 76: "E5", 75: "Eb5", 74: "D5", 73: "Db5", 72: "C5", 71: "B4", 70: "Bb4", 69: "A4", 68: "Ab4", 67: "G4", 66: "Gb4", 65: "F4", 64: "E4", 63: "Eb4", 62: "D4", 61: "Db4", 60: "C4", 59: "B3", 58: "Bb3", 57: "A3", 56: "Ab3", 55: "G3", 54: "Gb3", 53: "F3", 52: "E3", 51: "Eb3", 50: "D3", 49: "Db3", 48: "C3", 47: "B2", 46: "Bb2", 45: "A2", 44: "Ab2", 43: "G2", 42: "Gb2", 41: "F2", 40: "E2", 39: "Eb2", 38: "D2", 37: "Db2", 36: "C2", 35: "B1", 34: "Bb1", 33: "A1", 32: "Ab1", 31: "G1", 30: "Gb1",
+            127: "G9", 126: "Gb9", 125: "F9", 124: "E9", 123: "Eb9", 122: "D9", 121: "Db9", 120: "C9", 119: "B8", 118: "Bb8", 117: "A8	 ", 116: "Ab8", 115: "G8", 114: "Gb8", 113: "F8", 112: "E8", 111: "Eb8", 110: "D8", 109: "Db8", 108: "C8", 107: "B7", 106: "Bb7", 105: "A7", 104: "Ab7", 103: "G7", 102: "Gb7", 101: "F7", 100: "E7", 99: "Eb7", 98: "D7", 97: "Db7", 96: "C7", 95: "B6", 94: "Bb6", 93: "A6", 92: "Ab6", 91: "G6", 90: "Gb6", 89: "F6", 88: "E6", 87: "Eb6", 86: "D6", 85: "Db6", 84: "C6", 83: "B5", 82: "Bb5", 81: "A5", 80: "Ab5", 79: "G5", 78: "Gb5", 77: "F5", 76: "E5", 75: "Eb5", 74: "D5", 73: "Db5", 72: "C5", 71: "B4", 70: "Bb4", 69: "A4", 68: "Ab4", 67: "G4", 66: "Gb4", 65: "F4", 64: "E4", 63: "Eb4", 62: "D4", 61: "Db4", 60: "C4", 59: "B3", 58: "Bb3", 57: "A3", 56: "Ab3", 55: "G3", 54: "Gb3", 53: "F3", 52: "E3", 51: "Eb3", 50: "D3", 49: "Db3", 48: "C3", 47: "B2", 46: "Bb2", 45: "A2", 44: "Ab2", 43: "G2", 42: "Gb2", 41: "F2", 40: "E2", 39: "Eb2", 38: "D2", 37: "Db2", 36: "C2", 35: "B1", 34: "Bb1", 33: "A1", 32: "Ab1", 31: "G1", 30: "Gb1",
             29: "F1", 28: "E1", 27: "Eb1", 26: "D1", 25: "Db1", 24: "C1", 23: "B0", 22: "Bb0", 21: "A0", 20: "Ab", 19: "G", 18: "Gb", 17: "F", 16: "E", 15: "Eb", 14: "D", 13: "C#", 12: "C0", 11: "B", 10: "Bb", 9: "A", 8: "Ab", 7: "G", 6: "Gb", 5: "F", 4: "E", 3: "Eb", 2: "D", 1: "C#", 0: "C-1"
         }
 
@@ -563,22 +550,9 @@ input.addEventListener("change", () => {
             alphanumeric.push([notes[event[0]], event[1]])
         }
 
-        // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
-        // och SPECIELLT inte sätter någonting alls till no_note (!!!)
-        /* in iterates over indexes, of iterates over actual values */ 
-        for (const event of number_song_two) {
-            alphanumeric_two.push([notes[event[0]], event[1]])
-        }
+        console.log({alphanumeric})
 
-        const combined = combineTracks(alphanumeric_two, alphanumeric)
-
-        const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
-        setTempo(1, combined, original_song)
-
-        // console.log({alphanumeric})
-
-        // selfPlay(alphanumeric_two); 
-        selfPlay(combined); 
+        selfPlay(alphanumeric); 
     });
 })
 

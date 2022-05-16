@@ -23,8 +23,9 @@ MIDI.js
 /target
 
 front-end/node_modules
-aiproject/src/main.exe
-
+midiparser/src/main.rs
+midiparser/Rush_E.mid
+hello-world
 
 # Added by cargo
 #
@@ -55,5 +56,5 @@ hello-world
 data/maestro-v2.0.0
 
 # MatrixValueFiles
-sentence-predicting-ai/many-to-one/src/rnnMemory.txt
-sentence-predicting-ai/many-to-one/src/rnnMemory2.txt
+# sentence-predicting-ai/many-to-one/src/rnnMemory.txt
+# sentence-predicting-ai/many-to-one/src/rnnMemory2.txt

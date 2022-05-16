@@ -77,6 +77,16 @@ fn run_epochs(
     mut rnn: &mut RNN,
 ) {
     RNN::load_memory(rnn, "rnnMemory2.txt");
+
+    // if we want to use serde instead 
+    /* let deserialized = fs::read_to_string("serde_weights").expect("Unable to read file");
+    let serde_RNN: RNN = serde_json::from_str(&deserialized).unwrap();
+    rnn.wxh = serde_RNN.wxh;
+    rnn.whh = serde_RNN.whh;
+    rnn.why = serde_RNN.why;
+    rnn.bh = serde_RNN.bh;
+    rnn.by = serde_RNN.by; */
+
     for epoch in 1..1000 {
         let (train_loss, train_acc) = process_data(
             train_data.to_owned(),
@@ -100,7 +110,12 @@ fn run_epochs(
                 &mut rnn,
             );
             println!("Test:\tLoss {:.20} | Accuracy: {:.20}", test_loss, test_acc);
-            RNN::save_matrices(rnn);
+
+            // if we want to use serde instead
+            let serialized = serde_json::to_string(&rnn).unwrap();
+            fs::write("serde_weights", serialized).expect("Unable to write file");
+
+            RNN::save_matrices(rnn, "rnnMemory2.txt");
         }
     }
 }

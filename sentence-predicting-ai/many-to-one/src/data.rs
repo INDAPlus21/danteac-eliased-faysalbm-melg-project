@@ -98,12 +98,36 @@ pub fn gen_words_to_id(data: HashMap<&str, bool>) -> (HashMap<&str, usize>, usiz
         .collect::<HashSet<_>>()
         .into_iter()
         .collect();
-    let words_to_id: HashMap<&str, usize> = vocab
+    let mut words_to_id: HashMap<&str, usize> = vocab
         .to_owned()
         .into_iter()
         .enumerate()
         .map(|(i, val)| (val, i))
         .collect();
+
     let vocab_size: usize = vocab.len();
+
+    // for having a consistent weight matrix
+    words_to_id = HashMap::from([
+        ("am", 8),
+        ("all", 3),
+        ("i", 15),
+        ("very", 4),
+        ("at", 2),
+        ("was", 10),
+        ("good", 5),
+        ("now", 17),
+        ("sad", 12),
+        ("happy", 13),
+        ("earlier", 11),
+        ("this", 9),
+        ("is", 14),
+        ("or", 1),
+        ("and", 0),
+        ("right", 7),
+        ("not", 16),
+        ("bad", 6),
+    ]);
+
     (words_to_id, vocab_size)
 }

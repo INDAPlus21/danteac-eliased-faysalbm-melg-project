@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 const midiParser = require('midi-parser-js');
 const fs = require('fs')
 
+// second row in Fur Elise midi file it switches to G clef! 
 export function parseFile() {
     const tracks = []
     fs.readFile(midi_file, 'base64', function (err, raw_data) {
@@ -15,6 +16,7 @@ export function parseFile() {
 
         console.log(midiArray); // useful information 
         console.log(midiArray.track[0]);
+        console.log(midiArray.track[1]);
 
         // maybe the 121 byte is there in every midi to estabish the upper range? 
         function getNotesAndTimes(track) {
@@ -26,7 +28,11 @@ export function parseFile() {
                 if (type == 9) {
                     const note = notes[data[0]]
                     notes_and_times.push([note, deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
-                }
+                } else if (deltaTime != 0) {
+                    notes_and_times.push(["no_note", deltaTime]) // keep the ms, already in right format. well, not necessarily (it's in time ticks), not even usually, but the most relevant thing is the time relation between notes anyways 
+                } /*  else if (type == 8) {
+                    console.log("eight!")
+                }  */
             }
             return notes_and_times
         }
@@ -42,7 +48,10 @@ export function parseFile() {
         }
 
         console.log(tracks.length)
+        console.log("left hand: ", tracks[1], "right hand: ", tracks[0])
         const combined = combineTracks(tracks[0], tracks[1])
+        console.log("combined: ", combined)
+        // const combined = tracks[1]
 
         fs.writeFile("./song.js", "export const song = " + JSON.stringify(combined), 'utf8', function (err) {
             if (err) {
@@ -68,6 +77,6 @@ const notes = {
 // "Events unaffected by time are still preceded by a delta time, but should always use a value of 0 and come first in the stream of track events. Examples of this type of event include track titles and copyright information. The most important thing to remember about delta"
 
 // read a .mid binary (as base64)
-const midi_file = "./midis/Lone_Digger.mid"
+const midi_file = "./midis/Rush_E.mid"
 
 parseFile(midi_file)
