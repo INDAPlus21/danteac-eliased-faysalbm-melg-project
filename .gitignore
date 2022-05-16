@@ -23,7 +23,7 @@ MIDI.js
 /target
 
 front-end/node_modules
-aiproject/src/main.exe
+midiparser/src/main.rs
 midiparser/Rush_E.mid
 hello-world
 
