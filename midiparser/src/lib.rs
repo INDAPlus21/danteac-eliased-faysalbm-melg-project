@@ -6,7 +6,7 @@ use std::ffi::OsString;
 use std::fs;
 use std::fs::ReadDir;
 
-pub fn actually_parse(data: Vec<u8>) -> Song {
+pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
     let mut tracks = vec![];
 
     let mut i = 0;
@@ -100,37 +100,11 @@ pub fn actually_parse(data: Vec<u8>) -> Song {
 
                             current_delta_time = 0; 
 
-                        // End of track, ignore other messages
-                        if message_type == 47 {
-                            break;
-                        }
-                    } else {
-                        match current_event_type {
-                            8 | 9 => {
-                                // Note on/off event
-                                offsets.push(current_delta_time as f32);
-                                notes.push(data[i] as f32);
-                                current_delta_time = 0;
-
-                                // Note off should always have volume 0
-                                if current_event_type == 8 {
-                                    volumes.push(0f32);
-                                } else {
-                                    volumes.push(data[i + 1] as f32);
-                                }
-
-                                i += 2;
-                            }
-                            10 | 11 | 14 => {
-                                // Skip event
-                                i += 2;
-                            }
-                            12 | 13 => {
-                                // Skip event
-                                i += 1;
-                            }
-                            _ => {
-                                i += 1;
+                            // Note off should always have volume 0
+                            if current_event_type == 8 {
+                                volumes.push(0f32);
+                            } else {
+                                volumes.push(data[i + 1] as f32);
                             }
 
                             i += 2;
@@ -150,17 +124,10 @@ pub fn actually_parse(data: Vec<u8>) -> Song {
                 }
                 
 
-                // Only add tracks with note data
-                if notes.len() > 0 {
-                    tracks.push(Track {
-                        notes,
-                        volumes,
-                        offsets,
-                    });
-                }
-                current_delta_time = 0;
-            } else {
-                i += 1;
+                /* if !eight_nine {
+                    offsets.push(delta as f32);
+                    notes.push(255 as f32);
+                } */
             }
 
             // Only add tracks with note data
@@ -180,7 +147,7 @@ pub fn actually_parse(data: Vec<u8>) -> Song {
         }
     }
 
-    tracks
+    Some(Song { tracks })
 }
 
 // Filename without extension suffix
