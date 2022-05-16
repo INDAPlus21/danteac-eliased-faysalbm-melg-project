@@ -82,7 +82,7 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
                     // End of track, ignore other messages
                     if message_type == 47 {
-                        current_delta_time = 0; 
+                        current_delta_time = 0;
                         current_event_type = 0;
                         break;
                     }
@@ -98,7 +98,7 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                             offsets.push(current_delta_time as f32);
                             notes.push(data[i] as f32);
 
-                            current_delta_time = 0; 
+                            current_delta_time = 0;
 
                             // Note off should always have volume 0
                             if current_event_type == 8 {
@@ -122,7 +122,6 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                         }
                     }
                 }
-                
 
                 /* if !eight_nine {
                     offsets.push(delta as f32);
@@ -139,10 +138,9 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
                 });
             }
 
-            current_delta_time = 0; 
+            current_delta_time = 0;
             current_event_type = 0;
         } else {
-            
             i += 1;
         }
     }
@@ -152,7 +150,13 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
 // Filename without extension suffix
 pub fn parse_midi_file(filename: &str) -> Option<Song> {
-    if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
+    let path = if filename.contains("mid") {
+        filename.to_owned() 
+    } else {
+        filename.to_owned() + ".mid"
+    };
+
+    if let Ok(data) = fs::read(path) {
         actually_parse(data)
     } else {
         println!("Error: File {}.mid not found!", filename);
@@ -306,7 +310,9 @@ pub fn convert_to_front_end_format(song: Song) -> Vec<Vec<Thing>> {
     } */
 
     let track = &song.tracks[1];
-    for i in 0..100 /*track.notes.len()*/ {
+    for i in 0..100
+    /*track.notes.len()*/
+    {
         // println!("{}", i);
         let note = hash_notes[&(track.notes[i] as i32)];
         let to_push = vec![

@@ -8,7 +8,7 @@ use crate::notes_rnn::NotesRNN;
 use midiparser::song::Song;
 
 fn main() {
-    let maestro_dataset_path = "./train-data/";
+    let maestro_dataset_path = "../../aiproject/train-data/";
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
     let songs: Vec<Song> = midiparser::parse_midi_files(maestro_dataset_path);
     let songs_modified: Vec<Song> = vec![songs[0].clone()]; // To test that it works
