@@ -20,17 +20,18 @@ impl RNN {
         let factor: f32 = 1.0 / 1000.0;
         RNN {
             // Standard normal distribution.
-            /* wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor,
+            wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor,
             whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
             bh: Vector::with_length(hidden_size),
-            by: Vector::with_length(output_size) */
+            by: Vector::with_length(output_size)
 
-            wxh: Matrix::from_vecs(vec![]),
+            // if we want a zero initializion 
+            /* wxh: Matrix::from_vecs(vec![]),
             whh:  Matrix::from_vecs(vec![]),
             why:  Matrix::from_vecs(vec![]),
             bh: Vector::with_length(0),
-            by: Vector::with_length(0)
+            by: Vector::with_length(0) */
         }
     }
 
@@ -83,7 +84,7 @@ impl RNN {
     }
 
     // saves memory to a memory file
-    /* pub fn save_matrices(rnn: &mut RNN, path: &str) {
+    pub fn save_matrices(rnn: &mut RNN, path: &str) {
         if let Ok(file) = File::create(path) {
             let wxh: &Matrix = &rnn.wxh;
             let whh: &Matrix = &rnn.whh;
@@ -111,10 +112,10 @@ impl RNN {
         } else {
             println!("file error or smth");
         }
-    } */
+    }
 
     // loads memory from memory file
-    /* ub fn load_memory(rnn: &mut RNN, path: &str) {
+    pub fn load_memory(rnn: &mut RNN, path: &str) {
         // get memory string
         // använder samma openoptions objet att den inte readar/writer! 
         // .seek(SeekFrom::Current(0))
@@ -130,7 +131,6 @@ impl RNN {
         // read dimensions
         let mut next_index: usize = 0;
         (rnn.wxh, next_index) = RNN::load_matrix(&content, &next_index);
-        // println!("after {:?}", rnn.wxh);
         // println!("wxh {}", next_index);
         (rnn.whh, next_index) = RNN::load_matrix(&content, &next_index);
         println!("whh {}", next_index);
@@ -141,15 +141,12 @@ impl RNN {
         (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
         println!("bh {}", next_index);
         rnn.bh = b_matrix.flatten();
-        println!("bh {:?}", rnn.bh);
         (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
         println!("by {}", next_index);
         rnn.by = b_matrix.flatten();
-        println!("by {:?}", rnn.by);
-        // println!("bh after {:?}", rnn.bh);
-    } */
+    }
 
-    /* fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize) {
+    fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize) {
         let (height, next_index): (f32, usize) =
             memory_reader::read_number(&content, next_index);
         let (width, mut next_index): (f32, usize) =
@@ -174,5 +171,5 @@ impl RNN {
         }
 
         (Matrix::from_vecs(vec_of_vecs), next_index)
-    } */
+    }
 }

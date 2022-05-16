@@ -105,7 +105,6 @@ pub fn gen_words_to_id(data: HashMap<&str, bool>) -> (HashMap<&str, usize>, usiz
         .map(|(i, val)| (val, i))
         .collect();
 
-    println!("{:?}", words_to_id);
     let vocab_size: usize = vocab.len();
 
     // for having a consistent weight matrix
