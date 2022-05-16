@@ -29,7 +29,7 @@ impl Matrix {
             vec_of_vecs.push(Vector::from_vec(vec));
         }
         Matrix {
-            vectors: vec_of_vecs
+            vectors: vec_of_vecs,
         }
     }
 
@@ -39,7 +39,7 @@ impl Matrix {
             vec_of_vecs.push(Vector::with_length(width));
         }
         Matrix {
-            vectors: vec_of_vecs
+            vectors: vec_of_vecs,
         }
     }
 
@@ -53,7 +53,7 @@ impl Matrix {
             vec_of_vectors.push(Vector::with_random(width));
         }
         Matrix {
-            vectors: vec_of_vectors
+            vectors: vec_of_vectors,
         }
     }
 
@@ -63,7 +63,7 @@ impl Matrix {
             vec_of_vectors.push(Vector::with_random_normal(width, mean, std_dev));
         }
         Matrix {
-            vectors: vec_of_vectors
+            vectors: vec_of_vectors,
         }
     }
     //endregion
@@ -115,6 +115,35 @@ impl Matrix {
         }
         output
     }
+
+    // Concatenates all row vectors into one column vector.
+    pub fn flatten(&self) -> Vector {
+        let self_height: usize = self.get_height();
+        let self_width: usize = self.get_width();
+        let output_len: usize = self_height * self_width;
+        let mut output: Vector = Vector::with_length(output_len);
+        for row in 0..self_height {
+            for col in 0..self_width {
+                output[row * self_width + col] = self[row][col];
+            }
+        }
+        output
+    }
+
+    pub fn convert_to_string(&self) -> String {
+        let mut string: String = Matrix::get_height(&self).to_string();
+        string.push_str(" ");
+        string.push_str(&Matrix::get_width(&self).to_string());
+        string.push_str(" ");
+
+        for i in 0..self.get_height() {
+            for j in 0..self.get_width() {
+                string.push_str(&self.vectors[i][j].to_string());
+                string.push_str(" ");
+            }
+        }
+        string
+    }
     //endregion
 }
 
@@ -122,9 +151,9 @@ impl Debug for Matrix {
     // Print matrix as grid
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         formatter.write_str("[")?;
-        for y in 0..self.get_height() {
-            for x in 0..self.get_width() {
-                formatter.write_fmt(format_args!("{}", self[x][y]))?;
+        for y in 0..self.get_height()-1 {
+            for x in 0..self.get_width()-1 {
+                formatter.write_fmt(format_args!("{}", self[y][x]))?;
                 if x < self.get_width() - 1 {
                     formatter.write_str(", ")?;
                 }
@@ -291,7 +320,9 @@ impl Mul<Matrix> for Matrix {
             for self_out_row in 0..self_height {
                 for operand_out_col in 0..operand_width {
                     for self_col_operand_row in 0..self_width {
-                        output[self_out_row][operand_out_col] += self[self_out_row][self_col_operand_row] * rhs[self_col_operand_row][operand_out_col];
+                        output[self_out_row][operand_out_col] += self[self_out_row]
+                            [self_col_operand_row]
+                            * rhs[self_col_operand_row][operand_out_col];
                     }
                 }
             }

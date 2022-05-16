@@ -1,25 +1,34 @@
-
-use crate::linalg::{Vector, Matrix};
+use crate::linalg::{Matrix, Vector};
+use crate::memory_reader;
+use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::{Read, Write};
 
 #[derive(Clone, PartialEq)]
 pub struct RNN {
-    wxh: Matrix,
-    whh: Matrix,
-    why: Matrix,
-    bh: Vector,
-    by: Vector,
+    pub wxh: Matrix,
+    pub whh: Matrix,
+    pub why: Matrix,
+    pub bh: Vector,
+    pub by: Vector,
 }
 
 impl RNN {
     pub fn new(input_size: usize, hidden_size: usize, output_size: usize) -> RNN {
-        let factor: f32 = (1.0/1000.0);
+        let factor: f32 = 1.0 / 1000.0;
         RNN {
             // Standard normal distribution.
             wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor,
             whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
             bh: Vector::with_length(hidden_size),
-            by: Vector::with_length(output_size),
+            by: Vector::with_length(output_size)
+
+           /*  wxh: Matrix::from_vecs(vec![]),
+            whh:  Matrix::from_vecs(vec![]),
+            why:  Matrix::from_vecs(vec![]),
+            bh: Vector::with_length(0),
+            by: Vector::with_length(0) */
         }
     }
 
@@ -48,8 +57,8 @@ impl RNN {
         let mut d_bh: Vector = Vector::with_length(self.bh.get_length());
         let input_len: usize = inputs.get_height();
 
-        let mut d_why: Matrix = d_y.clone() * last_hs[input_len].clone().t();
-        let mut d_by: Vector = d_y.clone();
+        let d_why: Matrix = d_y.clone() * last_hs[input_len].clone().t();
+        let d_by: Vector = d_y.clone();
 
         let mut d_h: Vector = self.why.t() * d_y.clone();
 
@@ -69,5 +78,90 @@ impl RNN {
         self.wxh -= learn_rate * d_wxh.clamp(-1.0, 1.0);
         self.by -= learn_rate * d_by.clamp(-1.0, 1.0);
         self.bh -= learn_rate * d_bh.clamp(-1.0, 1.0);
+    }
+
+    // saves memory to a memory file
+    pub fn save_matrices(rnn: &mut RNN, path: &str) {
+        if let Ok(file) = File::create(path) {
+            let wxh: &Matrix = &rnn.wxh;
+            let whh: &Matrix = &rnn.whh;
+            let why: &Matrix = &rnn.why;
+            let bh: &Vector = &rnn.bh;
+            let by: &Vector = &rnn.by;
+
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(path)
+                .unwrap();
+
+            for matrix in vec![&wxh, &whh, &why].iter() {
+                if let Err(error) = writeln!(file, "{}", &Matrix::convert_to_string(matrix)) {
+                    eprintln!("Couldn't write to file: {}", error);
+                }
+            }
+
+            for vector in vec![&bh, &by].iter() {
+                if let Err(error) = writeln!(file, "{}", &Vector::convert_to_string(vector)) {
+                    eprintln!("Couldn't write to file: {}", error);
+                }
+            }
+        } else {
+            println!("file error or smth");
+        }
+    }
+
+    // loads memory from memory file
+    pub fn load_memory(rnn: &mut RNN, path: &str) {
+        // get memory string
+        // använder samma openoptions objet att den inte readar/writer! 
+        let mut file = OpenOptions::new().seek(SeekFrom::Current(0))
+        .read(true).
+        .open(path)
+        .unwrap(); // File::open(path).expect("file error or something");
+        let mut content = String::new();
+        file.read_to_string(&mut content)
+            .expect("file read error or something");
+        let mut b_matrix: Matrix;
+        // read dimensions
+        let mut next_index: usize = 0;
+        (rnn.wxh, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("wxh {}", next_index);
+        (rnn.whh, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("whh {}", next_index);
+        (rnn.why, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("why {}", next_index);
+        (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("bh {}", next_index);
+        rnn.bh = b_matrix.flatten();
+        (b_matrix, next_index) = RNN::load_matrix(&content, &next_index);
+        println!("by {}", next_index);
+        rnn.by = b_matrix.flatten();
+    }
+
+    fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize) {
+        let (height, next_index): (f32, usize) =
+            memory_reader::read_number(&content, next_index);
+        let (width, mut next_index): (f32, usize) =
+            memory_reader::read_number(&content, &next_index);
+
+        let width = width as usize;
+        let height = height as usize;
+
+        // read contents and create matrix
+        let mut vec_of_vecs: Vec<Vec<f32>> = vec![];
+        for _ in 0..height {
+            let row = vec![0.0; width];
+            vec_of_vecs.push(row);
+        }
+
+        let mut num: f32;
+        for n in 0..height {
+            for m in 0..width {
+                (num, next_index) = memory_reader::read_number(&content, &next_index);
+                vec_of_vecs[n][m] = num;
+            }
+        }
+        (Matrix::from_vecs(vec_of_vecs), next_index)
     }
 }

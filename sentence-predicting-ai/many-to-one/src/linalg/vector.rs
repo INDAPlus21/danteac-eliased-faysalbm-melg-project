@@ -1,7 +1,7 @@
 use crate::Matrix;
+use rand_distr::{Distribution, Normal};
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
-use rand_distr::{Normal, Distribution};
 
 #[derive(Clone, PartialEq)]
 pub struct Vector {
@@ -17,14 +17,12 @@ impl Vector {
 
     //region Creation functions
     pub fn from_vec(vec: Vec<f32>) -> Vector {
-        Vector {
-            vector: vec
-        }
+        Vector { vector: vec }
     }
 
     pub fn with_value(length: usize, value: f32) -> Vector {
         Vector {
-            vector: vec![value; length]
+            vector: vec![value; length],
         }
     }
 
@@ -37,9 +35,7 @@ impl Vector {
         for i in 0..vec.len() {
             vec[i] = rand::random::<f32>();
         }
-        Vector {
-            vector: vec
-        }
+        Vector { vector: vec }
     }
 
     pub fn with_random_normal(length: usize, mean: f32, std_dev: f32) -> Vector {
@@ -48,9 +44,7 @@ impl Vector {
         for i in 0..vec.len() {
             vec[i] = normal_distr.sample(&mut rand::thread_rng());
         }
-        Vector {
-            vector: vec
-        }
+        Vector { vector: vec }
     }
     //endregion
 
@@ -164,6 +158,19 @@ impl Vector {
 
     pub fn t(&self) -> Matrix {
         Matrix::from_vecs(vec![self.vector.clone()])
+    }
+
+    pub fn convert_to_string(&self) -> String {
+        let mut string: String = "1".to_string();
+        string.push_str(" ");
+        string.push_str(&Vector::get_length(&self).to_string());
+        string.push_str(" ");
+
+        for i in 0..self.get_length() {
+            string.push_str(&self.vector[i].to_string());
+            string.push_str(" ");
+        }
+        string
     }
     //endregion
 }
@@ -352,7 +359,8 @@ impl Mul<Matrix> for Vector {
             let mut output: Matrix = Matrix::with_size((self_len, operand_width));
             for self_out_row in 0..self_len {
                 for operand_out_col in 0..operand_width {
-                    output[self_out_row][operand_out_col] = self[self_out_row] *  rhs[0][operand_out_col];
+                    output[self_out_row][operand_out_col] =
+                        self[self_out_row] * rhs[0][operand_out_col];
                 }
             }
             output

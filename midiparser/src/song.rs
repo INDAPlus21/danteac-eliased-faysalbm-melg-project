@@ -1,9 +1,9 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Song {
     pub tracks: Vec<Track>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Track {
     pub notes: Vec<f32>,
     pub volumes: Vec<f32>,

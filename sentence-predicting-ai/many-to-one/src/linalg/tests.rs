@@ -300,6 +300,18 @@ mod tests {
             ])
         );
     }
+
+    #[test]
+    fn test_matrix_flatten() {
+        assert_eq!(
+            Matrix::from_vecs(vec![
+                vec![4.0, 12.0, 3.0, 4.0],
+                vec![8.0, 1.0, 5.0, -6.0],
+                vec![-2.0, 9.0, 7.0, 11.0],
+            ]).flatten(),
+            Vector::from_vec(vec![4.0, 12.0, 3.0, 4.0, 8.0, 1.0, 5.0, -6.0, -2.0, 9.0, 7.0, 11.0])
+        );
+    }
     //endregion
 
     //region Operators
