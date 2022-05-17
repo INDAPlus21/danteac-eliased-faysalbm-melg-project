@@ -3,10 +3,11 @@ use crate::rnn::RNN;
 use crate::vector::Vector;
 use midiparser::song::{Song, Track};
 use std::collections::VecDeque;
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct NotesRNN {
-    rnn: RNN,
+    pub rnn: RNN,
 }
 
 impl NotesRNN {

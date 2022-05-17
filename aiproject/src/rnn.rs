@@ -1,13 +1,17 @@
 use crate::matrix::Matrix;
 use crate::vector::Vector;
+use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::{Read, Write};
+use serde::{Serialize, Deserialize};
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RNN {
-    wxh: Matrix,
-    whh: Matrix,
-    why: Matrix,
-    bh: Vector,
-    by: Vector,
+    pub wxh: Matrix,
+    pub whh: Matrix,
+    pub why: Matrix,
+    pub bh: Vector,
+    pub by: Vector,
 }
 
 impl RNN {
@@ -71,4 +75,5 @@ impl RNN {
         self.by -= learn_rate * d_by.clamp(-1.0, 1.0);
         self.bh -= learn_rate * d_bh.clamp(-1.0, 1.0);
     }
+
 }

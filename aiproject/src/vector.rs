@@ -2,9 +2,10 @@ use crate::matrix::Matrix;
 use rand_distr::{Distribution, Normal};
 use std::fmt::{Debug, Formatter, Result};
 use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub, SubAssign};
+use serde::{Serialize, Deserialize};
 
 // Represents a row vector
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct Vector {
     vector: Vec<f32>,
 }

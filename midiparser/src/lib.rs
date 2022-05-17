@@ -152,7 +152,12 @@ pub fn actually_parse(data: Vec<u8>) -> Option<Song> {
 
 // Filename without extension suffix
 pub fn parse_midi_file(filename: &str) -> Option<Song> {
-    if let Ok(data) = fs::read(filename.to_owned() + ".mid") {
+    let path = if filename.contains("mid") {
+        filename.to_owned() 
+    } else {
+        filename.to_owned() + ".mid"
+    };
+    if let Ok(data) = fs::read(path) {
         actually_parse(data)
     } else {
         println!("Error: File {}.mid not found!", filename);
