@@ -119,7 +119,15 @@ pub fn parse_midi(filename: &str) -> Option<Song> {
             }
         }
 
-        Some(Song { tracks })
+// Filename without extension suffix
+pub fn parse_midi_file(filename: &str) -> Option<Song> {
+    let path = if filename.contains("mid") {
+        filename.to_owned() 
+    } else {
+        filename.to_owned() + ".mid"
+    };
+    if let Ok(data) = fs::read(path) {
+        actually_parse(data)
     } else {
         println!("Error: File {}.mid not found!", filename);
         None
