@@ -61,13 +61,13 @@ impl Vector {
     }
 
     pub fn arg_max(&self) -> usize {
-        let mut index: usize = 0;
-        for i in 0..(self.get_length() - 1) {
-            if self[i + 1] > self[i] {
-                index = i + 1;
+        let mut current_index: usize = 0;
+        for i in 1..self.get_length() {
+            if self[i] > self[current_index] {
+                current_index = i;
             }
         }
-        index
+        current_index
     }
 
     pub fn contains_nan(&self) -> bool {
