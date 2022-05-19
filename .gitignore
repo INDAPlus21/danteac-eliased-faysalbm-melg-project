@@ -46,6 +46,7 @@ aiproject/node_modules/
 
 # Train data
 aiproject/train-data/
+midiparser/src/main.rs
 data/train-data
 
 # Dante

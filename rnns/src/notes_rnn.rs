@@ -8,22 +8,19 @@ const NR_OF_POSSIBLE_NOTES: usize = 88;
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct NotesRNN {
-    rnn: RNN,
-    weights_biases_file_path: String,
+    rnn: RNN
 }
 
 impl NotesRNN {
-    pub fn new(hidden_size: usize, weights_biases_file_path: String) -> NotesRNN {
+    pub fn new(hidden_size: usize) -> NotesRNN {
         NotesRNN {
-            rnn: RNN::new(NR_OF_POSSIBLE_NOTES, hidden_size, NR_OF_POSSIBLE_NOTES),
-            weights_biases_file_path,
+            rnn: RNN::new(NR_OF_POSSIBLE_NOTES, hidden_size, NR_OF_POSSIBLE_NOTES)
         }
     }
 
-    pub fn from_weights_biases_file(weights_biases_file_path: String) -> NotesRNN {
+    pub fn from_weights_biases_file() -> NotesRNN {
         NotesRNN {
-            rnn: RNN::from_weight_bias_file(weights_biases_file_path.clone()),
-            weights_biases_file_path,
+            rnn: RNN::from_weight_bias_file()
         }
     }
 
@@ -102,7 +99,7 @@ impl NotesRNN {
     }
 
     pub fn save_weights_biases_to_file(&self) {
-        self.rnn.save_weights_biases_to_file(self.weights_biases_file_path.to_owned());
+        self.rnn.save_weights_biases_to_file("../serde_weights".to_string());
         println!("Weight and biases saved.");
     }
 }
