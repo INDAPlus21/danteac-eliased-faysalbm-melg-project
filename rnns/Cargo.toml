@@ -10,3 +10,4 @@ linear_algebra = {path = "../linear_algebra"}
 midiparser = { path = "../midiparser" }
 serde = { version = "1.0.137", features = ["derive"] }
 serde_json = "1.0.81"
+getrandom = { version = "0.2", features = ["js"] }

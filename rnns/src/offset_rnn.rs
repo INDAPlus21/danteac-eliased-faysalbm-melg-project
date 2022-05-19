@@ -6,24 +6,23 @@ use serde::{Serialize, Deserialize};
 
 const NR_OF_POSSIBLE_OFFSETS: usize = 1001;
 
+const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
+
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct OffsetRNN {
-    rnn: RNN,
-    weights_biases_file_path: String,
+    rnn: RNN
 }
 
 impl OffsetRNN {
     pub fn new(hidden_size: usize, weights_biases_file_path: String) -> OffsetRNN {
         OffsetRNN {
-            rnn: RNN::new(NR_OF_POSSIBLE_OFFSETS, hidden_size, NR_OF_POSSIBLE_OFFSETS),
-            weights_biases_file_path,
+            rnn: RNN::new(NR_OF_POSSIBLE_OFFSETS, hidden_size, NR_OF_POSSIBLE_OFFSETS)
         }
     }
 
-    pub fn from_weights_biases_file(weights_biases_file_path: String) -> OffsetRNN {
+    pub fn from_weights_biases_file() -> OffsetRNN {
         OffsetRNN {
-            rnn: RNN::from_weight_bias_file(weights_biases_file_path.clone()),
-            weights_biases_file_path,
+            rnn: RNN::from_weight_bias_file()        
         }
     }
 
@@ -98,7 +97,7 @@ impl OffsetRNN {
     }
 
     pub fn save_weights_biases_to_file(&self) {
-        self.rnn.save_weights_biases_to_file(self.weights_biases_file_path.to_owned());
+        self.rnn.save_weights_biases_to_file("../serde_offset_weights".to_string());
         println!("Weight and biases saved.");
     }
 }

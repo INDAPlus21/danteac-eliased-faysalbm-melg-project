@@ -2,7 +2,8 @@ use js_sys::Array;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 // use neon::prelude::*;
-use aiproject::NotesRNN;
+// use aiproject::NotesRNN;
+use rnns::NotesRNN; 
 use midiparser::parse_midi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -10,7 +11,7 @@ use std::collections::HashMap;
 fn send_to_rnn(notes: Vec<f32>) -> JsValue {
     console::log_2(&"sending to rnn from wasm: ".into(), &JsValue::from_serde(&notes).unwrap());
 
-    let notes_rnn: NotesRNN = NotesRNN::new(64);
+    let notes_rnn: NotesRNN = NotesRNN::from_weights_biases_file();
     let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100);
 
     return JsValue::from_serde(&generated_notes).unwrap();
