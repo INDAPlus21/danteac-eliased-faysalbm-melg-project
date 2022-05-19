@@ -1,7 +1,7 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
-import init, { return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai } from './integrated_rust/pkg/integrated_rust.js';
+import init, { receive_notes, process_file, process_send_ai } from './integrated_rust/pkg/integrated_rust.js';
 import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
@@ -658,27 +658,16 @@ document.getElementById("import_ai").addEventListener("change", () => {
         console.log({ array })
         console.log("calling process file!")
         const number_song = process_send_ai(array)
-        // const number_song_two = process_file_2(array)
 
         console.log({ number_song })
 
         const alphanumeric = []
-        // const alphanumeric_two = []
 
         /* in iterates over indexes, of iterates over actual values */
         for (const event of number_song) {
             console.log(event, s.notes[event])
-            alphanumeric.push([s.notes[event - 50], 100, 0])
+            alphanumeric.push([s.notes[event], 100, 0])
         }
-
-        // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
-        // och SPECIELLT inte sätter någonting alls till no_note (!!!)
-        /* in iterates over indexes, of iterates over actual values */
-        /* for (const event of number_song_two) {
-            alphanumeric_two.push([s.notes[event[0]], event[1]])
-        } */
-
-        // const combined = combineTracks(alphanumeric_two, alphanumeric)
 
         // const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
         // setTempo(2, combined, original_song)
@@ -698,7 +687,6 @@ document.getElementById("pass_own_to_ai").addEventListener("click", () => {
 
     for (let i = 0; i < note_length; i++) {
         played_with_u8.push([parseInt(s.reverse_notes[s.played_notes[i][0]]), s.played_notes[i][1]])
-        // s.played_notes[i][0] = s.reverse_notes[s.played_notes[i][0]]
     }
 
     console.log(played_with_u8)
@@ -708,12 +696,11 @@ document.getElementById("pass_own_to_ai").addEventListener("click", () => {
     const generated_with_delta = []
 
     for (const note of generated_events) {
-        generated_with_delta.push([s.notes[note - 50], 100, 0])
+        generated_with_delta.push([s.notes[note], 100, 0])
     }
 
     console.log({ generated_events })
     console.log({ generated_with_delta })
-    selfPlay(generated_with_delta)
 
-    // selfPlay(generated_events)
+    selfPlay(generated_with_delta)
 })
