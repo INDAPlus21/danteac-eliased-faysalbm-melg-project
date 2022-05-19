@@ -26,7 +26,6 @@ front-end/node_modules
 midiparser/src/main.rs
 midiparser/Rush_E.mid
 hello-world/
-data/train-data
 
 # Added by cargo
 #
@@ -48,6 +47,10 @@ aiproject/node_modules/
 # Train data
 aiproject/train-data/
 midiparser/src/main.rs
+data/train-data
+
+# Dante
+aiproject2
 
 
 # Elias
