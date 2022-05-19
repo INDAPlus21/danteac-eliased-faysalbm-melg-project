@@ -25,7 +25,8 @@ MIDI.js
 front-end/node_modules
 midiparser/src/main.rs
 midiparser/Rush_E.mid
-hello-world
+hello-world/
+data/train-data
 
 # Added by cargo
 #

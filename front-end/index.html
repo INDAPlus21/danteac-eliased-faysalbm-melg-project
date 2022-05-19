@@ -32,6 +32,18 @@
                 id="import"
                 name="file"
             >
+            <input
+                type="button"
+                id="pass_to_ai"
+                value="Import and send MIDI to AI"
+                onclick="document.getElementById('import_ai').click();"
+            >
+            <input
+                type="file"
+                style="display:none;"
+                id="import_ai"
+                name="ai-file"
+            >
             <!-- <label for="select-song">Song</label>
             <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select> -->
         </div>
