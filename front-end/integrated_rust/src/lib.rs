@@ -92,7 +92,7 @@ pub fn receive_notes(val: &JsValue) -> JsValue
     console::log_1(&JsValue::from_serde(&notes).unwrap());
 
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
-    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100); 
+    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10); 
 
     return JsValue::from_serde(&generated_notes).unwrap(); // generated_notes.into() 
 
@@ -142,7 +142,7 @@ pub fn process_send_ai(fileData: &[u8]) -> JsValue {
     }
 
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
-    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100); 
+    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10); 
 
     return JsValue::from_serde(&generated_notes).unwrap();  
 }

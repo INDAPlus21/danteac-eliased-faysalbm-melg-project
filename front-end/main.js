@@ -1,7 +1,7 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
-import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai} from './integrated_rust/pkg/hello_world.js';
+import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai } from './integrated_rust/pkg/hello_world.js';
 import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
@@ -230,7 +230,13 @@ function unColorTile(key, octave) {
 }
 
 export async function selfPlay(song_to_play) {
-    console.log({song_to_play})
+    /* let notes_container = document.getElementById("falling-tiles-container")
+    notes_container.remove()
+    const new_notes_container = document.createElement("div")
+    new_notes_container.id = "falling-tiles-container" 
+    document.getElementById("piano-display").prepend(new_notes_container)
+
+    console.log({ song_to_play }) */
 
     const notes_container = document.getElementById("falling-tiles-container")
 
@@ -242,7 +248,7 @@ export async function selfPlay(song_to_play) {
 
     let total_delta_height = 0
 
-    console.log({song_to_play}, {num_tiles_start})
+    console.log({ song_to_play }, { num_tiles_start })
 
     // iterate through all the notes in the song 
     for (let i = 0; i < song_to_play.length; i++) {
@@ -259,9 +265,6 @@ export async function selfPlay(song_to_play) {
 
         total_delta_height += delta_time * 0.4
 
-        // use date milliseconds instead 
-        // jag tror att en stor anledning till att animate inte blir korrekt 
-        // är för att settimeout blir helt disturbed av att man renderar 
         const sleep_time = performance.now()
 
         if (delta_time) {
@@ -269,17 +272,14 @@ export async function selfPlay(song_to_play) {
         }
         // console.log("sleep took %fms, should have taken %sms", ((performance.now() - sleep_time)).toString().slice(0, 4), delta_time)
 
-
         const time = performance.now()
 
         const [key, octave] = getKeyOctave(note)
 
         if (s.notes_audios[note]) {
-            addEventToDisplay(song_to_play, i + num_tiles_start) // you need to start adding immediately 
+            addEventToDisplay(song_to_play, i + num_tiles_start) 
 
             pauseNote(note)
-
-            // new solution is that everything is happening too high up to see 
 
             unColorTile(key, octave)
         } else {
@@ -291,14 +291,21 @@ export async function selfPlay(song_to_play) {
             colorTile(key, octave, song_to_play[i][2])
         }
 
-        // string substitution patterns !
         // console.log("midi event took %fms", ((performance.now() - time)).toString().slice(0, 4))
     }
 
     notes_container.innerHTML = ""
+
+    /* setTimeout(async function() {
+        const response = await fetch("/midis/Never_Gonna_Give_You_Up.mid");
+        const content = await response.arrayBuffer();
+
+        bufferToParser(content)
+    }, 1000) */
 }
 
-// one idea is to replace this with a canvas 
+// one idea is to replace this with WebGL  
+// är för att settimeout blir helt disturbed av att man renderar om ej async
 async function addEventToDisplay(song_to_play, i) {
     if (song_to_play[i]) {
         const key = song_to_play[i][0]
@@ -505,7 +512,7 @@ function setUpKeyboard() {
         // let song_to_play = songs["combined_lone"] //.slice(22)
         const song_to_play = song //.slice(22)
         const original_song = JSON.parse(JSON.stringify(song_to_play)) // js references, man  
-        setTempo(2, song_to_play, original_song)
+        setTempo(1, song_to_play, original_song)
         // transposeUp(song_to_play)
         selfPlay(song_to_play)
     }
@@ -527,8 +534,8 @@ function addToTime(note) {
     if (s.played_notes.length == 20) {
         console.log("sending notes")
 
-        const note_length = s.played_notes.length 
-        const played_with_u8 = []; 
+        const note_length = s.played_notes.length
+        const played_with_u8 = [];
 
         for (let i = 0; i < note_length; i++) {
             played_with_u8.push([parseInt(s.reverse_notes[s.played_notes[i][0]]), s.played_notes[i][1]])
@@ -540,13 +547,13 @@ function addToTime(note) {
         const generated_events = receive_notes(played_with_u8)
 
         const generated_with_delta = []
-        
+
         for (note of generated_events) {
-            generated_with_delta.push([s.notes[note-50], 100, 0])
+            generated_with_delta.push([s.notes[note - 50], 100, 0])
         }
 
-        console.log({generated_events})
-        console.log({generated_with_delta})
+        console.log({ generated_events })
+        console.log({ generated_with_delta })
         selfPlay(generated_with_delta)
 
         // selfPlay(generated_events)
@@ -612,42 +619,10 @@ document.addEventListener("keydown", computerKeyboardPress)
 
 const input = document.querySelector('input[type=file]');
 
-
-/* function base64toBlob(base64Data, contentType) {
-    contentType = contentType || '';
-    const sliceSize = 1024;
-    const byteCharacters = atob(base64Data);
-    const bytesLength = byteCharacters.length;
-    const slicesCount = Math.ceil(bytesLength / sliceSize);
-    const byteArrays = new Array(slicesCount);
-
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-        const begin = sliceIndex * sliceSize;
-        const end = Math.min(begin + sliceSize, bytesLength);
-
-        const bytes = new Array(end - begin);
-        for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-            bytes[i] = byteCharacters[offset].charCodeAt(0);
-        }
-        byteArrays[sliceIndex] = new Uint8Array(bytes);
-    }
-    return new Blob(byteArrays, { type: contentType });
-} */
-
-function b64EncodeUnicode(str) {
-    // first we use encodeURIComponent to get percent-encoded UTF-8,
-    // then we convert the percent encodings into raw bytes which
-    // can be fed into btoa.
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-        function toSolidBytes(match, p1) {
-            return String.fromCharCode('0x' + p1);
-        }));
-}
-
 /* window.onload = function () {
     // configure MIDIReader
     const source = document.getElementById('import');
-
+ 
     
     parseFile(source) /* (combined) => {
         console.log(combined)
@@ -660,37 +635,44 @@ function b64EncodeUnicode(str) {
 }); 
 }; */
 
-/* async function run() {
-    await init();
-    console.log(say("Elias"))
-    console.log(add(1, 2))
-    console.log(return_song_vectors())
-    console.log(send_example_to_js())
-    // console.log(send_complex_vec())
-    console.log(send_vec_just_numbers())
-    receive_example_from_js([[1, 2]])
-
-    // const fileData = new Uint8Array(23);
-    // process_file(fileData)
-
-    /* file.arrayBuffer().then(buff => {
-        let x = new Uint8Array(buff); // x is your uInt8Array
-        // perform all required operations with x here.
-    }); */
-
-
-// receive_midi([1, 2, 3])
-/* var buttonOne = document.getElementById('buttonOne');
-buttonOne.addEventListener('click', function () {
-  var input = $("#nameInput").val();
-  alert(say(input));
-}, false); */
-// }
-
-// run(); */
-
 // you need to fetch wasm not to get TypeError: Cannot read property '__wbindgen_malloc'
 await init(await fetch('../integrated_rust/pkg/hello_world_bg.wasm'));
+
+function bufferToParser(buff) {
+    const array = new Uint8Array(buff);
+
+    console.log({ array })
+    console.log("calling process file!")
+    const number_song = process_file(array)
+    const number_song_two = process_file_2(array)
+
+    console.log({ number_song })
+
+    const alphanumeric = []
+    const alphanumeric_two = []
+
+    /* in iterates over indexes, of iterates over actual values */
+    for (const event of number_song) {
+        alphanumeric.push([s.notes[event[0]], event[1]])
+    }
+
+    // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
+    // och SPECIELLT inte sätter någonting alls till no_note (!!!)
+    /* in iterates over indexes, of iterates over actual values */
+    for (const event of number_song_two) {
+        alphanumeric_two.push([s.notes[event[0]], event[1]])
+    }
+
+    const combined = combineTracks(alphanumeric_two, alphanumeric)
+
+    const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
+    setTempo(1, combined, original_song)
+
+    // console.log({alphanumeric})
+
+    // selfPlay(alphanumeric_two); 
+    selfPlay(combined);
+}
 
 input.addEventListener("change", () => {
     const file = input.files[0]
@@ -698,40 +680,7 @@ input.addEventListener("change", () => {
     console.log({ file })
 
     file.arrayBuffer().then(buff => {
-
-        const array = new Uint8Array(buff);
-
-        console.log({ array })
-        console.log("calling process file!")
-        const number_song = process_file(array)
-        const number_song_two = process_file_2(array)
-
-        console.log({ number_song })
-
-        const alphanumeric = []
-        const alphanumeric_two = []
-
-        /* in iterates over indexes, of iterates over actual values */
-        for (const event of number_song) {
-            alphanumeric.push([s.notes[event[0]], event[1]])
-        }
-
-        // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
-        // och SPECIELLT inte sätter någonting alls till no_note (!!!)
-        /* in iterates over indexes, of iterates over actual values */
-        for (const event of number_song_two) {
-            alphanumeric_two.push([s.notes[event[0]], event[1]])
-        }
-
-        const combined = combineTracks(alphanumeric_two, alphanumeric)
-
-        const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
-        setTempo(2, combined, original_song)
-
-        // console.log({alphanumeric})
-
-        // selfPlay(alphanumeric_two); 
-        selfPlay(combined);
+        bufferToParser(buff);
     });
 })
 
@@ -779,25 +728,3 @@ document.getElementById("import_ai").addEventListener("change", () => {
         selfPlay(alphanumeric);
     });
 })
-
-
-// process_send_ai
-
-
-// // input.addEventListener("change", (/* event /) => {
-//     console.log("hi")
-//     // const file = event.target.files[0]; 
-//     const file = input.files[0]
-//     const reader = new FileReader()
-//     reader.addEventListener("load", (e) => {
-//         console.log("in reader")
-//         console.log(typeof e.target.result)
-//         // const midi_file = reader.readAsText(event.target.files[0].result)
-//         // const base64 = Buffer.from(e.target.result, 'base64')
-//         // parseFile(base64)
-
-//         const combined = parseFile(b64EncodeUnicode(e.target.result)) // document.getElementById("import")
-//         console.log({ combined })
-//     })
-//     reader.readAsText(file);
-// })

@@ -11,6 +11,7 @@ const fs = require('fs')
 export function parseFile() {
     const tracks = []
     fs.readFile(midi_file, 'base64', function (err, raw_data) {
+        
         // Parse the obtainer base64 string ...
         const midiArray = midiParser.parse(raw_data);
 

@@ -1,23 +1,8 @@
-import { songs } from "./songs.js"
-
-// looking up an array's length is O(1) nej inte orsaken 
-// here somewhere 
-/* 'E4', 6, 0 ],    [ 'E4', 113, 0 ],  [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
-[ 'Eb5', 7, 0 ],   [ 'Eb5', 113, 0 ], [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
-[ 'Eb5', 7, 0 ],   [ 'Eb5', 113, 0 ], [ 'E5', 7, 0 ],   [ 'E5', 113, 0 ],
-[ 'A2', 0, 1 ] */
-// here's an explanation for type 11: https://users.cs.cf.ac.uk/dave/Multimedia/node158.html¨
-// and the 11s HAVE A DELTATIME !!!!) 
-// yes it's still definitely the delta time that's fucking it up 
-// no note is changed, but the right_lead and left_lead are affected 
-
 export function combineTracks(left_hand, right_hand) {
     let combined = []
 
     let index_left = 0
     let index_right = 0
-
-    // the bug makes perfect sense! the right hand is intrepreted as LEFT HAND (?), or something of the like 
 
     let right_lead = 0;
     let left_lead = 0;
@@ -25,7 +10,7 @@ export function combineTracks(left_hand, right_hand) {
     // fix the side effects! 
 
     function pushRight() {
-        if (right_hand[index_right][0] ==  "no_note") {
+        if (right_hand[index_right][0] == "no_note") {
             left_lead -= right_hand[index_right][1]
             index_right++
         } else {
@@ -51,24 +36,17 @@ export function combineTracks(left_hand, right_hand) {
     }
 
     while (true) {
-        // console.log(right_hand[index_right], { right_lead }, left_hand[index_left], { left_lead })
-
         if (left_lead + left_hand[index_left][1] <= right_lead + right_hand[index_right][1]) {
             pushLeft()
         } else {
             pushRight()
         }
 
-        // eller kan det ha att göra med eventtyp 8 !?!??! 
-
         if (!right_hand[index_right]) {
-            // du borde också ta hänsyn till lead här 
-            // console.log("concating left", left_hand.slice(index_left))
             if (left_hand[index_left]) pushLeft()
             combined = combined.concat(left_hand.slice(index_left))
             break;
         } else if (!left_hand[index_left]) {
-            // console.log("concating right", { index_right })
             if (right_hand[index_right]) pushRight()
             combined = combined.concat(right_hand.slice(index_right))
             break;
@@ -77,6 +55,8 @@ export function combineTracks(left_hand, right_hand) {
 
     return combined
 }
+
+// TESTS 
 
 function arraysEqual(a1, a2) {
     /* WARNING: arrays must not contain {objects} or behavior may be undefined */
@@ -188,36 +168,3 @@ function testAnother() {
 // testSimple()
 testLeftHandConcat()
 // testAnother()
-
-/* Reasoning (you don't need to read through this) */
-// this is a method which has less complexity... async js and ui manipulation introduces so much that 
-// you need to synchronize 
-// horrific time complexity, but will work 
-// a big obvious improvement is caching where you are in the right hand 
-// so we first want 0, 0, then BOTH inserted 
-// then we have the second index, total times elapsed are 227 and 0  
-// we want to insert D3, and keep E5... 
-// we need two separate "pointers"! 
-// so we now have index_left and index_right as 1 
-// because D3 (left) has a higher delta time, we want to insert the RIGHT hand 
-// then there's the problem that we can't double count  
-// no... how can we make them equal? 
-// remember that _i is completely irrelevant, it's only the there to make sure that we iter[0], delta_time_elapsed_rightate enough times 
-// and we want to iterate through the longest hand... right? 
-// no, Math.max(left_hand.length, right_hand.length) isn't correct 
-// we want to iterate until the combined array's length is equal to both the other's COMBINED (duh!) 
-// after we've inserted E5, D3 and Gb4 have equal again, but will the elapsed times be equal...?
-// is the double count problem solved by putting them 
-// no... by subtracting if we don't use it! brilliant idea! 
-// right... we don't want the actual delta time to get appended, but the difference 
-// WHAT!?!??! the basic concept works!!?!??!?!? actual thinking involved here 
-// we want Gb4 not to have a deltatime of 227, but of 0. We could get 0 by subtracing 
-// the previous element, but for D3 we then want to subtract the entire total deltatime... 
-// so take max, or it's obvious which is max  
-// or a new variable relative deltatime which is reset 
-// now we have the fucking problem of you trying to solve the problem of only one more note again 
-// there can be MULTIPLE notes that have deltatime 0 
-// Iiii know the reason E5 should be 0 is because its deltatime is 0 
-// Ooooh we maybe should use delta_time_elapsed_left at all when adding to the array 
-// no we need a relative delta time  
-// ["E5", 745], ["G5", 0]
