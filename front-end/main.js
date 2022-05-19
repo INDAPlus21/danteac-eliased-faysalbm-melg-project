@@ -517,7 +517,7 @@ function addToTime(note) {
 
     console.log("played notes: ", s.played_notes)
 
-    if (s.played_notes.length > 20) {
+    if (s.played_notes.length == 20) {
         console.log("sending notes")
 
         const note_length = s.played_notes.length 

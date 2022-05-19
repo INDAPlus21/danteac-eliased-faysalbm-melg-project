@@ -74,7 +74,7 @@ pub struct Track {
 // parser and the AI, and we of course still need the notes and volume arrays
 // you create here
 #[wasm_bindgen]
-pub fn receive_notes(val: &JsValue) /* -> JsValue */
+pub fn receive_notes(val: &JsValue) -> JsValue 
 {
     let example: Vec<Vec<f32>> = val.into_serde().unwrap();
     // console::log_1(&example.into());
@@ -93,6 +93,8 @@ pub fn receive_notes(val: &JsValue) /* -> JsValue */
 
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
     let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10); 
+
+    return generated_notes 
 
     /*  let track = Track {
         notes: notes,
