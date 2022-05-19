@@ -128,7 +128,7 @@ pub fn parse_midi_file(filename: &str) -> Option<Song> {
         filename.to_owned() + ".mid"
     };
 
-    if let Ok(data) = fs::read(path) {
+    if let Ok(data) = fs::read(path.clone()) {
         parse_midi(data)
     } else {
         println!("Error: File {} not found!", path);
