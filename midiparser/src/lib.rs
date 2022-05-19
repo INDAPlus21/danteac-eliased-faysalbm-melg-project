@@ -131,7 +131,7 @@ pub fn parse_midi_file(filename: &str) -> Option<Song> {
     if let Ok(data) = fs::read(path) {
         parse_midi(data)
     } else {
-        println!("Error: File {}.mid not found!", filename);
+        println!("Error: File {} not found!", path);
         None
     }
 }
