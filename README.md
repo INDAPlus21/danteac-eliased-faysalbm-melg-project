@@ -31,4 +31,4 @@ This starts the front-end wasm server
 
 Decribes the overall flow of the program. May change in the future. (Requires basic knowledge of swedish).
 
-![Activity diagram](activity_diagram.png)
+![Activity diagram](Music_AI_activity_diagram.png)
