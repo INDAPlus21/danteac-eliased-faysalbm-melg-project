@@ -94,7 +94,7 @@ pub fn receive_notes(val: &JsValue) -> JsValue
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
     let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10); 
 
-    return generated_notes 
+    return JsValue::from_serde(&generated_notes).unwrap(); // generated_notes.into() 
 
     /*  let track = Track {
         notes: notes,
