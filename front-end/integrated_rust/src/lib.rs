@@ -2,8 +2,7 @@ use js_sys::Array;
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 // use neon::prelude::*;
-use midiparser::actually_parse;
-use midiparser::convert_to_front_end_format;
+use midiparser::parse_midi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use aiproject::NotesRNN;
@@ -128,7 +127,7 @@ pub fn process_file(fileData: &[u8]) -> JsValue {
     let real_midi_file: Vec<u8> = fileData.to_vec();
     console::log_1(&"hello real midi file".into());
 
-    let song: midiparser::song::Song = actually_parse(real_midi_file).unwrap();
+    let song: midiparser::song::Song = parse_midi(real_midi_file).unwrap();
 
     console::log_1(&"hello parsed".into());
 
@@ -179,7 +178,7 @@ pub fn process_file_2(fileData: &[u8]) -> JsValue {
 
     let real_midi_file: Vec<u8> = fileData.to_vec();
 
-    let song: midiparser::song::Song = actually_parse(real_midi_file).unwrap();
+    let song: midiparser::song::Song = parse_midi(real_midi_file).unwrap();
 
     let mut note_offsets: Vec<Vec<f32>> = vec![];
 
