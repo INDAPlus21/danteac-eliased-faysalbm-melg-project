@@ -30,6 +30,7 @@ hello-world/
 # Added by cargo
 #
 # already existing elements were commented out
+.vscode
 
 /target
 #Cargo.lock

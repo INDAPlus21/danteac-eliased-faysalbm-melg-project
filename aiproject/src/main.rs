@@ -26,9 +26,10 @@ fn main() {
 
     println!("Training started");
     for epoch in 1..=1000 {
-        let avg_train_loss: f32 = notes_rnn.train(songs.clone(), 1, 2e-2);
+        // let avg_train_loss: f32 = notes_rnn.train(songs.clone(), 1, 2e-2);
         println!("--- Epoch {}", (epoch));
-        println!("Train:\tLoss {:.20}", avg_train_loss);
+        // println!("Train:\tLoss {:.20}", avg_train_loss);
+        notes_rnn.save_weights_biases_to_file();
 
         // if we want to use serde instead
         let serialized = serde_json::to_string(&notes_rnn.rnn).unwrap();

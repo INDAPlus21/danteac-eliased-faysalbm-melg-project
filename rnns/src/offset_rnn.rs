@@ -6,15 +6,13 @@ use serde::{Serialize, Deserialize};
 
 const NR_OF_POSSIBLE_OFFSETS: usize = 1001;
 
-const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
-
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct OffsetRNN {
     rnn: RNN
 }
 
 impl OffsetRNN {
-    pub fn new(hidden_size: usize, weights_biases_file_path: String) -> OffsetRNN {
+    pub fn new(hidden_size: usize) -> OffsetRNN {
         OffsetRNN {
             rnn: RNN::new(NR_OF_POSSIBLE_OFFSETS, hidden_size, NR_OF_POSSIBLE_OFFSETS)
         }
