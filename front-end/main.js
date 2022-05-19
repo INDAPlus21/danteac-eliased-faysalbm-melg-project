@@ -1,7 +1,7 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
-import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai } from './integrated_rust/pkg/hello_world.js';
+import init, { return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai } from './integrated_rust/pkg/integrated_rust.js';
 import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
@@ -176,7 +176,6 @@ function playNote(note, keyboard = false) {
     // console.log(url)
     const audio = new Audio(url) // (notes_audios[note]) ? notes_audios[note] : 
     audio.addEventListener("canplaythrough", (event) => {
-        console.log("is in playing")
         audio.play()
     })
 
@@ -277,15 +276,13 @@ export async function selfPlay(song_to_play) {
         const [key, octave] = getKeyOctave(note)
 
         if (s.notes_audios[note]) {
-            addEventToDisplay(song_to_play, i + num_tiles_start) 
+            addEventToDisplay(song_to_play, i + num_tiles_start)
 
             pauseNote(note)
 
             unColorTile(key, octave)
         } else {
             addEventToDisplay(song_to_play, i + num_tiles_start)
-
-            console.log("should be playing: ", note)
 
             playNote(note)
             colorTile(key, octave, song_to_play[i][2])
@@ -531,34 +528,6 @@ function addToTime(note) {
 
     console.log("played notes: ", s.played_notes)
 
-    if (s.played_notes.length == 20) {
-        console.log("sending notes")
-
-        const note_length = s.played_notes.length
-        const played_with_u8 = [];
-
-        for (let i = 0; i < note_length; i++) {
-            played_with_u8.push([parseInt(s.reverse_notes[s.played_notes[i][0]]), s.played_notes[i][1]])
-            // s.played_notes[i][0] = s.reverse_notes[s.played_notes[i][0]]
-        }
-
-        console.log(played_with_u8)
-
-        const generated_events = receive_notes(played_with_u8)
-
-        const generated_with_delta = []
-
-        for (note of generated_events) {
-            generated_with_delta.push([s.notes[note - 50], 100, 0])
-        }
-
-        console.log({ generated_events })
-        console.log({ generated_with_delta })
-        selfPlay(generated_with_delta)
-
-        // selfPlay(generated_events)
-    }
-
     s.time_last_event = time
 }
 
@@ -636,41 +605,33 @@ const input = document.querySelector('input[type=file]');
 }; */
 
 // you need to fetch wasm not to get TypeError: Cannot read property '__wbindgen_malloc'
-await init(await fetch('../integrated_rust/pkg/hello_world_bg.wasm'));
+await init(await fetch('../integrated_rust/pkg/integrated_rust_bg.wasm'));
 
 function bufferToParser(buff) {
     const array = new Uint8Array(buff);
 
     console.log({ array })
     console.log("calling process file!")
-    const number_song = process_file(array)
-    const number_song_two = process_file_2(array)
+    const both_songs = process_file(array)
 
-    console.log({ number_song })
-
-    const alphanumeric = []
-    const alphanumeric_two = []
+    const parsed_both_songs = [];
 
     /* in iterates over indexes, of iterates over actual values */
-    for (const event of number_song) {
-        alphanumeric.push([s.notes[event[0]], event[1]])
+    for (const song of both_songs) {
+        const alphanumeric = []
+
+        for (const event of song) {
+            alphanumeric.push([s.notes[event[0]], event[1]])
+        }
+
+        parsed_both_songs.push(alphanumeric)
     }
 
-    // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
-    // och SPECIELLT inte sätter någonting alls till no_note (!!!)
-    /* in iterates over indexes, of iterates over actual values */
-    for (const event of number_song_two) {
-        alphanumeric_two.push([s.notes[event[0]], event[1]])
-    }
-
-    const combined = combineTracks(alphanumeric_two, alphanumeric)
+    const combined = combineTracks(parsed_both_songs[0], parsed_both_songs[1])
 
     const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
     setTempo(1, combined, original_song)
 
-    // console.log({alphanumeric})
-
-    // selfPlay(alphanumeric_two); 
     selfPlay(combined);
 }
 
@@ -727,4 +688,32 @@ document.getElementById("import_ai").addEventListener("change", () => {
         // selfPlay(alphanumeric_two); 
         selfPlay(alphanumeric);
     });
+})
+
+document.getElementById("pass_own_to_ai").addEventListener("click", () => {
+    console.log("sending notes")
+
+    const note_length = s.played_notes.length
+    const played_with_u8 = [];
+
+    for (let i = 0; i < note_length; i++) {
+        played_with_u8.push([parseInt(s.reverse_notes[s.played_notes[i][0]]), s.played_notes[i][1]])
+        // s.played_notes[i][0] = s.reverse_notes[s.played_notes[i][0]]
+    }
+
+    console.log(played_with_u8)
+
+    const generated_events = receive_notes(played_with_u8)
+
+    const generated_with_delta = []
+
+    for (const note of generated_events) {
+        generated_with_delta.push([s.notes[note - 50], 100, 0])
+    }
+
+    console.log({ generated_events })
+    console.log({ generated_with_delta })
+    selfPlay(generated_with_delta)
+
+    // selfPlay(generated_events)
 })

@@ -10,10 +10,9 @@ use vector::{Vector};
 use midiparser::song::{Song, Track};
 use std::collections::VecDeque;
 
-use std::fs::File;
 use std::fs;
 
-const serde_weights_file: &str = include_str!("../serde_weights");
+const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
 
 #[derive(Clone, PartialEq)]
 pub struct NotesRNN {
@@ -29,12 +28,12 @@ impl NotesRNN {
     }
 
     pub fn gen_notes(mut self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {
-        let serde_RNN: RNN = serde_json::from_str(&serde_weights_file).unwrap();
-        self.rnn.wxh = serde_RNN.wxh;
-        self.rnn.whh = serde_RNN.whh;
-        self.rnn.why = serde_RNN.why;
-        self.rnn.bh = serde_RNN.bh;
-        self.rnn.by = serde_RNN.by; 
+        let serde_rnn: RNN = serde_json::from_str(&SERDE_WEIGHTS_FILE).unwrap();
+        self.rnn.wxh = serde_rnn.wxh;
+        self.rnn.whh = serde_rnn.whh;
+        self.rnn.why = serde_rnn.why;
+        self.rnn.bh = serde_rnn.bh;
+        self.rnn.by = serde_rnn.by; 
 
         let mut output_notes: Vec<f32> = vec![0.0; nr_of_gen_notes];
         let window_width: usize = 10;
@@ -70,7 +69,6 @@ impl NotesRNN {
             let nr_of_possible_labels: usize = notes.len() - window_width;
 
             for i in 1..nr_of_possible_labels {
-                println!("in possible labels {:?} {:?}", i, nr_of_possible_labels); 
                 let target: usize = self.note_value_to_id(label);
                 total_nr_of_sequences += 1.0;
                 let input_matrix: Matrix = self.create_input_matrix(&window);
