@@ -4,10 +4,9 @@ mod rnn;
 mod tests;
 mod vector;
 
-use crate::rnn::RNN;
 use crate::notes_rnn::NotesRNN;
+use crate::rnn::RNN;
 use midiparser::song::Song;
-use std::fs::File;
 use std::fs;
 
 fn main() {
@@ -22,7 +21,7 @@ fn main() {
     notes_rnn.rnn.whh = serde_RNN.whh;
     notes_rnn.rnn.why = serde_RNN.why;
     notes_rnn.rnn.bh = serde_RNN.bh;
-    notes_rnn.rnn.by = serde_RNN.by; 
+    notes_rnn.rnn.by = serde_RNN.by;
 
     println!("Training started");
     for epoch in 1..=1000 {
@@ -32,6 +31,6 @@ fn main() {
 
         // if we want to use serde instead
         let serialized = serde_json::to_string(&notes_rnn.rnn).unwrap();
-        fs::write("serde_weights", serialized).expect("Unable to write file");        
+        fs::write("serde_weights", serialized).expect("Unable to write file");
     }
 }
