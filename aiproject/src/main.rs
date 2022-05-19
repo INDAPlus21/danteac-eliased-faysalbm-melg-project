@@ -1,10 +1,11 @@
 mod matrix;
-mod notes_rnn;
+// mod notes_rnn;
 mod rnn;
 mod tests;
 mod vector;
 
-use crate::notes_rnn::NotesRNN;
+// use crate::notes_rnn::NotesRNN;
+use aiproject::NotesRNN;
 use midiparser::song::Song;
 
 fn main() {
