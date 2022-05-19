@@ -31,7 +31,7 @@ pub fn parse_midi(data: Vec<u8>) -> Option<Song> {
 
             // Tempo (tick division)
             // TODO
-            println!("tempo {:?}", data[i..i + 4]); 
+            println!("tempo {:?}", &data[i..i + 4]); 
             i += 4;
 
         } else if i < data.len() - 4 && data[i..i + 4] == b"MTrk".to_owned() {

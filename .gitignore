@@ -47,6 +47,7 @@ aiproject/node_modules/
 
 # Train data
 aiproject/train-data/
+midiparser/src/main.rs
 
 
 # Elias
