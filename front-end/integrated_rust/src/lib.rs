@@ -8,8 +8,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 fn send_to_rnn(notes: Vec<f32>) -> JsValue {
+    console::log_2(&"sending to rnn from wasm: ".into(), &JsValue::from_serde(&notes).unwrap());
+
     let notes_rnn: NotesRNN = NotesRNN::new(64);
-    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10);
+    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100);
 
     return JsValue::from_serde(&generated_notes).unwrap();
 }
@@ -28,8 +30,6 @@ pub fn receive_notes(val: &JsValue) -> JsValue {
         notes.push(event[0]);
         offsets.push(event[1]);
     }
-
-    console::log_1(&JsValue::from_serde(&notes).unwrap());
 
     send_to_rnn(notes)
 }

@@ -7,17 +7,15 @@ export function combineTracks(left_hand, right_hand) {
     let right_lead = 0;
     let left_lead = 0;
 
-    // fix the side effects! 
-
     function pushRight() {
         if (right_hand[index_right][0] == "no_note") {
             left_lead -= right_hand[index_right][1]
             index_right++
         } else {
-            right_hand[index_right][1] = right_hand[index_right][1] - left_lead
+            const diff = right_hand[index_right][1] - left_lead
             left_lead = 0
-            right_lead += right_hand[index_right][1]
-            combined.push([right_hand[index_right][0], right_hand[index_right][1], 1])
+            right_lead += diff
+            combined.push([right_hand[index_right][0], diff, 1])
             index_right++
         }
     }
@@ -27,10 +25,10 @@ export function combineTracks(left_hand, right_hand) {
             right_lead -= left_hand[index_left][1]
             index_left++
         } else {
-            left_hand[index_left][1] = left_hand[index_left][1] - right_lead
+            const diff = left_hand[index_left][1] - right_lead
             right_lead = 0
-            left_lead += left_hand[index_left][1]
-            combined.push([left_hand[index_left][0], left_hand[index_left][1], 0]);
+            left_lead += diff
+            combined.push([left_hand[index_left][0], diff, 0]);
             index_left++
         }
     }
