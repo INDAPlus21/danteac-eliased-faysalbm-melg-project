@@ -20,8 +20,8 @@ mod tests {
     #[test]
     fn test_vector_arg_max() {
         assert_eq!(
-            Vector::from_vec(vec![3.0, 2.0, 7.0]).arg_max(),
-            2.0 as usize
+            Vector::from_vec(vec![11.0, 2.0, 8.0, 7.0]).arg_max(),
+            0.0 as usize
         );
 
         assert_ne!(
