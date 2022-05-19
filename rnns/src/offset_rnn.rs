@@ -91,11 +91,11 @@ impl OffsetRNN {
     }
 
     fn offset_value_to_id(&self, offset_value: f32) -> usize {
-        offset_value.max(1000.0) as usize
+        offset_value.min(1000.0) as usize
     }
 
     pub fn save_weights_biases_to_file(&self) {
-        self.rnn.save_weights_biases_to_file("../serde_offset_weights".to_string());
+        self.rnn.save_weights_biases_to_file("serde_offset_weights".to_string());
         println!("Weight and biases saved.");
     }
 }

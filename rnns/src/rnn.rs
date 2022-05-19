@@ -11,8 +11,6 @@ pub struct RNN {
     by: Vector,
 }
 
-const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
-
 impl RNN {
     pub fn new(input_size: usize, hidden_size: usize, output_size: usize) -> RNN {
         let factor: f32 = 1.0 / 1000.0;
@@ -21,13 +19,14 @@ impl RNN {
             wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor,
             whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
-            bh: Vector::with_length(hidden_size),
-            by: Vector::with_length(output_size),
+            bh: Vector::with_value(hidden_size, 1.0), 
+            by: Vector::with_value(output_size, 1.0),
         }
     }
 
     pub fn from_weight_bias_file() -> RNN {
         // let deserialized: String = fs::read_to_string(path).expect("Unable to read file");
+        const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
         let serde_rnn: RNN = serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap();
         RNN {
             wxh: serde_rnn.wxh,
@@ -89,7 +88,7 @@ impl RNN {
 
     fn to_json_string(&self) -> String {
         serde_json::to_string(self).unwrap()
-    }
+}
 
     pub fn save_weights_biases_to_file(&self, weights_biases_file_path: String) {
         let serialized: String = self.to_json_string();

@@ -31,9 +31,17 @@ impl NotesRNN {
         window.extend(input_notes[0..window_width].iter());
 
         for i in 0..nr_of_gen_notes {
+            // println!("generating {}", i);
+            println!("{:?}", window);
             let input_matrix: Matrix = self.create_input_matrix(&window);
+            // println!("input {:?}", input_matrix);
+
             let (prediction_vector, _): (Vector, Matrix) = self.rnn.forward(&input_matrix);
+            // println!("prediction {:?}", prediction_vector);
+            
             let probs: Vector = prediction_vector.softmax();
+            // println!("probs {:?}", probs);
+
             let predicted_note_id: usize = probs.arg_max();
             let predicted_note: f32 = self.id_to_note_value(predicted_note_id);
             output_notes[i] = predicted_note;
@@ -99,7 +107,7 @@ impl NotesRNN {
     }
 
     pub fn save_weights_biases_to_file(&self) {
-        self.rnn.save_weights_biases_to_file("../serde_weights".to_string());
+        self.rnn.save_weights_biases_to_file("serde_weights".to_string());
         println!("Weight and biases saved.");
     }
 }

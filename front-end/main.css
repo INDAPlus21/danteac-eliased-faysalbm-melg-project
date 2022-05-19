@@ -169,6 +169,8 @@ body {
     border-radius: 5px; 
     padding: 5px; 
     font-size: 15px; 
+    opacity: 1; 
+    transition: opacity 0.5s ease-out;
 }
 
 .button:hover, #pass_to_ai:hover {

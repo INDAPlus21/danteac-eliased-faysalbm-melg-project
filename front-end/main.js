@@ -14,6 +14,7 @@ const s = {
     previous_heights: 0,
     self_play: false,
     time_last_event: performance.now(), // should really be reinitialized the first note user 
+    time_since_mouse_move: performance.now(),
     notes: {
         255: "no_note", 127: "G9", 126: "Gb9", 125: "F9", 124: "E9", 123: "Eb9", 122: "D9", 121: "Db9", 120: "C9", 119: "B8", 118: "Bb8", 117: "A8", 116: "Ab8", 115: "G8", 114: "Gb8", 113: "F8", 112: "E8", 111: "Eb8", 110: "D8", 109: "Db8", 108: "C8", 107: "B7", 106: "Bb7", 105: "A7", 104: "Ab7", 103: "G7", 102: "Gb7", 101: "F7", 100: "E7", 99: "Eb7", 98: "D7", 97: "Db7", 96: "C7", 95: "B6", 94: "Bb6", 93: "A6", 92: "Ab6", 91: "G6", 90: "Gb6", 89: "F6", 88: "E6", 87: "Eb6", 86: "D6", 85: "Db6", 84: "C6", 83: "B5", 82: "Bb5", 81: "A5", 80: "Ab5", 79: "G5", 78: "Gb5", 77: "F5", 76: "E5", 75: "Eb5", 74: "D5", 73: "Db5", 72: "C5", 71: "B4", 70: "Bb4", 69: "A4", 68: "Ab4", 67: "G4", 66: "Gb4", 65: "F4", 64: "E4", 63: "Eb4", 62: "D4", 61: "Db4", 60: "C4", 59: "B3", 58: "Bb3", 57: "A3", 56: "Ab3", 55: "G3", 54: "Gb3", 53: "F3", 52: "E3", 51: "Eb3", 50: "D3", 49: "Db3", 48: "C3", 47: "B2", 46: "Bb2", 45: "A2", 44: "Ab2", 43: "G2", 42: "Gb2", 41: "F2", 40: "E2", 39: "Eb2", 38: "D2", 37: "Db2", 36: "C2", 35: "B1", 34: "Bb1", 33: "A1", 32: "Ab1", 31: "G1", 30: "Gb1",
         29: "F1", 28: "E1", 27: "Eb1", 26: "D1", 25: "Db1", 24: "C1", 23: "B0", 22: "Bb0", 21: "A0", 20: "Ab", 19: "G", 18: "Gb", 17: "F", 16: "E", 15: "Eb", 14: "D", 13: "C#", 12: "C0", 11: "B", 10: "Bb", 9: "A", 8: "Ab", 7: "G", 6: "Gb", 5: "F", 4: "E", 3: "Eb", 2: "D", 1: "C#", 0: "C-1"
@@ -507,7 +508,7 @@ function bufferToParser(buff) {
         parsed_both_songs.push(alphanumeric)
     }
 
-    let combined 
+    let combined
     if (parsed_both_songs.length > 1) {
         combined = combineTracks(parsed_both_songs[0], parsed_both_songs[1])
     } else {
@@ -549,8 +550,12 @@ document.getElementById("import_ai").addEventListener("change", () => {
         const alphanumeric = []
 
         /* in iterates over indexes, of iterates over actual values */
-        for (const event of number_song) {
-            alphanumeric.push([s.notes[event], 100, 0])
+        /* for (const event of number_song) {
+            alphanumeric.push([s.notes[event[0]], event[1], 0])
+        }  */
+
+        for (let i = 0; i < number_song[0].length; i++) {
+            alphanumeric.push([s.notes[number_song[0][i]], number_song[1][i], 0])
         }
 
         // const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
@@ -579,8 +584,8 @@ document.getElementById("pass_own_to_ai").addEventListener("click", () => {
 
     const generated_with_delta = []
 
-    for (const note of generated_events) {
-        generated_with_delta.push([s.notes[note], 100, 0])
+    for (let i = 0; i < generated_events[0].length; i++) {
+        generated_with_delta.push([s.notes[generated_events[0][i]], generated_events[1][i], 0])
     }
 
     console.log({ generated_events })
@@ -588,3 +593,28 @@ document.getElementById("pass_own_to_ai").addEventListener("click", () => {
 
     selfPlay(generated_with_delta)
 })
+
+
+document.addEventListener('mousemove', e => {
+    console.log("mouse moved")
+    const time_diff = performance.now() - s.time_since_mouse_move
+    s.time_since_mouse_move = performance.now()
+    console.log({time_diff})
+    const buttons = document.getElementsByClassName("button")
+    for (let i = 0; i < buttons.length; i++) { 
+        // buttons[i].style.display = "inline-block"; 
+        buttons[i].style.opacity = "1"; 
+    }
+});
+
+setInterval(() => {
+    const time_diff = performance.now() - s.time_since_mouse_move
+    if (time_diff > 1000) {
+        console.log("hide")
+        const buttons = document.getElementsByClassName("button")
+        for (let i = 0; i < buttons.length; i++) { 
+            // buttons[i].style.display = "none"; 
+            buttons[i].style.opacity = "0"; 
+        }
+    }
+}, 1000) 
