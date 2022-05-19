@@ -52,6 +52,9 @@ aiproject/train-data/
 python-networks
 hello-world
 
+# Dante
+aiproject/src/notes_weights_biases
+
 # Just to be sure
 data/maestro-v2.0.0
 
