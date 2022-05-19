@@ -1,17 +1,15 @@
+use std::fs;
 use crate::matrix::Matrix;
 use crate::vector::Vector;
-use std::fs::File;
-use std::fs::OpenOptions;
-use std::io::{Read, Write};
 use serde::{Serialize, Deserialize};
 
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RNN {
-    pub wxh: Matrix,
-    pub whh: Matrix,
-    pub why: Matrix,
-    pub bh: Vector,
-    pub by: Vector,
+    wxh: Matrix,
+    whh: Matrix,
+    why: Matrix,
+    bh: Vector,
+    by: Vector,
 }
 
 impl RNN {
@@ -24,6 +22,18 @@ impl RNN {
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
             bh: Vector::with_length(hidden_size),
             by: Vector::with_length(output_size),
+        }
+    }
+
+    pub fn from_weight_bias_file(path: String) -> RNN {
+        let deserialized: String = fs::read_to_string(path).expect("Unable to read file");
+        let serde_rnn: RNN = serde_json::from_str(&deserialized).unwrap();
+        RNN {
+            wxh: serde_rnn.wxh,
+            whh: serde_rnn.whh,
+            why: serde_rnn.why,
+            bh: serde_rnn.bh,
+            by: serde_rnn.by,
         }
     }
 
@@ -74,6 +84,15 @@ impl RNN {
         self.wxh -= learn_rate * d_wxh.clamp(-1.0, 1.0);
         self.by -= learn_rate * d_by.clamp(-1.0, 1.0);
         self.bh -= learn_rate * d_bh.clamp(-1.0, 1.0);
+    }
+
+    fn to_json_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
+    pub fn save_weights_biases_to_file(&self, weights_biases_file_path: String) {
+        let serialized: String = self.to_json_string();
+        fs::write(weights_biases_file_path, serialized).expect("Unable to write file");
     }
 
 }
