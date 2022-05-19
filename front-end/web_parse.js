@@ -1,10 +1,6 @@
 import { combineTracks } from "./combineTracks.js"
-// const midiParser = require('midi-parser-js');
 import { MidiParser } from './npm_midi_parser/midi-parser.js'
 import { selfPlay } from './main.js'
-
-console.log("in web parse")
-// console.log(MidiParser)
 
 export async function parseFile(raw_data) {
     const notes = {
@@ -13,15 +9,12 @@ export async function parseFile(raw_data) {
     }
 
     const tracks = []
+    
     // Parse the obtainer base64 string ...
     await MidiParser.parse(raw_data, function (midiArray) {
-        // Your callback function
-        // console.log(obj);
-        // document.getElementById("output").innerHTML = JSON.stringify(obj, undefined, 2);
         console.log(midiArray); // useful information 
         console.log(midiArray.track[0]);
 
-        // maybe the 121 byte is there in every midi to estabish the upper range? 
         function getNotesAndTimes(track) {
             const notes_and_times = []
             for (let i = 0; i < track.length; i++) {

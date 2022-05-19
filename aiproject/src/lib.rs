@@ -28,16 +28,14 @@ impl NotesRNN {
         }
     }
 
-    pub fn gen_notes(mut self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {        
-        // let deserialized = fs::read_to_string("../../serde_weights").expect("Unable to read file");
-        // let serde_RNN: RNN = serde_json::from_str(&deserialized).unwrap();
+    pub fn gen_notes(mut self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {
         let serde_RNN: RNN = serde_json::from_str(&serde_weights_file).unwrap();
         self.rnn.wxh = serde_RNN.wxh;
         self.rnn.whh = serde_RNN.whh;
         self.rnn.why = serde_RNN.why;
         self.rnn.bh = serde_RNN.bh;
         self.rnn.by = serde_RNN.by; 
-        
+
         let mut output_notes: Vec<f32> = vec![0.0; nr_of_gen_notes];
         let window_width: usize = 10;
         let mut window: VecDeque<f32> = VecDeque::with_capacity(window_width);
@@ -46,14 +44,16 @@ impl NotesRNN {
         for i in 0..nr_of_gen_notes {
             let input_matrix: Matrix = self.create_input_matrix(&window);
             let (prediction_vector, _): (Vector, Matrix) = self.rnn.forward(&input_matrix);
-            let predicted_note: f32 = self.id_to_note_value(prediction_vector.arg_max());
+            let probs: Vector = prediction_vector.softmax();
+            let predicted_note_id: usize = probs.arg_max();
+            let predicted_note: f32 = self.id_to_note_value(predicted_note_id);
             output_notes[i] = predicted_note;
-            // seems wrong dante 
             window.pop_front();
             window.push_back(predicted_note);
         }
         output_notes
     }
+
 
     pub fn train(&mut self, data: Vec<Song>, track_nr: usize, learn_rate: f32) -> f32 {
         let window_width: usize = 10;
