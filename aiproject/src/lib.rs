@@ -1,18 +1,23 @@
-pub mod matrix;
+mod matrix;
 use matrix::{Matrix};
 // use crate::matrix::Matrix;
 // use crate::vector::Vector;
 pub mod rnn;
 use rnn::{RNN};
 
-pub mod vector;
+mod vector;
 use vector::{Vector};
 use midiparser::song::{Song, Track};
 use std::collections::VecDeque;
 
+use std::fs::File;
+use std::fs;
+
+const serde_weights_file: &str = include_str!("../serde_weights");
+
 #[derive(Clone, PartialEq)]
 pub struct NotesRNN {
-    rnn: RNN,
+    pub rnn: RNN,
 }
 
 impl NotesRNN {
@@ -23,7 +28,16 @@ impl NotesRNN {
         }
     }
 
-    pub fn gen_notes(&self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {
+    pub fn gen_notes(mut self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {        
+        // let deserialized = fs::read_to_string("../../serde_weights").expect("Unable to read file");
+        // let serde_RNN: RNN = serde_json::from_str(&deserialized).unwrap();
+        let serde_RNN: RNN = serde_json::from_str(&serde_weights_file).unwrap();
+        self.rnn.wxh = serde_RNN.wxh;
+        self.rnn.whh = serde_RNN.whh;
+        self.rnn.why = serde_RNN.why;
+        self.rnn.bh = serde_RNN.bh;
+        self.rnn.by = serde_RNN.by; 
+        
         let mut output_notes: Vec<f32> = vec![0.0; nr_of_gen_notes];
         let window_width: usize = 10;
         let mut window: VecDeque<f32> = VecDeque::with_capacity(window_width);
@@ -34,6 +48,7 @@ impl NotesRNN {
             let (prediction_vector, _): (Vector, Matrix) = self.rnn.forward(&input_matrix);
             let predicted_note: f32 = self.id_to_note_value(prediction_vector.arg_max());
             output_notes[i] = predicted_note;
+            // seems wrong dante 
             window.pop_front();
             window.push_back(predicted_note);
         }
@@ -55,6 +70,7 @@ impl NotesRNN {
             let nr_of_possible_labels: usize = notes.len() - window_width;
 
             for i in 1..nr_of_possible_labels {
+                println!("in possible labels {:?} {:?}", i, nr_of_possible_labels); 
                 let target: usize = self.note_value_to_id(label);
                 total_nr_of_sequences += 1.0;
                 let input_matrix: Matrix = self.create_input_matrix(&window);
@@ -70,6 +86,11 @@ impl NotesRNN {
                 label_index += 1;
                 label = notes[label_index];
             }
+
+            // if we want to use serde instead
+            println!("saving"); 
+            let serialized = serde_json::to_string(&self.rnn).unwrap();
+            fs::write("serde_weights", serialized).expect("Unable to write file");
         }
         let average_loss: f32 = total_loss / total_nr_of_sequences;
         average_loss

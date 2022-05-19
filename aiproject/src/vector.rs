@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 // Represents a row vector
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct Vector {
-    vector: Vec<f32>,
+    pub vector: Vec<f32>,
 }
 
 impl Vector {
@@ -178,7 +178,7 @@ impl Vector {
         }
         string
     }
-    //endregion
+    //endregionprivate field
 }
 
 impl Debug for Vector {

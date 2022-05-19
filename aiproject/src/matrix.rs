@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct Matrix {
-    vectors: Vec<Vector>,
+    pub vectors: Vec<Vector>,
 }
 
 impl Matrix {

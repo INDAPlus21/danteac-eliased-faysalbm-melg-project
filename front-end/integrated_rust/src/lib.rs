@@ -88,10 +88,11 @@ pub fn receive_notes(val: &JsValue) -> JsValue
         offsets.push(event[1]);
     }
     
-    console::log_1(&notes[0].into());
+    // console::log_1(&notes[0].into());
+    console::log_1(&JsValue::from_serde(&notes).unwrap());
 
     let mut notes_rnn: NotesRNN = NotesRNN::new(64);
-    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 10); 
+    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100); 
 
     return JsValue::from_serde(&generated_notes).unwrap(); // generated_notes.into() 
 
@@ -118,6 +119,32 @@ pub fn receive_notes(val: &JsValue) -> JsValue
     // let js_value : Array = notes.into(); 
     // console::log_1(&js_value);
     // console::log_1(notes.into_iter().map(JsValue::from).collect::<Array>().into());
+}
+
+#[wasm_bindgen]
+pub fn process_send_ai(fileData: &[u8]) -> JsValue {
+    console::log_1(&"hello send ai".into());
+
+    let real_midi_file: Vec<u8> = fileData.to_vec();
+
+    let song: midiparser::song::Song = parse_midi(real_midi_file).unwrap();
+
+    let mut note_offsets: Vec<Vec<f32>> = vec![];
+    let mut notes = vec![];
+
+    let track = &song.tracks[1];
+    for i in 0..track.notes.len() {
+        let to_push = vec![track.notes[i], track.offsets[i]];
+        note_offsets.push(to_push);
+        if i < 10 {
+            notes.push(track.notes[i] as f32)
+        }
+    }
+
+    let mut notes_rnn: NotesRNN = NotesRNN::new(64);
+    let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100); 
+
+    return JsValue::from_serde(&generated_notes).unwrap();  
 }
 
 #[wasm_bindgen]

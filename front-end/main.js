@@ -1,7 +1,7 @@
 import { songs } from "../songs.js"
 import { song } from "../song.js"
 import { parseFile } from "../web_parse.js"
-import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2 } from './integrated_rust/pkg/hello_world.js';
+import init, { say, add, return_song_vectors, send_example_to_js, send_vec_just_numbers, receive_notes, process_file, process_file_2, process_send_ai} from './integrated_rust/pkg/hello_world.js';
 import { combineTracks } from "./combineTracks.js"
 
 const cached = {}
@@ -176,6 +176,7 @@ function playNote(note, keyboard = false) {
     // console.log(url)
     const audio = new Audio(url) // (notes_audios[note]) ? notes_audios[note] : 
     audio.addEventListener("canplaythrough", (event) => {
+        console.log("is in playing")
         audio.play()
     })
 
@@ -229,6 +230,8 @@ function unColorTile(key, octave) {
 }
 
 export async function selfPlay(song_to_play) {
+    console.log({song_to_play})
+
     const notes_container = document.getElementById("falling-tiles-container")
 
     const num_tiles_start = Math.min(song_to_play.length, 90)
@@ -238,6 +241,8 @@ export async function selfPlay(song_to_play) {
     }
 
     let total_delta_height = 0
+
+    console.log({song_to_play}, {num_tiles_start})
 
     // iterate through all the notes in the song 
     for (let i = 0; i < song_to_play.length; i++) {
@@ -279,6 +284,8 @@ export async function selfPlay(song_to_play) {
             unColorTile(key, octave)
         } else {
             addEventToDisplay(song_to_play, i + num_tiles_start)
+
+            console.log("should be playing: ", note)
 
             playNote(note)
             colorTile(key, octave, song_to_play[i][2])
@@ -532,9 +539,17 @@ function addToTime(note) {
 
         const generated_events = receive_notes(played_with_u8)
 
-        console.log({generated_events})
+        const generated_with_delta = []
+        
+        for (note of generated_events) {
+            generated_with_delta.push([s.notes[note-50], 100, 0])
+        }
 
-        selfPlay(generated_events)
+        console.log({generated_events})
+        console.log({generated_with_delta})
+        selfPlay(generated_with_delta)
+
+        // selfPlay(generated_events)
     }
 
     s.time_last_event = time
@@ -719,6 +734,54 @@ input.addEventListener("change", () => {
         selfPlay(combined);
     });
 })
+
+document.getElementById("import_ai").addEventListener("change", () => {
+    console.log("in change ai")
+    const file = document.getElementById("import_ai").files[0]
+
+    console.log({ file })
+
+    file.arrayBuffer().then(buff => {
+
+        const array = new Uint8Array(buff);
+
+        console.log({ array })
+        console.log("calling process file!")
+        const number_song = process_send_ai(array)
+        // const number_song_two = process_file_2(array)
+
+        console.log({ number_song })
+
+        const alphanumeric = []
+        // const alphanumeric_two = []
+
+        /* in iterates over indexes, of iterates over actual values */
+        for (const event of number_song) {
+            console.log(event, s.notes[event])
+            alphanumeric.push([s.notes[event - 50], 100, 0])
+        }
+
+        // right!!! för att markus inte inkrementerar DELTATIME (Oooooooh!)
+        // och SPECIELLT inte sätter någonting alls till no_note (!!!)
+        /* in iterates over indexes, of iterates over actual values */
+        /* for (const event of number_song_two) {
+            alphanumeric_two.push([s.notes[event[0]], event[1]])
+        } */
+
+        // const combined = combineTracks(alphanumeric_two, alphanumeric)
+
+        // const original_song = JSON.parse(JSON.stringify(combined)) // js references, man  
+        // setTempo(2, combined, original_song)
+
+        // console.log({alphanumeric})
+
+        // selfPlay(alphanumeric_two); 
+        selfPlay(alphanumeric);
+    });
+})
+
+
+// process_send_ai
 
 
 // // input.addEventListener("change", (/* event /) => {

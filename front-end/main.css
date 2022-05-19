@@ -163,7 +163,7 @@ body {
     padding: 3px;
 }
 
-#pass_to_real_import {
+#pass_to_real_import, #pass_to_ai {
     background: white; 
     border: none; 
     border-radius: 5px; 
@@ -171,7 +171,7 @@ body {
     font-size: 15px; 
 }
 
-#pass_to_real_import:hover {
+#pass_to_real_import:hover, #pass_to_ai:hover {
     cursor: pointer;
     background:rgb(226, 226, 226);
 }
