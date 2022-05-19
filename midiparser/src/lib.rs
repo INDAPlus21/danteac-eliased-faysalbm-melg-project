@@ -3,7 +3,6 @@ use core::convert::TryInto;
 use song::{Song, Track};
 use std::ffi::OsString;
 use std::fs;
-use std::fs::ReadDir;
 
 // Filename without extension suffix
 pub fn parse_midi(data: Vec<u8>) -> Option<Song> {
@@ -129,10 +128,10 @@ pub fn parse_midi_file(filename: &str) -> Option<Song> {
         filename.to_owned() + ".mid"
     };
 
-    if let Ok(data) = fs::read(path) {
+    if let Ok(data) = fs::read(path.clone()) {
         parse_midi(data)
     } else {
-        println!("Error: File {}.mid not found!", filename);
+        println!("Error: File {} not found!", path);
         None
     }
 }
@@ -160,14 +159,17 @@ fn bytes_to_int(bytes: &[u8]) -> u32 {
 
 pub fn parse_midi_files(folder_path: &str) -> Vec<Song> {
     let mut output: Vec<Song> = vec![];
-    let paths: ReadDir = fs::read_dir(folder_path).unwrap();
-    for path in paths {
-        let filename: OsString = path.unwrap().file_name();
-        let filename_str: &str = filename.to_str().unwrap();
-        let file_path: String = format!("{}{}", folder_path, filename_str);
-        if let Some(song) = parse_midi_file(file_path.as_str()) {
-            output.push(song);
+    if let Ok(paths) = fs::read_dir(folder_path) {
+        for path in paths {
+            let filename: OsString = path.unwrap().file_name();
+            let filename_str: &str = filename.to_str().unwrap();
+            let file_path: String = format!("{}{}", folder_path, filename_str);
+            if let Some(song) = parse_midi_file(file_path.as_str()) {
+                output.push(song);
+            }
         }
+    } else {
+        println!("Error: Folder {} not found!", folder_path);
     }
     output
 }

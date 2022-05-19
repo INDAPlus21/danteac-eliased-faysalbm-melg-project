@@ -22,7 +22,7 @@ fn main() {
     notes_rnn.rnn.whh = serde_RNN.whh;
     notes_rnn.rnn.why = serde_RNN.why;
     notes_rnn.rnn.bh = serde_RNN.bh;
-    notes_rnn.rnn.by = serde_RNN.by; */
+    notes_rnn.rnn.by = serde_RNN.by; */ 
 
     println!("Training started");
     for epoch in 1..=1000 {
