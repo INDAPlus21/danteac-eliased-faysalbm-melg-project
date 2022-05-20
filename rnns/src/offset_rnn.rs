@@ -19,9 +19,13 @@ impl OffsetRNN {
     }
 
     pub fn from_weights_biases_file() -> OffsetRNN {
-        OffsetRNN {
+        /* OffsetRNN {
             rnn: RNN::from_weight_bias_file()        
-        }
+        } */
+        const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_offset_weights");
+        return OffsetRNN {
+            rnn: serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap()     
+        } 
     }
 
     pub fn gen_offsets(&self, input_offsets: Vec<f32>, nr_of_gen_offsets: usize) -> Vec<f32> {

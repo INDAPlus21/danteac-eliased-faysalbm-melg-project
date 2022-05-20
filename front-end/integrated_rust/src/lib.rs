@@ -15,7 +15,7 @@ fn send_to_rnn(notes: Vec<f32>, offsets: Vec<f32>) -> JsValue {
 
     let notes_rnn: NotesRNN = NotesRNN::from_weights_biases_file();
     let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100);
-    let offset_rnn: OffsetRNN = OffsetRNN::new(64); //from_weights_biases_file();
+    let offset_rnn: OffsetRNN = OffsetRNN::from_weights_biases_file(); // new(64); 
     let generated_offsets: Vec<f32> = offset_rnn.gen_offsets(offsets, 100);
 
     let combined: Vec<Vec<f32>> = vec![generated_notes, generated_offsets];

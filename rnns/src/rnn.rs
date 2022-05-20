@@ -1,6 +1,6 @@
-use linear_algebra::{Vector, Matrix};
+use linear_algebra::{Matrix, Vector};
+use serde::{Deserialize, Serialize};
 use std::fs;
-use serde::{Serialize, Deserialize};
 
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RNN {
@@ -14,18 +14,21 @@ pub struct RNN {
 impl RNN {
     pub fn new(input_size: usize, hidden_size: usize, output_size: usize) -> RNN {
         let factor: f32 = 1.0 / 10.0;
+        let standard_deviation = 1.0;
         RNN {
             // Standard normal distribution.
-            wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor, /* with_random(hidden_size, input_size),  */
-            whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor, /* with_random(hidden_size, hidden_size), */ 
-            why: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor, //with_random_normal(output_size, hidden_size, 0.0, 2.0) * factor,
-            bh: Vector::with_length(hidden_size), 
+            wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, standard_deviation)
+                * factor,
+            whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, standard_deviation)
+                * factor,
+            why: Matrix::with_random_normal(output_size, hidden_size, 0.0, standard_deviation)
+                * factor,
+            bh: Vector::with_length(hidden_size),
             by: Vector::with_length(output_size),
         }
     }
 
     pub fn from_weight_bias_file() -> RNN {
-        // let deserialized: String = fs::read_to_string(path).expect("Unable to read file");
         const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
         return serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap();
     }
@@ -81,7 +84,7 @@ impl RNN {
 
     fn to_json_string(&self) -> String {
         serde_json::to_string(self).unwrap()
-}
+    }
 
     pub fn save_weights_biases_to_file(&self, weights_biases_file_path: String) {
         let serialized: String = self.to_json_string();

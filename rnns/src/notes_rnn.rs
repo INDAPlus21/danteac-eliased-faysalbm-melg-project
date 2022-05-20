@@ -19,9 +19,11 @@ impl NotesRNN {
     }
 
     pub fn from_weights_biases_file() -> NotesRNN {
-        NotesRNN {
+        let to_return = NotesRNN {
             rnn: RNN::from_weight_bias_file()
-        }
+        }; 
+        println!("{:?}", to_return.rnn);
+        to_return
     }
 
     pub fn gen_notes(&self, input_notes: Vec<f32>, nr_of_gen_notes: usize) -> Vec<f32> {
