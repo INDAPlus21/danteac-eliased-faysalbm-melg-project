@@ -13,28 +13,21 @@ pub struct RNN {
 
 impl RNN {
     pub fn new(input_size: usize, hidden_size: usize, output_size: usize) -> RNN {
-        let factor: f32 = 1.0 / 1000.0;
+        let factor: f32 = 1.0 / 10.0;
         RNN {
             // Standard normal distribution.
-            wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor,
-            whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
-            why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
-            bh: Vector::with_value(hidden_size, 1.0), 
-            by: Vector::with_value(output_size, 1.0),
+            wxh: Matrix::with_random_normal(hidden_size, input_size, 0.0, 1.0) * factor, /* with_random(hidden_size, input_size),  */
+            whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor, /* with_random(hidden_size, hidden_size), */ 
+            why: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor, //with_random_normal(output_size, hidden_size, 0.0, 2.0) * factor,
+            bh: Vector::with_length(hidden_size), 
+            by: Vector::with_length(output_size),
         }
     }
 
     pub fn from_weight_bias_file() -> RNN {
         // let deserialized: String = fs::read_to_string(path).expect("Unable to read file");
         const SERDE_WEIGHTS_FILE: &str = include_str!("../serde_weights");
-        let serde_rnn: RNN = serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap();
-        RNN {
-            wxh: serde_rnn.wxh,
-            whh: serde_rnn.whh,
-            why: serde_rnn.why,
-            bh: serde_rnn.bh,
-            by: serde_rnn.by,
-        }
+        return serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap();
     }
 
     pub fn forward(&self, inputs: &Matrix) -> (Vector, Matrix) {
