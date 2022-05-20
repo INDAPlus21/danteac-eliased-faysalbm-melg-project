@@ -1,13 +1,8 @@
-mod matrix;
-use matrix::{Matrix};
-// use crate::matrix::Matrix;
-// use crate::vector::Vector;
 pub mod rnn;
-use rnn::{RNN};
 
-mod vector;
-use vector::{Vector};
+use linear_algebra::{Matrix, Vector};
 use midiparser::song::{Song, Track};
+use rnn::RNN;
 use std::collections::VecDeque;
 
 use std::fs;
@@ -33,7 +28,7 @@ impl NotesRNN {
         self.rnn.whh = serde_rnn.whh;
         self.rnn.why = serde_rnn.why;
         self.rnn.bh = serde_rnn.bh;
-        self.rnn.by = serde_rnn.by; 
+        self.rnn.by = serde_rnn.by;
 
         let mut output_notes: Vec<f32> = vec![0.0; nr_of_gen_notes];
         let window_width: usize = 10;
@@ -52,7 +47,6 @@ impl NotesRNN {
         }
         output_notes
     }
-
 
     pub fn train(&mut self, data: Vec<Song>, track_nr: usize, learn_rate: f32) -> f32 {
         let window_width: usize = 10;
@@ -86,7 +80,7 @@ impl NotesRNN {
             }
 
             // if we want to use serde instead
-            println!("saving"); 
+            println!("saving");
             let serialized = serde_json::to_string(&self.rnn).unwrap();
             fs::write("serde_weights", serialized).expect("Unable to write file");
         }

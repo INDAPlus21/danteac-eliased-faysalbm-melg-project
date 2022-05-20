@@ -3,8 +3,8 @@ mod linalg;
 mod memory_reader;
 mod rnn;
 
-use crate::linalg::{Matrix, Vector};
 use crate::rnn::RNN;
+use linear_algebra::{Matrix, Vector};
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::fs::File;
@@ -78,7 +78,7 @@ fn run_epochs(
 ) {
     RNN::load_memory(rnn, "rnnMemory2.txt");
 
-    // if we want to use serde instead 
+    // if we want to use serde instead
     /* let deserialized = fs::read_to_string("serde_weights").expect("Unable to read file");
     let serde_RNN: RNN = serde_json::from_str(&deserialized).unwrap();
     rnn.wxh = serde_RNN.wxh;

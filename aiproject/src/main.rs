@@ -1,12 +1,8 @@
-mod matrix;
-// mod notes_rnn;
 mod rnn;
-mod tests;
-mod vector;
 
-// use crate::notes_rnn::NotesRNN;
 use aiproject::rnn::RNN;
 use aiproject::NotesRNN;
+use linear_algebra::{Matrix, Vector};
 use midiparser::song::Song;
 use std::fs;
 use std::fs::File;
@@ -22,14 +18,14 @@ fn main() {
     notes_rnn.rnn.whh = serde_rnn.whh;
     notes_rnn.rnn.why = serde_rnn.why;
     notes_rnn.rnn.bh = serde_rnn.bh;
-    notes_rnn.rnn.by = serde_rnn.by; */ 
+    notes_rnn.rnn.by = serde_rnn.by; */
 
     println!("Training started");
     for epoch in 1..=1000 {
         // let avg_train_loss: f32 = notes_rnn.train(songs.clone(), 1, 2e-2);
         println!("--- Epoch {}", (epoch));
         // println!("Train:\tLoss {:.20}", avg_train_loss);
-        notes_rnn.save_weights_biases_to_file();
+        //notes_rnn.save_weights_biases_to_file();
 
         // if we want to use serde instead
         let serialized = serde_json::to_string(&notes_rnn.rnn).unwrap();

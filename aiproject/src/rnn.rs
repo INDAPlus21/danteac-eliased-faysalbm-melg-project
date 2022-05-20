@@ -1,6 +1,5 @@
-use crate::matrix::Matrix;
-use crate::vector::Vector;
-use serde::{Serialize, Deserialize};
+use linear_algebra::{Matrix, Vector};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize)]
 pub struct RNN {
@@ -72,5 +71,4 @@ impl RNN {
         self.by -= learn_rate * d_by.clamp(-1.0, 1.0);
         self.bh -= learn_rate * d_bh.clamp(-1.0, 1.0);
     }
-
 }
