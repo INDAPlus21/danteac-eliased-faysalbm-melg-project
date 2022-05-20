@@ -20,6 +20,14 @@ impl OffsetRNN {
         }
     }
 
+    pub fn from_hardcoded_weight() -> OffsetRNN {
+        const SERDE_WEIGHTS_FILE: &str = include_str!("../../data/offsets_weights_biases");
+        return OffsetRNN {
+            rnn: serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap(),
+            weights_biases_file_path: "../../data/offsets_weights_biases".to_string(),
+        };
+    }
+
     pub fn from_weights_biases_file(weights_biases_file_path: String) -> OffsetRNN {
         OffsetRNN {
             rnn: RNN::from_weight_bias_file(weights_biases_file_path.clone()),
