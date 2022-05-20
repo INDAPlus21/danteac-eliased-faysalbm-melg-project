@@ -1,12 +1,11 @@
-use crate::linalg::{Matrix, Vector};
 use crate::memory_reader;
+use linear_algebra::{Matrix, Vector};
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::{Read, Write};
-use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct RNN {
     pub wxh: Matrix,
     pub whh: Matrix,
@@ -24,14 +23,12 @@ impl RNN {
             whh: Matrix::with_random_normal(hidden_size, hidden_size, 0.0, 1.0) * factor,
             why: Matrix::with_random_normal(output_size, hidden_size, 0.0, 1.0) * factor,
             bh: Vector::with_length(hidden_size),
-            by: Vector::with_length(output_size)
-
-            // if we want a zero initializion 
-            /* wxh: Matrix::from_vecs(vec![]),
-            whh:  Matrix::from_vecs(vec![]),
-            why:  Matrix::from_vecs(vec![]),
-            bh: Vector::with_length(0),
-            by: Vector::with_length(0) */
+            by: Vector::with_length(output_size), // if we want a zero initializion
+                                                  /* wxh: Matrix::from_vecs(vec![]),
+                                                  whh:  Matrix::from_vecs(vec![]),
+                                                  why:  Matrix::from_vecs(vec![]),
+                                                  bh: Vector::with_length(0),
+                                                  by: Vector::with_length(0) */
         }
     }
 
@@ -117,12 +114,9 @@ impl RNN {
     // loads memory from memory file
     pub fn load_memory(rnn: &mut RNN, path: &str) {
         // get memory string
-        // använder samma openoptions objet att den inte readar/writer! 
+        // använder samma openoptions objet att den inte readar/writer!
         // .seek(SeekFrom::Current(0))
-        let mut file = OpenOptions::new()
-        .read(true)
-        .open(path)
-        .unwrap();  
+        let mut file = OpenOptions::new().read(true).open(path).unwrap();
         // let mut file = File::open(path).expect("file error or something");
         let mut content = String::new();
         file.read_to_string(&mut content)
@@ -147,8 +141,7 @@ impl RNN {
     }
 
     fn load_matrix(content: &String, next_index: &usize) -> (Matrix, usize) {
-        let (height, next_index): (f32, usize) =
-            memory_reader::read_number(&content, next_index);
+        let (height, next_index): (f32, usize) = memory_reader::read_number(&content, next_index);
         let (width, mut next_index): (f32, usize) =
             memory_reader::read_number(&content, &next_index);
 
