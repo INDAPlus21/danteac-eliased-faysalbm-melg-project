@@ -4,7 +4,6 @@ use midiparser::song::Song;
 fn main() {
     let maestro_dataset_path: &str = "../data/train-data/";
     let offsets_weights_biases_file_path: String = "../data/offsets_weights_biases".into();
-    // let mut offsets_rnn: OffsetRNN = OffsetRNN::new(64, offsets_weights_biases_file_path);
     let mut offsets_rnn: OffsetRNN = OffsetRNN::from_weights_biases_file(offsets_weights_biases_file_path);
     let songs: Vec<Song> = midiparser::parse_midi_files(maestro_dataset_path);
 
