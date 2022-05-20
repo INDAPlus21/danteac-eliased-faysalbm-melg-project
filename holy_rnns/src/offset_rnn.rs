@@ -60,7 +60,7 @@ impl OffsetRNN {
             let mut label: f32 = offsets[label_index];
             let nr_of_possible_labels: usize = offsets.len() - window_width;
 
-            for _ in 1..nr_of_possible_labels {
+            for i in 1..nr_of_possible_labels {
                 let target: usize = self.offset_value_to_id(label);
                 total_nr_of_sequences += 1.0;
                 let input_matrix: Matrix = self.create_input_matrix(&window);
@@ -74,8 +74,10 @@ impl OffsetRNN {
                 window.push_back(label);
                 label_index += 1;
                 label = offsets[label_index];
+                if i % 100 == 0 {
+                    self.save_weights_biases_to_file();
+                }
             }
-            self.save_weights_biases_to_file();
         }
         let average_loss: f32 = total_loss / total_nr_of_sequences;
         average_loss
@@ -99,6 +101,6 @@ impl OffsetRNN {
 
     pub fn save_weights_biases_to_file(&self) {
         self.rnn.save_weights_biases_to_file(self.weights_biases_file_path.to_owned());
-        println!("Weight and biases saved.");
+        println!("Weights and biases saved.");
     }
 }
