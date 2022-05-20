@@ -68,7 +68,7 @@ impl NotesRNN {
             let mut label: f32 = notes[label_index];
             let nr_of_possible_labels: usize = notes.len() - window_width;
 
-            for _ in 1..nr_of_possible_labels {
+            for i in 1..nr_of_possible_labels {
                 let target: usize = self.note_value_to_id(label);
                 total_nr_of_sequences += 1.0;
                 let input_matrix: Matrix = self.create_input_matrix(&window);
@@ -83,8 +83,10 @@ impl NotesRNN {
                 window.push_back(label);
                 label_index += 1;
                 label = notes[label_index];
+                if i % 300 == 0 {
+                    self.save_weights_biases_to_file();
+                }
             }
-            self.save_weights_biases_to_file();
         }
         let average_loss: f32 = total_loss / total_nr_of_sequences;
         average_loss
