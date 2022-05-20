@@ -3,8 +3,10 @@ use wasm_bindgen::prelude::*;
 use web_sys::console;
 // use neon::prelude::*;
 // use aiproject::NotesRNN;
-use rnns::NotesRNN; 
-use rnns::OffsetRNN; 
+// use rnns::NotesRNN; 
+// use rnns::OffsetRNN; 
+use holy_rnns::NotesRNN; 
+use holy_rnns::OffsetRNN; 
 use midiparser::parse_midi;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -13,9 +15,9 @@ extern crate console_error_panic_hook;
 fn send_to_rnn(notes: Vec<f32>, offsets: Vec<f32>) -> JsValue {
     console::log_2(&"sending to rnn from wasm: ".into(), &JsValue::from_serde(&notes).unwrap());
 
-    let notes_rnn: NotesRNN = NotesRNN::from_weights_biases_file();
+    let notes_rnn: NotesRNN = NotesRNN::from_hardcoded_weight();
     let generated_notes: Vec<f32> = notes_rnn.gen_notes(notes, 100);
-    let offset_rnn: OffsetRNN = OffsetRNN::from_weights_biases_file(); // new(64); 
+    let offset_rnn: OffsetRNN = OffsetRNN::from_hardcoded_weight(); // new(64); 
     let generated_offsets: Vec<f32> = offset_rnn.gen_offsets(offsets, 100);
 
     let combined: Vec<Vec<f32>> = vec![generated_notes, generated_offsets];

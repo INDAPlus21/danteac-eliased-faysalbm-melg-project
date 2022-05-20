@@ -1,8 +1,8 @@
-use holy_linear_algebra::{Vector, Matrix};
 use crate::rnn::RNN;
+use holy_linear_algebra::{Matrix, Vector};
 use midiparser::song::{Song, Track};
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
-use serde::{Serialize, Deserialize};
 
 const NR_OF_POSSIBLE_NOTES: usize = 88;
 
@@ -18,6 +18,14 @@ impl NotesRNN {
             rnn: RNN::new(NR_OF_POSSIBLE_NOTES, hidden_size, NR_OF_POSSIBLE_NOTES),
             weights_biases_file_path,
         }
+    }
+
+    pub fn from_hardcoded_weight() -> NotesRNN {
+        const SERDE_WEIGHTS_FILE: &str = include_str!("../../data/notes_weights_biases");
+        return NotesRNN {
+            rnn: serde_json::from_str(SERDE_WEIGHTS_FILE).unwrap(),
+            weights_biases_file_path: "../../data/notes_weights_biases".to_string(),
+        };
     }
 
     pub fn from_weights_biases_file(weights_biases_file_path: String) -> NotesRNN {
@@ -68,7 +76,8 @@ impl NotesRNN {
                 let probs: Vector = output.softmax();
                 let mut pd_l_pd_y: Vector = probs.clone();
                 pd_l_pd_y[target] -= 1.0;
-                self.rnn.backward(&input_matrix, pd_l_pd_y, last_hs, learn_rate);
+                self.rnn
+                    .backward(&input_matrix, pd_l_pd_y, last_hs, learn_rate);
                 total_loss -= probs[target].ln();
                 window.pop_front();
                 window.push_back(label);
@@ -102,7 +111,8 @@ impl NotesRNN {
     }
 
     pub fn save_weights_biases_to_file(&self) {
-        self.rnn.save_weights_biases_to_file(self.weights_biases_file_path.to_owned());
+        self.rnn
+            .save_weights_biases_to_file(self.weights_biases_file_path.to_owned());
         println!("Weight and biases saved.");
     }
 }
