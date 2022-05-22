@@ -15,3 +15,55 @@ Cargo.lock
 *.pdb
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,rust
+
+MIDI.js
+
+# Added by cargo
+
+/target
+
+front-end/node_modules
+midiparser/src/main.rs
+midiparser/Rush_E.mid
+hello-world/
+
+# Added by cargo
+#
+# already existing elements were commented out
+.vscode
+
+/target
+#Cargo.lock
+
+# Nodejs
+aiproject/node_modules/
+
+
+# JetBrains
+.idea
+
+# MacOS
+.DS_Store
+
+# Train data
+aiproject/train-data/
+midiparser/src/main.rs
+data/train-data
+
+# Dante
+aiproject2
+linear_algebra2
+rnns2
+
+
+# Elias
+python-networks
+hello-world
+
+# Just to be sure
+data/maestro-v2.0.0
+
+# MatrixValueFiles
+# sentence-predicting-ai/many-to-one/src/rnnMemory.txt
+# sentence-predicting-ai/many-to-one/src/rnnMemory2.txt
+front-end/midis

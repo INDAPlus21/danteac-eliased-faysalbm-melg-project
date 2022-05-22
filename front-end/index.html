@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Piano Skynet</title>
+        <link rel="icon" type="image/x-icon" href="./logo.png">
+    </head>
+    <body>
+        <div id="settings">
+            <!-- <label for="tempo">Tempo</label>
+            <input
+                type="range"
+                oninput="setTempo(this.value)"
+                name="tempo"
+                min="0.1"
+                max="10"
+                step="0.1"
+                value="1"
+            ></input> -->
+            <!-- <input type="file" id="import"></input> -->
+            <input
+                class="button"
+                type="button"
+                id="pass_to_real_import"
+                value="Import MIDI file"
+                onclick="document.getElementById('import').click();"
+            >
+            <input
+                type="file"
+                style="display:none;"
+                id="import"
+                name="file"
+            >
+            <input
+                class="button"
+                type="button"
+                id="pass_to_ai"
+                value="Import & send MIDI to AI"
+                onclick="document.getElementById('import_ai').click();"
+            >
+            <input
+                type="file"
+                style="display:none;"
+                id="import_ai"
+                name="ai-file"
+            >
+            <button
+                class="button"
+                id="pass_own_to_ai"
+            >Send played notes to AI</button>
+            <!-- <label for="select-song">Song</label>
+            <select onchange="selectSong(this.value)" name="select-song" id="select-song"></select> -->
+        </div>
+        <div id="piano-display">
+            <template id="template">
+                <div class="octave-container">
+                    <div class="tile C white start-white"></div>
+                    <div class="tile Db black"></div>
+                    <div class="tile D white"></div>
+                    <div class="tile Eb black"></div>
+                    <div class="tile E white next-white"></div>
+                    <div class="tile F white"></div>
+                    <div class="tile Gb black"></div>
+                    <div class="tile G white"></div>
+                    <div class="tile Ab black"></div>
+                    <div class="tile A white"></div>
+                    <div class="tile Bb black"></div>
+                    <div class="tile B white end-white"></div>
+                </div>
+            </template>
+            <div id="falling-tiles-container"></div>
+            <!-- <div id="keyboard-container-devider"></div> -->
+            <div id="keyboard-container"></div>
+        </div>
+        <script type="module" src="main.js"></script>
+        <link rel="stylesheet" href="main.css">
+        <link href="midis/Never_Gonna_Give_You_Up.mid">
+    </body>
+</html>
