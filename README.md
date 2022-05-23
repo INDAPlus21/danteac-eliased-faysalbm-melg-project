@@ -1,5 +1,7 @@
 A project that uses AI for generating a song based on inputted tunes. Written in JS and Rust.
 
+To serve the project set up a local http-server in the front-end folder.
+
 TODO when adding a feature/fixing a bug:
 - Create an issue
 - Assign a person, set a milestone and labels as well as the project board
